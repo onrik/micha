@@ -10,7 +10,7 @@ type ParseMode string
 
 // User object represents a Telegram user, bot
 type User struct {
-	Id        uint64 `json:"id"`
+	Id        int64  `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Username  string `json:"username"`
@@ -18,7 +18,7 @@ type User struct {
 
 // Chat object represents a Telegram user, bot or group chat.
 type Chat struct {
-	Id        uint64 `json:"id"`
+	Id        int64  `json:"id"`
 	Type      string `json:"type"`
 	Title     string `json:"title"`
 	FirstName string `json:"first_name"`
@@ -96,7 +96,7 @@ type Voice struct {
 
 // Contact object represents a contact to Telegram user
 type Contact struct {
-	UserId      uint64 `json:"user_id"`
+	UserId      int64  `json:"user_id"`
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
@@ -135,7 +135,7 @@ type MessageEntity struct {
 
 // Message object represents a message.
 type Message struct {
-	MessageId uint64 `json:"message_id"`
+	MessageId int64  `json:"message_id"`
 	From      User   `json:"from"`
 	Date      uint64 `json:"date"`
 	Chat      Chat   `json:"chat"`
@@ -164,8 +164,8 @@ type Message struct {
 	GroupChatCreated      bool            `json:"group_chat_created"`
 	SupergroupChatCreated bool            `json:"supergroup_chat_created"`
 	ChannelChatCreated    bool            `json:"channel_chat_created"`
-	MigrateToChatId       uint64          `json:"migrate_to_chat_id"`
-	MigrateFromChatId     uint64          `json:"migrate_from_chat_id"`
+	MigrateToChatId       int64           `json:"migrate_to_chat_id"`
+	MigrateFromChatId     int64           `json:"migrate_from_chat_id"`
 	PinnedMessage         *Message        `json:"pinned_message"`
 }
 
