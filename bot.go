@@ -47,7 +47,7 @@ func (bot *Bot) buildUrl(method string) string {
 	return fmt.Sprintf(API_URL, bot.token, method)
 }
 
-// Decode response body to ApiResponse object
+// Decode response result to target object
 func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 	apiResponse := new(ApiResponse)
 	if err := json.Unmarshal(data, apiResponse); err != nil {
@@ -55,8 +55,14 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 	}
 
 	if !apiResponse.Ok {
-		return fmt.Errorf("%d: %s", apiResponse.ErrorCode, apiResponse.Description)
+		return fmt.Errorf("Response status: %d (%s)", apiResponse.ErrorCode, apiResponse.Description)
 	}
+
+	if target == nil {
+		// Don't need to decode result
+		return nil
+	}
+
 	if err := json.Unmarshal(apiResponse.Result, target); err != nil {
 		return fmt.Errorf("Decode result error (%s)", err.Error())
 	} else {
@@ -174,6 +180,18 @@ func (bot *Bot) EditMessageReplyMarkup(chatId, messageId int64, inlineMessageId 
 	err := bot.post("editMessageReplyMarkup", params, message)
 
 	return message, err
+}
+
+func (bot *Bot) AnswerInlineQuery(inlineQueryId string, results InlineQueryResults, options *AnswerInlineQueryOptions) error {
+	params := AnswerInlineQueryParams{
+		InlineQueryId: inlineQueryId,
+		Results:       results,
+	}
+	if options != nil {
+		params.AnswerInlineQueryOptions = *options
+	}
+
+	return bot.post("answerInlineQuery", params, nil)
 }
 
 // Start getting updates

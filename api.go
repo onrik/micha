@@ -60,3 +60,17 @@ type EditMessageReplyMarkupParams struct {
 	InlineMessageId string       `json:"inline_message_id,omitempty"`
 	ReplyMarkup     *ReplyMarkup `json:"reply_markup,omitempty"`
 }
+
+type AnswerInlineQueryOptions struct {
+	CacheTime         int    `json:"cache_time,omitempty"`
+	IsPersonal        bool   `json:"is_personal,omitempty"`
+	NextOffset        string `json:"next_offset,omitempty"`
+	SwitchPmText      string `json:"switch_pm_text,omitempty"`
+	SwitchPmParameter string `json:"switch_pm_parameter,omitempty"`
+}
+
+type AnswerInlineQueryParams struct {
+	InlineQueryId string             `json:"inline_query_id"`
+	Results       InlineQueryResults `json:"results"`
+	AnswerInlineQueryOptions
+}
