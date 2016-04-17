@@ -104,6 +104,25 @@ func (bot *Bot) getUpdates(offset uint64) ([]Update, error) {
 	return updates, err
 }
 
+// Start getting updates
+func (bot *Bot) Start() {
+	offset := uint64(0)
+
+	for {
+		updates, err := bot.getUpdates(offset + 1)
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
+
+		for _, update := range updates {
+			bot.Updates <- update
+
+			offset = update.UpdateId
+		}
+	}
+}
+
 // A simple method for testing your bot's auth token.
 // Returns basic information about the bot in form of a User object.
 func (bot *Bot) GetMe() (*User, error) {
@@ -125,6 +144,20 @@ func (bot *Bot) SendMessage(chatId int64, text string, options *SendMessageOptio
 
 	message := new(Message)
 	err := bot.post("sendMessage", params, message)
+
+	return message, err
+}
+
+func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
+	params := map[string]interface{}{
+		"chat_id":              chatId,
+		"from_chat_id":         fromChatId,
+		"message_id":           messageId,
+		"disable_notification": disableNotification,
+	}
+
+	message := new(Message)
+	err := bot.post("forwardMessage", params, message)
 
 	return message, err
 }
@@ -182,6 +215,8 @@ func (bot *Bot) EditMessageReplyMarkup(chatId, messageId int64, inlineMessageId 
 	return message, err
 }
 
+// Use this method to send answers to an inline query.
+// No more than 50 results per query are allowed.
 func (bot *Bot) AnswerInlineQuery(inlineQueryId string, results InlineQueryResults, options *AnswerInlineQueryOptions) error {
 	params := AnswerInlineQueryParams{
 		InlineQueryId: inlineQueryId,
@@ -192,23 +227,4 @@ func (bot *Bot) AnswerInlineQuery(inlineQueryId string, results InlineQueryResul
 	}
 
 	return bot.post("answerInlineQuery", params, nil)
-}
-
-// Start getting updates
-func (bot *Bot) Start() {
-	offset := uint64(0)
-
-	for {
-		updates, err := bot.getUpdates(offset + 1)
-		if err != nil {
-			log.Println(err.Error())
-			continue
-		}
-
-		for _, update := range updates {
-			bot.Updates <- update
-
-			offset = update.UpdateId
-		}
-	}
 }
