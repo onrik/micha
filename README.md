@@ -1,6 +1,6 @@
 # Micha
 
-[![Gitter](https://badges.gitter.im/onrik/micha.svg)](https://gitter.im/onrik/micha?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/onrik/micha.svg)](https://gitter.im/onrik/micha)
 
 Telegram bot framework
 
