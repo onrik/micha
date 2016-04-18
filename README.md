@@ -1,6 +1,6 @@
 # Micha
 
-[![Gitter](https://badges.gitter.im/onrik/micha.svg)](https://gitter.im/onrik/micha)
+[![Build Status](https://travis-ci.org/onrik/micha.svg?branch=master)](https://travis-ci.org/onrik/micha) [![Gitter](https://badges.gitter.im/onrik/micha.svg)](https://gitter.im/onrik/micha)
 
 Telegram bot framework
 
