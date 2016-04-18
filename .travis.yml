@@ -7,3 +7,6 @@ go:
 install:
   - go get github.com/stretchr/testify/suite
   - go get github.com/jarcoal/httpmock
+  
+after_success:
+  - coveralls
