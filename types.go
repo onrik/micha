@@ -169,6 +169,14 @@ type Message struct {
 	PinnedMessage         *Message        `json:"pinned_message"`
 }
 
+type ReplyMarkup interface {
+	_ItsReplyMarkup()
+}
+
+type ReplyMarkupImplementation struct{}
+
+func (r ReplyMarkupImplementation) _ItsReplyMarkup() {}
+
 // This object represents one button of the reply keyboard.
 // For simple text buttons String can be used instead of this object to specify text of the button.
 // Optional fields are mutually exclusive.
@@ -182,6 +190,7 @@ type KeyboardButton struct {
 
 // This object represents a custom keyboard with reply options
 type ReplyKeyboardMarkup struct {
+	ReplyMarkupImplementation
 	Keyboard        [][]KeyboardButton `json:"keyboard"`
 	ResizeKeyboard  bool               `json:"resize_keyboard,omitempty"`
 	OneTimeKeyboard bool               `json:"one_time_keyboard,omitempty"`
@@ -193,6 +202,7 @@ type ReplyKeyboardMarkup struct {
 // By default, custom keyboards are displayed until a new keyboard is sent by a bot.
 // An exception is made for one-time keyboards that are hidden immediately after the user presses a button
 type ReplyKeyboardHide struct {
+	ReplyMarkupImplementation
 	HideKeyboard bool `json:"hide_keyboard,omitempty"`
 	Selective    bool `json:"selective,omitempty"`
 }
@@ -209,7 +219,17 @@ type InlineKeyboardButton struct {
 
 // This object represents an inline keyboard that appears right next to the message it belongs to.
 type InlineKeyboardMarkup struct {
+	ReplyMarkupImplementation
 	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard"`
+}
+
+// Upon receiving a message with this object,
+// Telegram clients will display a reply interface to the user.
+// This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
+type ForceReply struct {
+	ReplyMarkupImplementation
+	ForceReply bool `json:"force_reply"`
+	Selective  bool `json:"selective,omitempty"`
 }
 
 // Represents a result of an inline query that was chosen by the user and sent to their chat partner.
