@@ -201,7 +201,7 @@ func (bot *Bot) EditMessageCaption(chatId, messageId int64, inlineMessageId stri
 
 // Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
 // On success, the edited Message is returned.
-func (bot *Bot) EditMessageReplyMarkup(chatId, messageId int64, inlineMessageId string, replyMarkup *ReplyMarkup) (*Message, error) {
+func (bot *Bot) EditMessageReplyMarkup(chatId, messageId int64, inlineMessageId string, replyMarkup ReplyMarkup) (*Message, error) {
 	params := EditMessageReplyMarkupParams{
 		ChatId:          chatId,
 		MessageId:       messageId,
