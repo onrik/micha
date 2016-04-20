@@ -3,6 +3,7 @@ package micha
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/url"
 	"time"
@@ -90,6 +91,16 @@ func (bot *Bot) post(method string, data, target interface{}) error {
 	}
 }
 
+// Make POST request to Telegram API
+func (bot *Bot) postMultipart(method string, file *FileToSend, params url.Values, target interface{}) error {
+	response, err := postMultipart(bot.buildUrl(method), file, params)
+	if err != nil {
+		return err
+	} else {
+		return bot.decodeResponse(response, target)
+	}
+}
+
 // Use this method to receive incoming updates using long polling.
 // An Array of Update objects is returned.
 func (bot *Bot) getUpdates(offset uint64) ([]Update, error) {
@@ -132,7 +143,7 @@ func (bot *Bot) GetMe() (*User, error) {
 	return me, err
 }
 
-// Use this method to send text messages. On success, the sent Message is returned.
+// Use this method to send text messages.
 func (bot *Bot) SendMessage(chatId int64, text string, options *SendMessageOptions) (*Message, error) {
 	params := SendMessageParams{
 		ChatId: chatId,
@@ -148,6 +159,37 @@ func (bot *Bot) SendMessage(chatId int64, text string, options *SendMessageOptio
 	return message, err
 }
 
+// Send exists photo by file_id
+func (bot *Bot) SendPhoto(chatId int64, photoId string, options *SendPhotoOptions) (*Message, error) {
+	params := NewSendPhotoParams(chatId, photoId, options)
+
+	message := new(Message)
+	err := bot.post("sendPhoto", params, message)
+
+	return message, err
+}
+
+// Send photo file
+func (bot *Bot) SendPhotoFile(chatId int64, file io.ReadCloser, options *SendPhotoOptions) (*Message, error) {
+	params := NewSendPhotoParams(chatId, "", options)
+	values, err := structToValues(params)
+	if err != nil {
+		return nil, err
+	}
+
+	fileToSend := &FileToSend{
+		File:      file,
+		Fieldname: "photo",
+		Filename:  "photo.png",
+	}
+
+	message := new(Message)
+	err = bot.postMultipart("sendPhoto", fileToSend, values, message)
+
+	return message, err
+}
+
+// Use this method to forward messages of any kind.
 func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
 	params := map[string]interface{}{
 		"chat_id":              chatId,
@@ -163,7 +205,6 @@ func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotif
 }
 
 // Use this method to edit text messages sent by the bot or via the bot (for inline bots).
-// On success, the edited Message is returned.
 func (bot *Bot) EditMessageText(chatId, messageId int64, inlineMessageId, text string, options *EditMessageTextOptions) (*Message, error) {
 	params := EditMessageTextParams{
 		ChatId:          chatId,
@@ -182,7 +223,6 @@ func (bot *Bot) EditMessageText(chatId, messageId int64, inlineMessageId, text s
 }
 
 // Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
-// On success, the edited Message is returned.
 func (bot *Bot) EditMessageCaption(chatId, messageId int64, inlineMessageId string, options *EditMessageCationOptions) (*Message, error) {
 	params := EditMessageCationParams{
 		ChatId:          chatId,
@@ -200,7 +240,6 @@ func (bot *Bot) EditMessageCaption(chatId, messageId int64, inlineMessageId stri
 }
 
 // Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
-// On success, the edited Message is returned.
 func (bot *Bot) EditMessageReplyMarkup(chatId, messageId int64, inlineMessageId string, replyMarkup ReplyMarkup) (*Message, error) {
 	params := EditMessageReplyMarkupParams{
 		ChatId:          chatId,

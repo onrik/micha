@@ -14,6 +14,7 @@ type SendMessageParams struct {
 	Text   string `json:"text"`
 }
 
+// Send photo request params
 type SendPhotoOptions struct {
 	Caption             string      `json:"caption,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
@@ -23,8 +24,21 @@ type SendPhotoOptions struct {
 
 type SendPhotoParams struct {
 	ChatId int64  `json:"chat_id"`
-	Photo  string `json:"photo"`
+	Photo  string `json:"photo,omitempty"`
 	SendPhotoOptions
+}
+
+func NewSendPhotoParams(chatId int64, photo string, options *SendPhotoOptions) *SendPhotoParams {
+	params := &SendPhotoParams{
+		ChatId: chatId,
+		Photo:  photo,
+	}
+
+	if options != nil {
+		params.SendPhotoOptions = *options
+	}
+
+	return params
 }
 
 type EditMessageTextOptions struct {
