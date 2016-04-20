@@ -155,7 +155,7 @@ type Message struct {
 	Caption               string          `json:"caption"`
 	Contact               *Contact        `json:"contact"`
 	Location              *Location       `json:"location"`
-	Venue                 *Venue          `json:"venue`
+	Venue                 *Venue          `json:"venue"`
 	NewChatMember         *User           `json:"new_chat_member"`
 	LeftChatMember        *User           `json:"left_chat_member"`
 	NewChatTitle          string          `json:"new_chat_title"`

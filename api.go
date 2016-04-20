@@ -4,7 +4,7 @@ type SendMessageOptions struct {
 	DisableNotification   bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageId      int64       `json:"reply_to_message_id,omitempty"`
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
-	DisableWebPagePreview bool        `json:"disable_web_page_preview",omitempty`
+	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`
 	ReplyMarkup           ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
@@ -43,7 +43,7 @@ func NewSendPhotoParams(chatId int64, photo string, options *SendPhotoOptions) *
 
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
-	DisableWebPagePreview bool        `json:"disable_web_page_preview",omitempty`
+	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`
 	ReplyMarkup           ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
