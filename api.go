@@ -41,6 +41,35 @@ func NewSendPhotoParams(chatId int64, photo string, options *SendPhotoOptions) *
 	return params
 }
 
+// Send audio request params
+type SendAudioOptions struct {
+	Duration            int         `json:"duration,omitempty"`
+	Performer           string      `json:"performer,omitempty"`
+	title               string      `json:"title,omitempty"`
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendAudioParams struct {
+	ChatId int64  `json:"chat_id"`
+	Audio  string `json:"audio,omitempty"`
+	SendAudioOptions
+}
+
+func NewSendAudioParams(chatId int64, audio string, options *SendAudioOptions) *SendAudioParams {
+	params := &SendAudioParams{
+		ChatId: chatId,
+		Audio:  audio,
+	}
+
+	if options != nil {
+		params.SendAudioOptions = *options
+	}
+
+	return params
+}
+
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`

@@ -189,6 +189,36 @@ func (bot *Bot) SendPhotoFile(chatId int64, file io.ReadCloser, options *SendPho
 	return message, err
 }
 
+// Send exists audio by file_id
+func (bot *Bot) SendAudio(chatId int64, audioId string, options *SendAudioOptions) (*Message, error) {
+	params := NewSendAudioParams(chatId, audioId, options)
+
+	message := new(Message)
+	err := bot.post("sendAudio", params, message)
+
+	return message, err
+}
+
+// Send audio file
+func (bot *Bot) SendAudioFile(chatId int64, file io.ReadCloser, options *SendAudioOptions) (*Message, error) {
+	params := NewSendAudioParams(chatId, "", options)
+	values, err := structToValues(params)
+	if err != nil {
+		return nil, err
+	}
+
+	fileToSend := &FileToSend{
+		File:      file,
+		Fieldname: "audio",
+		Filename:  "audio.mp3",
+	}
+
+	message := new(Message)
+	err = bot.postMultipart("sendAudio", fileToSend, values, message)
+
+	return message, err
+}
+
 // Use this method to forward messages of any kind.
 func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
 	params := map[string]interface{}{
