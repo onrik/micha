@@ -45,7 +45,7 @@ func NewSendPhotoParams(chatId int64, photo string, options *SendPhotoOptions) *
 type SendAudioOptions struct {
 	Duration            int         `json:"duration,omitempty"`
 	Performer           string      `json:"performer,omitempty"`
-	title               string      `json:"title,omitempty"`
+	Title               string      `json:"title,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
@@ -65,6 +65,33 @@ func NewSendAudioParams(chatId int64, audio string, options *SendAudioOptions) *
 
 	if options != nil {
 		params.SendAudioOptions = *options
+	}
+
+	return params
+}
+
+// Send document request params
+type SendDocumentOptions struct {
+	Caption             string      `json:"caption,omitempty"`
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendDocumentParams struct {
+	ChatId   int64  `json:"chat_id"`
+	Document string `json:"document,omitempty"`
+	SendDocumentOptions
+}
+
+func NewSendDocumentParams(chatId int64, document string, options *SendDocumentOptions) *SendDocumentParams {
+	params := &SendDocumentParams{
+		ChatId:   chatId,
+		Document: document,
+	}
+
+	if options != nil {
+		params.SendDocumentOptions = *options
 	}
 
 	return params
