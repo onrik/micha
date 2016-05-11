@@ -249,6 +249,36 @@ func (bot *Bot) SendDocumentFile(chatId int64, documentName string, file io.Read
 	return message, err
 }
 
+// Send exists sticker by file_id
+func (bot *Bot) SendSticker(chatId int64, stickerId string, options *SendStickerOptions) (*Message, error) {
+	params := NewSendStickerParams(chatId, stickerId, options)
+
+	message := new(Message)
+	err := bot.post("sendSticker", params, message)
+
+	return message, err
+}
+
+// Send .webp sticker file
+func (bot *Bot) SendStickerFile(chatId int64, file io.ReadCloser, options *SendStickerOptions) (*Message, error) {
+	params := NewSendStickerParams(chatId, "", options)
+	values, err := structToValues(params)
+	if err != nil {
+		return nil, err
+	}
+
+	fileToSend := &FileToSend{
+		File:      file,
+		Fieldname: "sticker",
+		Filename:  "sticker.webp",
+	}
+
+	message := new(Message)
+	err = bot.postMultipart("sendSticker", fileToSend, values, message)
+
+	return message, err
+}
+
 // Use this method to forward messages of any kind.
 func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
 	params := map[string]interface{}{
