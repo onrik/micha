@@ -4,9 +4,19 @@ const (
 	PARSE_MODE_DEFAULT  ParseMode = ""
 	PARSE_MODE_HTML     ParseMode = "HTML"
 	PARSE_MODE_MARKDOWN ParseMode = "Markdown"
+
+	CHAT_ACTION_TYPING          ChatAction = "typing"
+	CHAT_ACTION_UPLOAD_PHOTO    ChatAction = "upload_photo"
+	CHAT_ACTION_RECORD_VIDEO    ChatAction = "record_video"
+	CHAT_ACTION_UPLOAD_VIDEO    ChatAction = "upload_video"
+	CHAT_ACTION_RECORD_AUDIO    ChatAction = "record_audio"
+	CHAT_ACTION_UPLOAD_AUDIO    ChatAction = "upload_audio"
+	CHAT_ACTION_UPLOAD_DOCUMENT ChatAction = "upload_document"
+	CHAT_ACTION_FIND_LOCATION   ChatAction = "find_location"
 )
 
 type ParseMode string
+type ChatAction string
 
 // User object represents a Telegram user, bot
 type User struct {

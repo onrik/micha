@@ -294,6 +294,17 @@ func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotif
 	return message, err
 }
 
+// Use this method when you need to tell the user that something is happening on the bot's side.
+// The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
+func (bot *Bot) SendChatAction(chatId int64, action ChatAction) error {
+	params := map[string]interface{}{
+		"chat_id": chatId,
+		"action":  action,
+	}
+
+	return bot.post("sendChatAction", params, nil)
+}
+
 // Use this method to edit text messages sent by the bot or via the bot (for inline bots).
 func (bot *Bot) EditMessageText(chatId, messageId int64, inlineMessageId, text string, options *EditMessageTextOptions) (*Message, error) {
 	params := EditMessageTextParams{
