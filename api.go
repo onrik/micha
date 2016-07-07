@@ -153,6 +153,33 @@ func NewSendVideoParams(chatId int64, video string, options *SendVideoOptions) *
 	return params
 }
 
+// Send voice request params
+type SendVoiceOptions struct {
+	Duration            int         `json:"duration,omitempty"`
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendVoiceParams struct {
+	ChatId int64  `json:"chat_id"`
+	Voice  string `json:"voice,omitempty"`
+	SendVoiceOptions
+}
+
+func NewSendVoiceParams(chatId int64, voice string, options *SendVoiceOptions) *SendVoiceParams {
+	params := &SendVoiceParams{
+		ChatId: chatId,
+		Voice:  voice,
+	}
+
+	if options != nil {
+		params.SendVoiceOptions = *options
+	}
+
+	return params
+}
+
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`

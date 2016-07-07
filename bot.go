@@ -309,6 +309,38 @@ func (bot *Bot) SendVideoFile(chatId int64, file io.ReadCloser, options *SendVid
 	return message, err
 }
 
+// Send exists voice by file_id
+func (bot *Bot) SendVoice(chatId int64, voiceId string, options *SendVoiceOptions) (*Message, error) {
+	params := NewSendVoiceParams(chatId, voiceId, options)
+
+	message := new(Message)
+	err := bot.post("sendVoice", params, message)
+
+	return message, err
+}
+
+// Use this method to send audio files,
+// if you want Telegram clients to display the file as a playable voice message.
+// For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document).
+func (bot *Bot) SendVoiceFile(chatId int64, file io.ReadCloser, options *SendVoiceOptions) (*Message, error) {
+	params := NewSendVoiceParams(chatId, "", options)
+	values, err := structToValues(params)
+	if err != nil {
+		return nil, err
+	}
+
+	fileToSend := &FileToSend{
+		File:      file,
+		Fieldname: "voice",
+		Filename:  "voice.ogg",
+	}
+
+	message := new(Message)
+	err = bot.postMultipart("sendVoice", fileToSend, values, message)
+
+	return message, err
+}
+
 // Use this method to forward messages of any kind.
 func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
 	params := map[string]interface{}{
