@@ -351,12 +351,22 @@ func (bot *Bot) SendLocation(chatId int64, latitude, longitude float64, options 
 	return message, err
 }
 
-// Use this method to send point on the map
+// Use this method to send information about a venue
 func (bot *Bot) SendVenue(chatId int64, latitude, longitude float64, title, address string, options *SendVenueOptions) (*Message, error) {
 	params := NewSendVenueParams(chatId, latitude, longitude, title, address, options)
 
 	message := new(Message)
 	err := bot.post("sendVenue", params, message)
+
+	return message, err
+}
+
+// Use this method to send phone contacts
+func (bot *Bot) SendContact(chatId int64, phoneNumber, firstName, lastName string, options *SendContactOptions) (*Message, error) {
+	params := NewSendContactParams(chatId, phoneNumber, firstName, lastName, options)
+
+	message := new(Message)
+	err := bot.post("sendContact", params, message)
 
 	return message, err
 }

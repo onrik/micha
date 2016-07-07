@@ -241,6 +241,36 @@ func NewSendVenueParams(chatId int64, latitude, longitude float64, title, addres
 	return params
 }
 
+// Send contact request params
+type SendContactOptions struct {
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendContactParams struct {
+	ChatId      int64  `json:"chat_id"`
+	PhoneNumber string `json:"phone_number"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name,omitempty"`
+	SendContactOptions
+}
+
+func NewSendContactParams(chatId int64, phoneNumber, firstName, lastName string, options *SendContactOptions) *SendContactParams {
+	params := &SendContactParams{
+		ChatId:      chatId,
+		PhoneNumber: phoneNumber,
+		FirstName:   firstName,
+		LastName:    lastName,
+	}
+
+	if options != nil {
+		params.SendContactOptions = *options
+	}
+
+	return params
+}
+
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`
