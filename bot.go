@@ -279,6 +279,36 @@ func (bot *Bot) SendStickerFile(chatId int64, file io.ReadCloser, options *SendS
 	return message, err
 }
 
+// Send exists video by file_id
+func (bot *Bot) SendVideo(chatId int64, videoId string, options *SendVideoOptions) (*Message, error) {
+	params := NewSendVideoParams(chatId, videoId, options)
+
+	message := new(Message)
+	err := bot.post("sendVideo", params, message)
+
+	return message, err
+}
+
+// Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document).
+func (bot *Bot) SendVideoFile(chatId int64, file io.ReadCloser, options *SendVideoOptions) (*Message, error) {
+	params := NewSendVideoParams(chatId, "", options)
+	values, err := structToValues(params)
+	if err != nil {
+		return nil, err
+	}
+
+	fileToSend := &FileToSend{
+		File:      file,
+		Fieldname: "video",
+		Filename:  "video.mp4",
+	}
+
+	message := new(Message)
+	err = bot.postMultipart("sendVideo", fileToSend, values, message)
+
+	return message, err
+}
+
 // Use this method to forward messages of any kind.
 func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
 	params := map[string]interface{}{

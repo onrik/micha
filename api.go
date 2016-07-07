@@ -123,6 +123,36 @@ func NewSendStickerParams(chatId int64, sticker string, options *SendStickerOpti
 	return params
 }
 
+// Send video request params
+type SendVideoOptions struct {
+	Duration            int         `json:"duration,omitempty"`
+	Width               int         `json:"width,omitempty"`
+	Height              int         `json:"height,omitempty"`
+	Caption             string      `json:"caption,omitempty"`
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendVideoParams struct {
+	ChatId int64  `json:"chat_id"`
+	Video  string `json:"video,omitempty"`
+	SendVideoOptions
+}
+
+func NewSendVideoParams(chatId int64, video string, options *SendVideoOptions) *SendVideoParams {
+	params := &SendVideoParams{
+		ChatId: chatId,
+		Video:  video,
+	}
+
+	if options != nil {
+		params.SendVideoOptions = *options
+	}
+
+	return params
+}
+
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`
