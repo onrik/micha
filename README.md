@@ -11,7 +11,6 @@ Telegram bot framework
 - [x] Forward messages
 - [x] Updating messages
 - [x] Inline mode
-- [ ] Inline mode cached results 
 - [ ] Getting files
 - [ ] Answer callback query
 - [ ] Getting updates by webhook
