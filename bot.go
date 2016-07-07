@@ -341,6 +341,26 @@ func (bot *Bot) SendVoiceFile(chatId int64, file io.ReadCloser, options *SendVoi
 	return message, err
 }
 
+// Use this method to send point on the map
+func (bot *Bot) SendLocation(chatId int64, latitude, longitude float64, options *SendLocationOptions) (*Message, error) {
+	params := NewSendLocationParams(chatId, latitude, longitude, options)
+
+	message := new(Message)
+	err := bot.post("sendLocation", params, message)
+
+	return message, err
+}
+
+// Use this method to send point on the map
+func (bot *Bot) SendVenue(chatId int64, latitude, longitude float64, title, address string, options *SendVenueOptions) (*Message, error) {
+	params := NewSendVenueParams(chatId, latitude, longitude, title, address, options)
+
+	message := new(Message)
+	err := bot.post("sendVenue", params, message)
+
+	return message, err
+}
+
 // Use this method to forward messages of any kind.
 func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
 	params := map[string]interface{}{

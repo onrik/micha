@@ -180,6 +180,67 @@ func NewSendVoiceParams(chatId int64, voice string, options *SendVoiceOptions) *
 	return params
 }
 
+// Send location request params
+type SendLocationOptions struct {
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendLocationParams struct {
+	ChatId    int64   `json:"chat_id"`
+	Latitude  float64 `json:"latitude,omitempty"`
+	Longitude float64 `json:"longitude,omitempty"`
+	SendLocationOptions
+}
+
+func NewSendLocationParams(chatId int64, latitude, longitude float64, options *SendLocationOptions) *SendLocationParams {
+	params := &SendLocationParams{
+		ChatId:    chatId,
+		Latitude:  latitude,
+		Longitude: longitude,
+	}
+
+	if options != nil {
+		params.SendLocationOptions = *options
+	}
+
+	return params
+}
+
+// Send venue request params
+type SendVenueOptions struct {
+	FoursquareId        string      `json:"foursquare_id,omitempty"`
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendVenueParams struct {
+	ChatId    int64   `json:"chat_id"`
+	Latitude  float64 `json:"latitude,omitempty"`
+	Longitude float64 `json:"longitude,omitempty"`
+	Title     string  `json:"title,omitempty"`
+	Address   string  `json:"address,omitempty"`
+	SendVenueOptions
+}
+
+func NewSendVenueParams(chatId int64, latitude, longitude float64, title, address string, options *SendVenueOptions) *SendVenueParams {
+	params := &SendVenueParams{
+		ChatId:    chatId,
+		Latitude:  latitude,
+		Longitude: longitude,
+		Title:     title,
+		Address:   address,
+	}
+
+	if options != nil {
+		params.SendVenueOptions = *options
+	}
+
+	return params
+}
+
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`
