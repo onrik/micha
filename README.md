@@ -14,6 +14,7 @@ Telegram bot framework
 - [ ] Inline mode cached results 
 - [ ] Getting files
 - [ ] Answer callback query
+- [ ] Getting updates by webhook
 
 
 ##### Simple echo bot example:
