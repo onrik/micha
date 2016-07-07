@@ -6,6 +6,16 @@
 
 Telegram bot framework
 
+- [x] Sending messages
+- [x] Sending files
+- [x] Forward messages
+- [x] Updating messages
+- [x] Inline mode
+- [ ] Inline mode cached results 
+- [ ] Getting files
+- [ ] Answer callback query
+
+Simple echo bot example:
 ```go
 package main
 
