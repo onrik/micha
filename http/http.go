@@ -56,7 +56,7 @@ func Post(url string, data interface{}) ([]byte, error) {
 	}
 }
 
-func PostMultipart(url string, file *FileToSend, params url.Values) ([]byte, error) {
+func PostMultipart(url string, file *File, params url.Values) ([]byte, error) {
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
 
