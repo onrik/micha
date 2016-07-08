@@ -13,7 +13,6 @@ Telegram bot framework
 - [x] Updating messages
 - [x] Inline mode
 - [ ] Getting files
-- [ ] Answer callback query
 - [ ] Getting updates by webhook
 
 
