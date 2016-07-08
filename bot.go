@@ -3,6 +3,7 @@ package micha
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/onrik/micha/http"
 	"io"
 	"log"
 	"net/url"
@@ -14,7 +15,7 @@ const (
 	FILE_API_URL = "https://api.telegram.org/file/bot%s/%s"
 )
 
-type ApiResponse struct {
+type Response struct {
 	Ok          bool            `json:"ok"`
 	ErrorCode   int             `json:"error_code"`
 	Description string          `json:"description"`
@@ -51,13 +52,13 @@ func (bot *Bot) buildUrl(method string) string {
 
 // Decode response result to target object
 func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
-	apiResponse := new(ApiResponse)
-	if err := json.Unmarshal(data, apiResponse); err != nil {
+	response := new(Response)
+	if err := json.Unmarshal(data, response); err != nil {
 		return fmt.Errorf("Decode response error (%s)", err.Error())
 	}
 
-	if !apiResponse.Ok {
-		return fmt.Errorf("Response status: %d (%s)", apiResponse.ErrorCode, apiResponse.Description)
+	if !response.Ok {
+		return fmt.Errorf("Response status: %d (%s)", response.ErrorCode, response.Description)
 	}
 
 	if target == nil {
@@ -65,7 +66,7 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 		return nil
 	}
 
-	if err := json.Unmarshal(apiResponse.Result, target); err != nil {
+	if err := json.Unmarshal(response.Result, target); err != nil {
 		return fmt.Errorf("Decode result error (%s)", err.Error())
 	} else {
 		return nil
@@ -74,7 +75,7 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 
 // Make GET request to Telegram API
 func (bot *Bot) get(method string, params url.Values, target interface{}) error {
-	response, err := get(bot.buildUrl(method) + "?" + params.Encode())
+	response, err := http.Get(bot.buildUrl(method) + "?" + params.Encode())
 	if err != nil {
 		return err
 	} else {
@@ -84,7 +85,7 @@ func (bot *Bot) get(method string, params url.Values, target interface{}) error 
 
 // Make POST request to Telegram API
 func (bot *Bot) post(method string, data, target interface{}) error {
-	response, err := post(bot.buildUrl(method), data)
+	response, err := http.Post(bot.buildUrl(method), data)
 	if err != nil {
 		return err
 	} else {
@@ -93,8 +94,8 @@ func (bot *Bot) post(method string, data, target interface{}) error {
 }
 
 // Make POST request to Telegram API
-func (bot *Bot) postMultipart(method string, file *FileToSend, params url.Values, target interface{}) error {
-	response, err := postMultipart(bot.buildUrl(method), file, params)
+func (bot *Bot) postMultipart(method string, file *http.File, params url.Values, target interface{}) error {
+	response, err := http.PostMultipart(bot.buildUrl(method), file, params)
 	if err != nil {
 		return err
 	} else {
@@ -178,14 +179,14 @@ func (bot *Bot) SendPhotoFile(chatId int64, file io.ReadCloser, options *SendPho
 		return nil, err
 	}
 
-	fileToSend := &FileToSend{
+	f := &http.File{
 		File:      file,
 		Fieldname: "photo",
 		Filename:  "photo.png",
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendPhoto", fileToSend, values, message)
+	err = bot.postMultipart("sendPhoto", f, values, message)
 
 	return message, err
 }
@@ -208,14 +209,14 @@ func (bot *Bot) SendAudioFile(chatId int64, file io.ReadCloser, options *SendAud
 		return nil, err
 	}
 
-	fileToSend := &FileToSend{
+	f := &http.File{
 		File:      file,
 		Fieldname: "audio",
 		Filename:  "audio.mp3",
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendAudio", fileToSend, values, message)
+	err = bot.postMultipart("sendAudio", f, values, message)
 
 	return message, err
 }
@@ -238,14 +239,14 @@ func (bot *Bot) SendDocumentFile(chatId int64, documentName string, file io.Read
 		return nil, err
 	}
 
-	fileToSend := &FileToSend{
+	f := &http.File{
 		File:      file,
 		Fieldname: "document",
 		Filename:  documentName,
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendDocument", fileToSend, values, message)
+	err = bot.postMultipart("sendDocument", f, values, message)
 
 	return message, err
 }
@@ -268,14 +269,14 @@ func (bot *Bot) SendStickerFile(chatId int64, file io.ReadCloser, options *SendS
 		return nil, err
 	}
 
-	fileToSend := &FileToSend{
+	f := &http.File{
 		File:      file,
 		Fieldname: "sticker",
 		Filename:  "sticker.webp",
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendSticker", fileToSend, values, message)
+	err = bot.postMultipart("sendSticker", f, values, message)
 
 	return message, err
 }
@@ -298,14 +299,14 @@ func (bot *Bot) SendVideoFile(chatId int64, file io.ReadCloser, options *SendVid
 		return nil, err
 	}
 
-	fileToSend := &FileToSend{
+	f := &http.File{
 		File:      file,
 		Fieldname: "video",
 		Filename:  "video.mp4",
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendVideo", fileToSend, values, message)
+	err = bot.postMultipart("sendVideo", f, values, message)
 
 	return message, err
 }
@@ -330,14 +331,14 @@ func (bot *Bot) SendVoiceFile(chatId int64, file io.ReadCloser, options *SendVoi
 		return nil, err
 	}
 
-	fileToSend := &FileToSend{
+	f := &http.File{
 		File:      file,
 		Fieldname: "voice",
 		Filename:  "voice.ogg",
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendVoice", fileToSend, values, message)
+	err = bot.postMultipart("sendVoice", f, values, message)
 
 	return message, err
 }
@@ -419,7 +420,7 @@ func (bot *Bot) GetUserProfilePhotos(userID int64, options *GetUserProfilePhotos
 // It is guaranteed that the link will be valid for at least 1 hour.
 // When the link expires, a new one can be requested by calling getFile again.
 func (bot *Bot) GetFile(fileID string) (*File, error) {
-	response, err := get(fmt.Sprintf(FILE_API_URL, bot.token, fileID))
+	response, err := http.Get(fmt.Sprintf(FILE_API_URL, bot.token, fileID))
 	if err != nil {
 		return nil, err
 	}
