@@ -271,6 +271,29 @@ func NewSendContactParams(chatId int64, phoneNumber, firstName, lastName string,
 	return params
 }
 
+// answerCallbackQuery request params
+type AnswerCallbackQueryOptions struct {
+	Text      string `json:"text,omitempty"`
+	ShowAlert bool   `json:"show_alert,omitempty"`
+}
+
+type AnswerCallbackQueryParams struct {
+	CallbackQueryId string `json:"callback_query_id"`
+	AnswerCallbackQueryOptions
+}
+
+func NewAnswerCallbackQueryParams(callbackQueryId string, options *AnswerCallbackQueryOptions) *AnswerCallbackQueryParams {
+	params := &AnswerCallbackQueryParams{
+		CallbackQueryId: callbackQueryId,
+	}
+
+	if options != nil {
+		params.AnswerCallbackQueryOptions = *options
+	}
+
+	return params
+}
+
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`

@@ -543,3 +543,11 @@ func (bot *Bot) GetChatMember(chatId, userId int64) (*ChatMember, error) {
 
 	return chatMember, err
 }
+
+// Use this method to send answers to callback queries sent from inline keyboards.
+// The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
+func (bot *Bot) AnswerCallbackQuery(callbackQueryID string, options *AnswerCallbackQueryOptions) error {
+	params := NewAnswerCallbackQueryParams(callbackQueryID, options)
+
+	return bot.post("answerCallbackQuery", params, nil)
+}
