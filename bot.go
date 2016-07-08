@@ -460,3 +460,86 @@ func (bot *Bot) AnswerInlineQuery(inlineQueryId string, results InlineQueryResul
 
 	return bot.post("answerInlineQuery", params, nil)
 }
+
+// Use this method to kick a user from a group or a supergroup.
+// In the case of supergroups, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
+// The bot must be an administrator in the group for this to work.
+func (bot *Bot) KickChatMember(chatId, userId int64) error {
+	params := map[string]interface{}{
+		"chat_id": chatId,
+		"user_id": userId,
+	}
+
+	return bot.post("kickChatMember", params, nil)
+}
+
+// Use this method for your bot to leave a group, supergroup or channel
+func (bot *Bot) LeaveChat(chatId int64) error {
+	params := map[string]interface{}{
+		"chat_id": chatId,
+	}
+
+	return bot.post("leaveChat", params, nil)
+}
+
+// Use this method to unban a previously kicked user in a supergroup.
+// The user will not return to the group automatically, but will be able to join via link, etc.
+// The bot must be an administrator in the group for this to work.
+func (bot *Bot) UnbanChatMember(chatId, userId int64) error {
+	params := map[string]interface{}{
+		"chat_id": chatId,
+		"user_id": userId,
+	}
+
+	return bot.post("unbanChatMember", params, nil)
+}
+
+// Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
+func (bot *Bot) GetChat(chatId int64) (*Chat, error) {
+	params := url.Values{
+		"chat_id": {fmt.Sprintf("%d", chatId)},
+	}
+
+	chat := new(Chat)
+	err := bot.get("getChat", params, chat)
+
+	return chat, err
+}
+
+// Use this method to get a list of administrators in a chat.
+// If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
+func (bot *Bot) GetChatAdministrators(chatId int64) ([]ChatMember, error) {
+	params := url.Values{
+		"chat_id": {fmt.Sprintf("%d", chatId)},
+	}
+
+	administrators := []ChatMember{}
+	err := bot.get("getChatAdministrators", params, administrators)
+
+	return administrators, err
+}
+
+// Use this method to get the number of members in a chat.
+func (bot *Bot) GetChatMembersCount(chatId int64) (int, error) {
+	params := url.Values{
+		"chat_id": {fmt.Sprintf("%d", chatId)},
+	}
+
+	count := 0
+	err := bot.get("getChatMembersCount", params, &count)
+
+	return count, err
+}
+
+// Use this method to get information about a member of a chat.
+func (bot *Bot) GetChatMember(chatId, userId int64) (*ChatMember, error) {
+	params := url.Values{
+		"chat_id": {fmt.Sprintf("%d", chatId)},
+		"user_id": {fmt.Sprintf("%d", userId)},
+	}
+
+	chatMember := new(ChatMember)
+	err := bot.get("getChatMember", params, chatMember)
+
+	return chatMember, err
+}

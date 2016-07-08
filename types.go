@@ -5,6 +5,11 @@ const (
 	PARSE_MODE_HTML     ParseMode = "HTML"
 	PARSE_MODE_MARKDOWN ParseMode = "Markdown"
 
+	CHAT_TYPE_PRIVATE    ChatType = "private"
+	CHAT_TYPE_GROUP      ChatType = "group"
+	CHAT_TYPE_SUPERGROUP ChatType = "supergroup"
+	CHAT_TYPE_CHANNEL    ChatType = "channel"
+
 	CHAT_ACTION_TYPING          ChatAction = "typing"
 	CHAT_ACTION_UPLOAD_PHOTO    ChatAction = "upload_photo"
 	CHAT_ACTION_RECORD_VIDEO    ChatAction = "record_video"
@@ -13,10 +18,18 @@ const (
 	CHAT_ACTION_UPLOAD_AUDIO    ChatAction = "upload_audio"
 	CHAT_ACTION_UPLOAD_DOCUMENT ChatAction = "upload_document"
 	CHAT_ACTION_FIND_LOCATION   ChatAction = "find_location"
+
+	MEMBER_STATUS_CREATOR       MemberStatus = "creator"
+	MEMBER_STATUS_ADMINISTRATOR MemberStatus = "administrator"
+	MEMBER_STATUS_MEMBER        MemberStatus = "member"
+	MEMBER_STATUS_LEFT          MemberStatus = "left"
+	MEMBER_STATUS_KICKED        MemberStatus = "kicked"
 )
 
 type ParseMode string
+type ChatType string
 type ChatAction string
+type MemberStatus string
 
 // User object represents a Telegram user, bot
 type User struct {
@@ -28,12 +41,17 @@ type User struct {
 
 // Chat object represents a Telegram user, bot or group chat.
 type Chat struct {
-	Id        int64  `json:"id"`
-	Type      string `json:"type"`
-	Title     string `json:"title"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Username  string `json:"username"`
+	Id        int64    `json:"id"`
+	Type      ChatType `json:"type"`
+	Title     string   `json:"title"`
+	FirstName string   `json:"first_name"`
+	LastName  string   `json:"last_name"`
+	Username  string   `json:"username"`
+}
+
+type ChatMember struct {
+	User   User         `json:"user"`
+	Status MemberStatus `json:"status"`
 }
 
 type FileBase struct {
