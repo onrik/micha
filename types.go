@@ -115,6 +115,7 @@ type Sticker struct {
 	Width  int        `json:"width"`
 	Height int        `json:"height"`
 	Thumb  *PhotoSize `json:"thumb"`
+	Emoji  string     `json:"emoji"`
 }
 
 // Video object represents an MP4-encoded video.
@@ -186,6 +187,7 @@ type Message struct {
 
 	// Optional
 	ForwardFrom           *User           `json:"forward_from"`
+	ForwardFromChat       *Chat           `json:"forward_from_chat"`
 	ForwardDate           uint64          `json:"forward_date"`
 	ReplyToMessage        *Message        `json:"reply_to_message"`
 	EditDate              uint64          `json:"edit_date"`
