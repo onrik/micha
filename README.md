@@ -5,7 +5,7 @@
 [![GoDoc](https://godoc.org/github.com/onrik/micha?status.svg)](https://godoc.org/github.com/onrik/micha)
 [![Gitter](https://badges.gitter.im/onrik/micha.svg)](https://gitter.im/onrik/micha)
 
-Telegram bot framework
+Client lib for [Telegram bot api](https://core.telegram.org/bots/api)
 
 - [x] Sending messages
 - [x] Sending files
