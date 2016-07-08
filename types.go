@@ -24,12 +24,25 @@ const (
 	MEMBER_STATUS_MEMBER        MemberStatus = "member"
 	MEMBER_STATUS_LEFT          MemberStatus = "left"
 	MEMBER_STATUS_KICKED        MemberStatus = "kicked"
+
+	MESSAGE_ENTITY_MENTION      MessageEntityType = "mention"
+	MESSAGE_ENTITY_HASHTAG      MessageEntityType = "hashtag"
+	MESSAGE_ENTITY_BOT_COMMAND  MessageEntityType = "bot_command"
+	MESSAGE_ENTITY_URL          MessageEntityType = "url"
+	MESSAGE_ENTITY_EMAIL        MessageEntityType = "email"
+	MESSAGE_ENTITY_BOLD         MessageEntityType = "bold"
+	MESSAGE_ENTITY_ITALIC       MessageEntityType = "italic"
+	MESSAGE_ENTITY_CODE         MessageEntityType = "code"
+	MESSAGE_ENTITY_PRE          MessageEntityType = "pre"
+	MESSAGE_ENTITY_TEXT_LINK    MessageEntityType = "text_link"
+	MESSAGE_ENTITY_TEXT_MENTION MessageEntityType = "text_mention"
 )
 
 type ParseMode string
 type ChatType string
 type ChatAction string
 type MemberStatus string
+type MessageEntityType string
 
 // User object represents a Telegram user, bot
 type User struct {
@@ -155,10 +168,13 @@ type File struct {
 }
 
 type MessageEntity struct {
-	Type   string `json:"type"`
-	Offset int    `json:"offset"`
-	Limit  int    `json:"limit"`
-	Url    string `json:"url"`
+	Type   MessageEntityType `json:"type"`
+	Offset int               `json:"offset"`
+	Limit  int               `json:"limit"`
+
+	// Optional
+	Url  string `json:"url"`  // For “text_link” only, url that will be opened after user taps on the text
+	User *User  `json:"user"` // For “text_mention” only, the mentioned user
 }
 
 // Message object represents a message.
@@ -172,6 +188,7 @@ type Message struct {
 	ForwardFrom           *User           `json:"forward_from"`
 	ForwardDate           uint64          `json:"forward_date"`
 	ReplyToMessage        *Message        `json:"reply_to_message"`
+	EditDate              uint64          `json:"edit_date"`
 	Text                  string          `json:"text"`
 	Entities              []MessageEntity `json:"entities"`
 	Audio                 *Audio          `json:"audio"`
@@ -295,6 +312,7 @@ type Update struct {
 
 	// Optional
 	Message            *Message            `json:"message"`
+	EditedMessage      *Message            `json:"edited_message"`
 	InlineQuery        *InlineQuery        `json:"inline_query"`
 	ChosenInlineResult *ChosenInlineResult `json:"chosen_inline_result"`
 	CallbackQuery      *CallbackQuery      `json:"callback_query"`
