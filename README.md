@@ -12,7 +12,6 @@ Telegram bot framework
 - [x] Forward messages
 - [x] Updating messages
 - [x] Inline mode
-- [ ] Getting files
 - [ ] Getting updates by webhook
 
 
