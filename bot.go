@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	API_URL = "https://api.telegram.org/bot%s/%s"
+	API_URL      = "https://api.telegram.org/bot%s/%s"
+	FILE_API_URL = "https://api.telegram.org/file/bot%s/%s"
 )
 
 type ApiResponse struct {
@@ -395,6 +396,38 @@ func (bot *Bot) SendChatAction(chatId int64, action ChatAction) error {
 	}
 
 	return bot.post("sendChatAction", params, nil)
+}
+
+// Use this method to get a list of profile pictures for a user.
+func (bot *Bot) GetUserProfilePhotos(userID int64, options *GetUserProfilePhotosOptions) (*UserProfilePhotos, error) {
+	params := url.Values{
+		"user_id": {fmt.Sprintf("%d", userID)},
+	}
+
+	if options != nil {
+		params["limit"] = []string{fmt.Sprintf("%d", options.limit)}
+		params["offset"] = []string{fmt.Sprintf("%d", options.offset)}
+	}
+
+	profilePhotos := new(UserProfilePhotos)
+	err := bot.get("getUserProfilePhotos", params, profilePhotos)
+
+	return profilePhotos, err
+}
+
+// Use this method to get basic info about a file and prepare it for downloading.
+// It is guaranteed that the link will be valid for at least 1 hour.
+// When the link expires, a new one can be requested by calling getFile again.
+func (bot *Bot) GetFile(fileID string) (*File, error) {
+	response, err := get(fmt.Sprintf(FILE_API_URL, bot.token, fileID))
+	if err != nil {
+		return nil, err
+	}
+
+	file := new(File)
+	err = bot.decodeResponse(response, file)
+
+	return file, err
 }
 
 // Use this method to edit text messages sent by the bot or via the bot (for inline bots).
