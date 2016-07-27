@@ -406,8 +406,8 @@ func (bot *Bot) GetUserProfilePhotos(userID int64, options *GetUserProfilePhotos
 	}
 
 	if options != nil {
-		params["limit"] = []string{fmt.Sprintf("%d", options.limit)}
-		params["offset"] = []string{fmt.Sprintf("%d", options.offset)}
+		params["limit"] = []string{fmt.Sprintf("%d", options.Limit)}
+		params["offset"] = []string{fmt.Sprintf("%d", options.Offset)}
 	}
 
 	profilePhotos := new(UserProfilePhotos)
