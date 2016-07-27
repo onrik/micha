@@ -295,8 +295,8 @@ func NewAnswerCallbackQueryParams(callbackQueryId string, options *AnswerCallbac
 }
 
 type GetUserProfilePhotosOptions struct {
-	offset int `json:"offset,omitempty"`
-	limit  int `json:"limit,omitempty"`
+	Offset int `json:"offset,omitempty"`
+	Limit  int `json:"limit,omitempty"`
 }
 
 type EditMessageTextOptions struct {

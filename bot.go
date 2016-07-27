@@ -420,13 +420,12 @@ func (bot *Bot) GetUserProfilePhotos(userID int64, options *GetUserProfilePhotos
 // It is guaranteed that the link will be valid for at least 1 hour.
 // When the link expires, a new one can be requested by calling getFile again.
 func (bot *Bot) GetFile(fileID string) (*File, error) {
-	response, err := http.Get(fmt.Sprintf(FILE_API_URL, bot.token, fileID))
-	if err != nil {
-		return nil, err
+	params := url.Values{
+		"file_id": {fileID},
 	}
 
 	file := new(File)
-	err = bot.decodeResponse(response, file)
+	err := bot.get("getFile", params, file)
 
 	return file, err
 }

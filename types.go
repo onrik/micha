@@ -68,11 +68,8 @@ type ChatMember struct {
 }
 
 type FileBase struct {
-	FileId string `json:"file_id"`
-
-	// Optional
+	FileId   string `json:"file_id"`
 	FileSize uint64 `json:"file_size"`
-	FilePath string `json:"file_path"`
 }
 
 // Thumbnail object represents an image/sticker of a particular size.
