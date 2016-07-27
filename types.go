@@ -68,8 +68,11 @@ type ChatMember struct {
 }
 
 type FileBase struct {
-	FileId   string `json:"file_id"`
+	FileId string `json:"file_id"`
+
+	// Optional
 	FileSize uint64 `json:"file_size"`
+	FilePath string `json:"file_path"`
 }
 
 // Thumbnail object represents an image/sticker of a particular size.
@@ -292,10 +295,11 @@ type ChosenInlineResult struct {
 // If the button that originated the query was attached to a message sent by the bot, the field message will be presented.
 // If the button was attached to a message sent via the bot (in inline mode), the field inline_message_id will be presented.
 type CallbackQuery struct {
-	Id      string  `json:"id"`
-	From    User    `json:"from"`
-	Message Message `json:"message"`
-	Data    string  `json:"data"`
+	Id              string   `json:"id"`
+	From            User     `json:"from"`
+	Message         *Message `json:"message"`
+	InlineMessageID string   `json:"inline_message_id"`
+	Data            string   `json:"data"`
 }
 
 // This object represents an incoming inline query.
