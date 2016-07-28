@@ -547,7 +547,7 @@ func (bot *Bot) GetChatAdministrators(chatId int64) ([]ChatMember, error) {
 	}
 
 	administrators := []ChatMember{}
-	err := bot.get("getChatAdministrators", params, administrators)
+	err := bot.get("getChatAdministrators", params, &administrators)
 
 	return administrators, err
 }
