@@ -13,7 +13,7 @@ func main() {
 
 	go bot.Start()
 
-	for update := range bot.Updates {
+	for update := range bot.Updates() {
 		if update.Message != nil {
 			bot.SendMessage(update.Message.Chat.Id, update.Message.Text, nil)
 		}

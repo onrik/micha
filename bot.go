@@ -39,17 +39,17 @@ type Response struct {
 
 type Bot struct {
 	token   string
+	updates chan Update
 	Me      User
 	Timeout time.Duration
-	Updates chan Update
 }
 
 // Create new bot instance
 func NewBot(token string) (*Bot, error) {
 	bot := Bot{
 		token:   token,
+		updates: make(chan Update),
 		Timeout: 25 * time.Second,
-		Updates: make(chan Update),
 	}
 
 	if me, err := bot.GetMe(); err != nil {
@@ -144,11 +144,16 @@ func (bot *Bot) Start() {
 		}
 
 		for _, update := range updates {
-			bot.Updates <- update
+			bot.updates <- update
 
 			offset = update.UpdateId
 		}
 	}
+}
+
+// Updates channel
+func (bot *Bot) Updates() <-chan Update {
+	return bot.updates
 }
 
 // A simple method for testing your bot's auth token.
@@ -443,6 +448,11 @@ func (bot *Bot) GetFile(fileID string) (*File, error) {
 	err := bot.get("getFile", params, file)
 
 	return file, err
+}
+
+// Return absolute url for file downloading by file path
+func (bot *Bot) DownloadFileUrl(filePath string) string {
+	return fmt.Sprintf(FILE_API_URL, bot.token, filePath)
 }
 
 // Use this method to edit text messages sent by the bot or via the bot (for inline bots).
