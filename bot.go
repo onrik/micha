@@ -3,17 +3,32 @@ package micha
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/onrik/micha/http"
 	"io"
 	"log"
 	"net/url"
+	"os"
 	"time"
+
+	"github.com/onrik/micha/http"
 )
 
 const (
 	API_URL      = "https://api.telegram.org/bot%s/%s"
 	FILE_API_URL = "https://api.telegram.org/file/bot%s/%s"
 )
+
+var (
+	logger *log.Logger
+)
+
+func init() {
+	logger = log.New(os.Stdout, "micha ", log.Ldate|log.Ltime|log.Lshortfile)
+}
+
+// Set logger
+func SetLogger(l *log.Logger) {
+	logger = l
+}
 
 type Response struct {
 	Ok          bool            `json:"ok"`
@@ -124,7 +139,7 @@ func (bot *Bot) Start() {
 	for {
 		updates, err := bot.getUpdates(offset + 1)
 		if err != nil {
-			log.Println(err.Error())
+			logger.Printf("Get updates error (%s)\n", err.Error())
 			continue
 		}
 
