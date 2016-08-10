@@ -1,16 +1,18 @@
 package micha
 
 const (
-	INLINE_TYPE_ARTICLE  = "article"
-	INLINE_TYPE_PHOTO    = "photo"
-	INLINE_TYPE_GIF      = "gif"
-	INLINE_TYPE_VIDEO    = "video"
-	INLINE_TYPE_AUDIO    = "audio"
-	INLINE_TYPE_DOCUMENT = "document"
-	INLINE_TYPE_VOICE    = "voice"
-	INLINE_TYPE_LOCATION = "location"
-	INLINE_TYPE_STICKER  = "sticker"
+	INLINE_TYPE_RESULT_ARTICLE  InlineResultType = "article"
+	INLINE_TYPE_RESULT_PHOTO    InlineResultType = "photo"
+	INLINE_TYPE_RESULT_GIF      InlineResultType = "gif"
+	INLINE_TYPE_RESULT_VIDEO    InlineResultType = "video"
+	INLINE_TYPE_RESULT_AUDIO    InlineResultType = "audio"
+	INLINE_TYPE_RESULT_DOCUMENT InlineResultType = "document"
+	INLINE_TYPE_RESULT_VOICE    InlineResultType = "voice"
+	INLINE_TYPE_RESULT_LOCATION InlineResultType = "location"
+	INLINE_TYPE_RESULT_STICKER  InlineResultType = "sticker"
 )
+
+type InlineResultType string
 
 type InlineQueryResults []InlineQueryResult
 
@@ -25,9 +27,9 @@ func (i InlineQueryResultImplementation) _ItsInlineQueryResult() {}
 // Represents a link to an article or web page.
 type InlineQueryResultArticle struct {
 	InlineQueryResultImplementation
-	Type  string `json:"type"`
-	Id    string `json:"id"`
-	Title string `json:"title"`
+	Type  InlineResultType `json:"type"`
+	Id    string           `json:"id"`
+	Title string           `json:"title"`
 
 	// Optional
 	Url                 string                `json:"url,omitempty"`
@@ -45,9 +47,9 @@ type InlineQueryResultArticle struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
 type InlineQueryResultPhoto struct {
 	InlineQueryResultImplementation
-	Type     string `json:"type"`
-	Id       string `json:"id"`
-	PhotoUrl string `json:"photo_url"`
+	Type     InlineResultType `json:"type"`
+	Id       string           `json:"id"`
+	PhotoUrl string           `json:"photo_url"`
 
 	// Optional
 	MimeType            string                `json:"mime_type,omitempty"`
@@ -66,9 +68,9 @@ type InlineQueryResultPhoto struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
 type InlineQueryResultCachedPhoto struct {
 	InlineQueryResultImplementation
-	Type        string `json:"type"`
-	Id          string `json:"id"`
-	PhotoFileId string `json:"photo_file_id"`
+	Type        InlineResultType `json:"type"`
+	Id          string           `json:"id"`
+	PhotoFileId string           `json:"photo_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -83,9 +85,9 @@ type InlineQueryResultCachedPhoto struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultGif struct {
 	InlineQueryResultImplementation
-	Type   string `json:"type"`
-	Id     string `json:"id"`
-	GifUrl string `json:"gif_url"`
+	Type   InlineResultType `json:"type"`
+	Id     string           `json:"id"`
+	GifUrl string           `json:"gif_url"`
 
 	// Optional
 	GifWidth            int                   `json:"gif_width,omitempty"`
@@ -102,9 +104,9 @@ type InlineQueryResultGif struct {
 // Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
 type InlineQueryResultCachedGif struct {
 	InlineQueryResultImplementation
-	Type      string `json:"type"`
-	Id        string `json:"id"`
-	GifFileId string `json:"gif_file_id"`
+	Type      InlineResultType `json:"type"`
+	Id        string           `json:"id"`
+	GifFileId string           `json:"gif_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -118,9 +120,9 @@ type InlineQueryResultCachedGif struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultMpeg4Gif struct {
 	InlineQueryResultImplementation
-	Type     string `json:"type"`
-	Id       string `json:"id"`
-	Mpeg4Url string `json:"mpeg4_url"`
+	Type     InlineResultType `json:"type"`
+	Id       string           `json:"id"`
+	Mpeg4Url string           `json:"mpeg4_url"`
 
 	// Optional
 	Mpeg4Width          int                   `json:"mpeg4_width,omitempty"`
@@ -137,9 +139,9 @@ type InlineQueryResultMpeg4Gif struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultCachedMpeg4Gif struct {
 	InlineQueryResultImplementation
-	Type        string `json:"type"`
-	Id          string `json:"id"`
-	Mpeg4FileId string `json:"mpeg4_file_id"`
+	Type        InlineResultType `json:"type"`
+	Id          string           `json:"id"`
+	Mpeg4FileId string           `json:"mpeg4_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -153,10 +155,10 @@ type InlineQueryResultCachedMpeg4Gif struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
 type InlineQueryResultVideo struct {
 	InlineQueryResultImplementation
-	Type     string `json:"type"`
-	Id       string `json:"id"`
-	VideoUrl string `json:"video_url"`
-	MimeType string `json:"mime_type"`
+	Type     InlineResultType `json:"type"`
+	Id       string           `json:"id"`
+	VideoUrl string           `json:"video_url"`
+	MimeType string           `json:"mime_type"`
 
 	// Optional
 	ThumbUrl            string                `json:"thumb_url,omitempty"`
@@ -175,9 +177,9 @@ type InlineQueryResultVideo struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
 type InlineQueryResultCachedVideo struct {
 	InlineQueryResultImplementation
-	Type        string `json:"type"`
-	Id          string `json:"id"`
-	VideoFileId string `json:"video_file_id"`
+	Type        InlineResultType `json:"type"`
+	Id          string           `json:"id"`
+	VideoFileId string           `json:"video_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -192,10 +194,10 @@ type InlineQueryResultCachedVideo struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
 type InlineQueryResultAudio struct {
 	InlineQueryResultImplementation
-	Type     string `json:"type"`
-	Id       string `json:"id"`
-	AudioUrl string `json:"audio_url"`
-	Title    string `json:"title"`
+	Type     InlineResultType `json:"type"`
+	Id       string           `json:"id"`
+	AudioUrl string           `json:"audio_url"`
+	Title    string           `json:"title"`
 
 	// Optional
 	Performer           string                `json:"performer,omitempty"`
@@ -209,9 +211,9 @@ type InlineQueryResultAudio struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
 type InlineQueryResultCachedAudio struct {
 	InlineQueryResultImplementation
-	Type        string `json:"type"`
-	Id          string `json:"id"`
-	AudioFileId string `json:"audio_file_id"`
+	Type        InlineResultType `json:"type"`
+	Id          string           `json:"id"`
+	AudioFileId string           `json:"audio_file_id"`
 
 	// Optional
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -223,10 +225,10 @@ type InlineQueryResultCachedAudio struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the the voice message.
 type InlineQueryResultVoice struct {
 	InlineQueryResultImplementation
-	Type     string `json:"type"`
-	Id       string `json:"id"`
-	VoiceUrl string `json:"voice_url"`
-	Title    string `json:"title"`
+	Type     InlineResultType `json:"type"`
+	Id       string           `json:"id"`
+	VoiceUrl string           `json:"voice_url"`
+	Title    string           `json:"title"`
 
 	// Optional
 	VoiceDuration       int                   `json:"voice_duration,omitempty"`
@@ -239,9 +241,9 @@ type InlineQueryResultVoice struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the voice message.
 type InlineQueryResultCachedVoice struct {
 	InlineQueryResultImplementation
-	Type        string `json:"type"`
-	Id          string `json:"id"`
-	VoiceFileId string `json:"voice_file_id"`
+	Type        InlineResultType `json:"type"`
+	Id          string           `json:"id"`
+	VoiceFileId string           `json:"voice_file_id"`
 
 	// Optional
 	Title               string                `json:"title"`
@@ -254,11 +256,11 @@ type InlineQueryResultCachedVoice struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only .PDF and .ZIP files can be sent using this method.
 type InlineQueryResultDocument struct {
 	InlineQueryResultImplementation
-	Type        string `json:"type"`
-	Id          string `json:"id"`
-	Title       string `json:"title"`
-	DocumentUrl string `json:"document_url"`
-	MimeType    string `json:"mime_type"`
+	Type        InlineResultType `json:"type"`
+	Id          string           `json:"id"`
+	Title       string           `json:"title"`
+	DocumentUrl string           `json:"document_url"`
+	MimeType    string           `json:"mime_type"`
 
 	// Optional
 	Caption             string                `json:"caption,omitempty"`
@@ -276,10 +278,10 @@ type InlineQueryResultDocument struct {
 // Currently, only pdf-files and zip archives can be sent using this method.
 type InlineQueryResultCachedDocument struct {
 	InlineQueryResultImplementation
-	Type           string `json:"type"`
-	Id             string `json:"id"`
-	Title          string `json:"title"`
-	DocumentFileId string `json:"document_file_id"`
+	Type           InlineResultType `json:"type"`
+	Id             string           `json:"id"`
+	Title          string           `json:"title"`
+	DocumentFileId string           `json:"document_file_id"`
 
 	// Optional
 	Description         string                `json:"description,omitempty"`
@@ -293,11 +295,11 @@ type InlineQueryResultCachedDocument struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the location.
 type InlineQueryResultLocation struct {
 	InlineQueryResultImplementation
-	Type      string  `json:"type"`
-	Id        string  `json:"id"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-	Title     string  `json:"title"`
+	Type      InlineResultType `json:"type"`
+	Id        string           `json:"id"`
+	Latitude  float64          `json:"latitude"`
+	Longitude float64          `json:"longitude"`
+	Title     string           `json:"title"`
 
 	// Optional
 	ThumbUrl            string                `json:"thumb_url,omitempty"`
@@ -312,9 +314,9 @@ type InlineQueryResultLocation struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the sticker.
 type InlineQueryResultCachedSticker struct {
 	InlineQueryResultImplementation
-	Type          string `json:"type"`
-	Id            string `json:"id"`
-	StickerFileId string `json:"sticker_file_id"`
+	Type          InlineResultType `json:"type"`
+	Id            string           `json:"id"`
+	StickerFileId string           `json:"sticker_file_id"`
 
 	// Optional
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -332,9 +334,9 @@ func (i InputMessageContentImplementation) _ItsInputMessageContent() {}
 // InputTextMessageContent contains text for displaying as an inline query result.
 type InputTextMessageContent struct {
 	InputMessageContentImplementation
-	MessageText           string `json:"message_text"`
-	ParseMode             string `json:"parse_mode"`
-	DisableWebPagePreview bool   `json:"disable_web_page_preview"`
+	MessageText           string    `json:"message_text"`
+	ParseMode             ParseMode `json:"parse_mode"`
+	DisableWebPagePreview bool      `json:"disable_web_page_preview"`
 }
 
 // InputLocationMessageContent contains a location for displaying as an inline query result.
