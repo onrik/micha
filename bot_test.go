@@ -63,6 +63,27 @@ func (s *BotTestSuite) registerRequestCheck(method string, exceptedRequest strin
 	})
 }
 
+func (s *BotTestSuite) TestErrorsHandle() {
+	s.registerResponse("method", nil, `{dsfkdf`)
+
+	err := s.bot.get("method", nil, nil)
+	s.NotEqual(err, nil)
+	s.True(strings.Contains(err.Error(), "Decode response error"))
+
+	httpmock.Reset()
+	s.registerResponse("method", nil, `{"ok":false, "error_code": 111}`)
+	err = s.bot.get("method", nil, nil)
+	s.NotEqual(err, nil)
+	s.True(strings.Contains(err.Error(), "Response status: 111"))
+
+	httpmock.Reset()
+	s.registerResponse("method", nil, `{"ok":true, "result": "dssdd"}`)
+	var result int
+	err = s.bot.get("method", nil, &result)
+	s.NotEqual(err, nil)
+	s.True(strings.Contains(err.Error(), "Decode result error"))
+}
+
 func (s *BotTestSuite) TestBuildUrl() {
 	url := s.bot.buildUrl("someMethod")
 	s.Equal(url, "https://api.telegram.org/bot111/someMethod")
@@ -314,6 +335,44 @@ func (s *BotTestSuite) TestSendChatAction() {
 
 	err := s.bot.SendChatAction(132, CHAT_ACTION_TYPING)
 	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestAnswerCallbackQuery() {
+	request := `{"callback_query_id":"66b04f35ec624974a78f72710a3dc09d","text":"foo","show_alert":true}`
+	s.registerRequestCheck("answerCallbackQuery", request)
+
+	err := s.bot.AnswerCallbackQuery("66b04f35ec624974a78f72710a3dc09d", &AnswerCallbackQueryOptions{
+		Text:      "foo",
+		ShowAlert: true,
+	})
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestKickChatMember() {
+	request := `{"chat_id":1,"user_id":2}`
+	s.registerRequestCheck("kickChatMember", request)
+
+	err := s.bot.KickChatMember(1, 2)
+	s.Equal(err, nil)
+
+}
+
+func (s *BotTestSuite) TestLeaveChat() {
+	request := `{"chat_id":143}`
+	s.registerRequestCheck("leaveChat", request)
+
+	err := s.bot.LeaveChat(143)
+	s.Equal(err, nil)
+
+}
+
+func (s *BotTestSuite) TestUnbanChatMember() {
+	request := `{"chat_id":22,"user_id":33}`
+	s.registerRequestCheck("unbanChatMember", request)
+
+	err := s.bot.UnbanChatMember(22, 33)
+	s.Equal(err, nil)
+
 }
 
 func TestBotTestSuite(t *testing.T) {
