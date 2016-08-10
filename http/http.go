@@ -18,12 +18,12 @@ type File struct {
 }
 
 func handleResponse(response *http.Response) ([]byte, error) {
+	defer response.Body.Close()
 	if response.StatusCode > http.StatusBadRequest {
 		return nil, fmt.Errorf("Response status: %d", response.StatusCode)
+	} else {
+		return ioutil.ReadAll(response.Body)
 	}
-
-	defer response.Body.Close()
-	return ioutil.ReadAll(response.Body)
 }
 
 func Get(url string) ([]byte, error) {
