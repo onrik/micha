@@ -420,14 +420,16 @@ func (bot *Bot) SendChatAction(chatId int64, action ChatAction) error {
 }
 
 // Use this method to get a list of profile pictures for a user.
-func (bot *Bot) GetUserProfilePhotos(userID int64, options *GetUserProfilePhotosOptions) (*UserProfilePhotos, error) {
+func (bot *Bot) GetUserProfilePhotos(userID int64, offset, limit *int) (*UserProfilePhotos, error) {
 	params := url.Values{
 		"user_id": {fmt.Sprintf("%d", userID)},
 	}
 
-	if options != nil {
-		params["limit"] = []string{fmt.Sprintf("%d", options.Limit)}
-		params["offset"] = []string{fmt.Sprintf("%d", options.Offset)}
+	if offset != nil {
+		params["offset"] = []string{fmt.Sprintf("%d", *offset)}
+	}
+	if limit != nil {
+		params["limit"] = []string{fmt.Sprintf("%d", *limit)}
 	}
 
 	profilePhotos := new(UserProfilePhotos)

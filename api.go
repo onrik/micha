@@ -294,11 +294,6 @@ func NewAnswerCallbackQueryParams(callbackQueryId string, options *AnswerCallbac
 	return params
 }
 
-type GetUserProfilePhotosOptions struct {
-	Offset int `json:"offset,omitempty"`
-	Limit  int `json:"limit,omitempty"`
-}
-
 type EditMessageTextOptions struct {
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`
@@ -314,7 +309,7 @@ type EditMessageTextParams struct {
 }
 
 type EditMessageCationOptions struct {
-	Caption     string      `json:"captino,omitempty"`
+	Caption     string      `json:"caption,omitempty"`
 	ReplyMarkup ReplyMarkup `json:"reply_markup,omitempty"`
 }
 

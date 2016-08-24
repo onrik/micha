@@ -2,13 +2,16 @@ package micha
 
 import (
 	"fmt"
-	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/suite"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"testing"
+
+	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/suite"
 )
 
 type BotTestSuite struct {
@@ -354,7 +357,6 @@ func (s *BotTestSuite) TestKickChatMember() {
 
 	err := s.bot.KickChatMember(1, 2)
 	s.Equal(err, nil)
-
 }
 
 func (s *BotTestSuite) TestLeaveChat() {
@@ -363,7 +365,6 @@ func (s *BotTestSuite) TestLeaveChat() {
 
 	err := s.bot.LeaveChat(143)
 	s.Equal(err, nil)
-
 }
 
 func (s *BotTestSuite) TestUnbanChatMember() {
@@ -372,7 +373,108 @@ func (s *BotTestSuite) TestUnbanChatMember() {
 
 	err := s.bot.UnbanChatMember(22, 33)
 	s.Equal(err, nil)
+}
 
+func (s *BotTestSuite) TestGetUserProfilePhotos() {
+	params := url.Values{
+		"user_id": {"55"},
+		"limit":   {"1"},
+		"offset":  {"22"},
+	}
+	s.registerResponse("getUserProfilePhotos", params, `{
+		"ok": true,
+		"result": {
+			"total_count": 1,
+			"photos": [[{
+				"file_id": "111",
+				"width": 320,
+				"height": 240,
+				"file_size": 15320
+			}]]
+		}
+	}`)
+
+	offset := 22
+	limit := 1
+	userPhotos, err := s.bot.GetUserProfilePhotos(55, &offset, &limit)
+	s.Equal(err, nil)
+	s.Equal(userPhotos.TotalCount, 1)
+	s.Equal(userPhotos.Photos[0][0].FileId, "111")
+	s.Equal(userPhotos.Photos[0][0].FileSize, uint64(15320))
+	s.Equal(userPhotos.Photos[0][0].Width, 320)
+	s.Equal(userPhotos.Photos[0][0].Height, 240)
+
+}
+
+func (s *BotTestSuite) TestSendMessage() {
+	request := `{"reply_to_message_id":89,"parse_mode":"HTML","chat_id":3434,"text":"mss"}`
+	s.registerRequestCheck("sendMessage", request)
+
+	_, err := s.bot.SendMessage(3434, "mss", &SendMessageOptions{
+		ReplyToMessageId: 89,
+		ParseMode:        PARSE_MODE_HTML,
+	})
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestEditMessageText() {
+	request := `{"chat_id":143,"message_id":67,"inline_message_id":"gyt","text":"new text","parse_mode":"Markdown"}`
+	s.registerRequestCheck("editMessageText", request)
+
+	_, err := s.bot.EditMessageText(143, 67, "gyt", "new text", &EditMessageTextOptions{
+		ParseMode: PARSE_MODE_MARKDOWN,
+	})
+
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestEditMessageCaption() {
+	request := `{"chat_id":490,"message_id":87,"inline_message_id":"ubl","caption":"ca"}`
+	s.registerRequestCheck("editMessageCaption", request)
+
+	_, err := s.bot.EditMessageCaption(490, 87, "ubl", &EditMessageCationOptions{
+		Caption: "ca",
+	})
+
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestEditMessageReplyMarkup() {
+	request := `{"chat_id":781,"message_id":32,"inline_message_id":"zzt","reply_markup":{"force_reply":true,"selective":true}}`
+	s.registerRequestCheck("editMessageReplyMarkup", request)
+
+	_, err := s.bot.EditMessageReplyMarkup(781, 32, "zzt", ForceReply{
+		ForceReply: true,
+		Selective:  true,
+	})
+
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestAnswerInlineQuery() {
+	request := `{"inline_query_id":"aaa","results":[{"type":"article","id":"124","title":"Article"}],"cache_time":42,"is_personal":true,"next_offset":"2","switch_pm_text":"yes","switch_pm_parameter":"no"}`
+	s.registerRequestCheck("answerInlineQuery", request)
+
+	results := InlineQueryResults{}
+	results = append(results, InlineQueryResultArticle{
+		Type:  INLINE_TYPE_RESULT_ARTICLE,
+		Id:    "124",
+		Title: "Article",
+	})
+	err := s.bot.AnswerInlineQuery("aaa", results, &AnswerInlineQueryOptions{
+		CacheTime:         42,
+		IsPersonal:        true,
+		NextOffset:        "2",
+		SwitchPmText:      "yes",
+		SwitchPmParameter: "no",
+	})
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestSetLogger() {
+	l := log.New(os.Stdout, "", log.Ldate)
+	SetLogger(l)
+	s.Equal(logger, l)
 }
 
 func TestBotTestSuite(t *testing.T) {

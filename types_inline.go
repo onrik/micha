@@ -1,15 +1,16 @@
 package micha
 
 const (
-	INLINE_TYPE_RESULT_ARTICLE  InlineResultType = "article"
-	INLINE_TYPE_RESULT_PHOTO    InlineResultType = "photo"
-	INLINE_TYPE_RESULT_GIF      InlineResultType = "gif"
-	INLINE_TYPE_RESULT_VIDEO    InlineResultType = "video"
-	INLINE_TYPE_RESULT_AUDIO    InlineResultType = "audio"
-	INLINE_TYPE_RESULT_DOCUMENT InlineResultType = "document"
-	INLINE_TYPE_RESULT_VOICE    InlineResultType = "voice"
-	INLINE_TYPE_RESULT_LOCATION InlineResultType = "location"
-	INLINE_TYPE_RESULT_STICKER  InlineResultType = "sticker"
+	INLINE_TYPE_RESULT_ARTICLE   InlineResultType = "article"
+	INLINE_TYPE_RESULT_PHOTO     InlineResultType = "photo"
+	INLINE_TYPE_RESULT_GIF       InlineResultType = "gif"
+	INLINE_TYPE_RESULT_MPEG4_GIF InlineResultType = "mpeg4_gif"
+	INLINE_TYPE_RESULT_VIDEO     InlineResultType = "video"
+	INLINE_TYPE_RESULT_AUDIO     InlineResultType = "audio"
+	INLINE_TYPE_RESULT_DOCUMENT  InlineResultType = "document"
+	INLINE_TYPE_RESULT_VOICE     InlineResultType = "voice"
+	INLINE_TYPE_RESULT_LOCATION  InlineResultType = "location"
+	INLINE_TYPE_RESULT_STICKER   InlineResultType = "sticker"
 )
 
 type InlineResultType string
