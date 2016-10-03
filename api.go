@@ -275,6 +275,7 @@ func NewSendContactParams(chatId int64, phoneNumber, firstName, lastName string,
 type AnswerCallbackQueryOptions struct {
 	Text      string `json:"text,omitempty"`
 	ShowAlert bool   `json:"show_alert,omitempty"`
+	URL       string `json:"url,omitempty"`
 }
 
 type AnswerCallbackQueryParams struct {

@@ -178,6 +178,31 @@ type MessageEntity struct {
 	User *User  `json:"user"` // For “text_mention” only, the mentioned user
 }
 
+// You can provide an animation for your game so that it looks stylish in chats.
+// This object represents an animation file to be displayed in the message containing a game.
+type Animation struct {
+	FileID string `json:"file_id"`
+
+	// Optional
+	Thumb    *PhotoSize `json:"thumb"`
+	FileName string     `json:"file_name"`
+	MimeType string     `json:"mime_type"`
+	FileSize *int       `json:"file_size"`
+}
+
+// This object represents a game.
+// Use BotFather to create and edit games, their short names will act as unique identifiers.
+type Game struct {
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	Photo       []PhotoSize `json:"photo"`
+
+	// Optional
+	Text         string          `json:"text"`
+	TextEntities []MessageEntity `json:"text_entities"`
+	Animation    *Animation      `json:"animation"`
+}
+
 // Message object represents a message.
 type Message struct {
 	MessageId int64  `json:"message_id"`
@@ -195,6 +220,7 @@ type Message struct {
 	Entities              []MessageEntity `json:"entities"`
 	Audio                 *Audio          `json:"audio"`
 	Document              *Document       `json:"document"`
+	Game                  *Game           `json:"game"`
 	Photo                 []PhotoSize     `json:"photo"`
 	Sticker               *Sticker        `json:"sticker"`
 	Video                 *Video          `json:"video"`

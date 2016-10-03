@@ -11,6 +11,7 @@ const (
 	INLINE_TYPE_RESULT_VOICE     InlineResultType = "voice"
 	INLINE_TYPE_RESULT_LOCATION  InlineResultType = "location"
 	INLINE_TYPE_RESULT_STICKER   InlineResultType = "sticker"
+	INLINE_TYPE_RESULT_GAME      InlineResultType = "game"
 )
 
 type InlineResultType string
@@ -322,6 +323,17 @@ type InlineQueryResultCachedSticker struct {
 	// Optional
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent   `json:"input_message_content,omitempty"`
+}
+
+// Represents a Game.
+type InlineQueryResultGame struct {
+	InlineQueryResultImplementation
+	Type          InlineResultType `json:"type"`
+	Id            string           `json:"id"`
+	GameShortName string           `json:"game_short_name"`
+
+	// Optional
+	ReplyMarkup *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 }
 
 type InputMessageContent interface {
