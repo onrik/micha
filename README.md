@@ -12,7 +12,7 @@ Client lib for [Telegram bot api](https://core.telegram.org/bots/api)
 - [x] Forward messages
 - [x] Updating messages
 - [x] Inline mode
-- [ ] Getting updates by webhook
+- [x] Games
 
 
 ##### Simple echo bot example:
