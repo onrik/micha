@@ -611,3 +611,53 @@ func (bot *Bot) AnswerCallbackQuery(callbackQueryID string, options *AnswerCallb
 
 	return bot.post("answerCallbackQuery", params, nil)
 }
+
+// Use this method to send a game.
+func (bot *Bot) SendGame(chatID int64, gameShortName string, options *SendGameOptions) (*Message, error) {
+	params := SendGameParams{
+		ChatID:        chatID,
+		GameShortName: gameShortName,
+	}
+
+	if options != nil {
+		params.SendGameOptions = *options
+	}
+
+	message := new(Message)
+	err := bot.post("sendGame", params, message)
+
+	return message, err
+}
+
+// Use this method to set the score of the specified user in a game.
+func (bot *Bot) SetGameScore(userID int64, score int, options *SetGameScoreOptions) (*Message, error) {
+	params := SetGameScoreParams{
+		UserID: userID,
+		Score:  score,
+	}
+
+	if options != nil {
+		params.SetGameScoreOptions = *options
+	}
+
+	message := new(Message)
+	err := bot.post("setGameScore", params, message)
+
+	return message, err
+}
+
+// Use this method to get data for high score tables.
+// Will return the score of the specified user and several of his neighbors in a game.
+func (bot *Bot) GetGameHighScores(userID int64, options *GetGameHighScoresOptions) ([]GameHighScore, error) {
+	params := GetGameHighScoresParams{
+		UserID: userID,
+	}
+
+	if options != nil {
+		params.GetGameHighScoresOptions = *options
+	}
+
+	scores := []GameHighScore{}
+	err := bot.post("getGameHighScores", params, &scores)
+	return scores, err
+}

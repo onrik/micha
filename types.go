@@ -203,6 +203,13 @@ type Game struct {
 	Animation    *Animation      `json:"animation"`
 }
 
+// This object represents one row of the high scores table for a game.
+type GameHighScore struct {
+	Position int  `json:"position"`
+	User     User `json:"user"`
+	Score    int  `json:"score"`
+}
+
 // Message object represents a message.
 type Message struct {
 	MessageId int64  `json:"message_id"`

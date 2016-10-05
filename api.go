@@ -271,6 +271,45 @@ func NewSendContactParams(chatId int64, phoneNumber, firstName, lastName string,
 	return params
 }
 
+// Send game request params
+type SendGameOptions struct {
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageId    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
+type SendGameParams struct {
+	ChatID        int64  `json:"chat_id"`
+	GameShortName string `json:"game_short_name"`
+	SendGameOptions
+}
+
+// Set game score request params
+type SetGameScoreOptions struct {
+	ChatID          int64  `json:"chat_id,omitempty"`
+	MessageID       int64  `json:"message_id,omitempty"`
+	InlineMessageID string `json:"inline_message_id,omitempty"`
+	EditMessage     bool   `json:"edit_message,omitempty"`
+}
+
+type SetGameScoreParams struct {
+	UserID int64 `json:"chat_id"`
+	Score  int   `json:"score"`
+	SetGameScoreOptions
+}
+
+// Get game high scopres request params
+type GetGameHighScoresOptions struct {
+	ChatID          int64  `json:"chat_id,omitempty"`
+	MessageID       int64  `json:"message_id,omitempty"`
+	InlineMessageID string `json:"inline_message_id,omitempty"`
+}
+
+type GetGameHighScoresParams struct {
+	UserID int64 `json:"chat_id"`
+	GetGameHighScoresOptions
+}
+
 // answerCallbackQuery request params
 type AnswerCallbackQueryOptions struct {
 	Text      string `json:"text,omitempty"`
