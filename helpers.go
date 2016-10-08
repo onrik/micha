@@ -3,6 +3,7 @@ package micha
 import (
 	"encoding/json"
 	"net/url"
+	"strings"
 )
 
 // Convert struct to url values map
@@ -20,7 +21,7 @@ func structToValues(obj interface{}) (url.Values, error) {
 
 	values := url.Values{}
 	for key := range rawMap {
-		values.Set(key, string(rawMap[key]))
+		values.Set(key, strings.Trim(string(rawMap[key]), `/"`))
 	}
 
 	return values, nil

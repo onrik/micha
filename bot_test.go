@@ -1,6 +1,7 @@
 package micha
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/suite"
+
+	mhttp "github.com/onrik/micha/http"
 )
 
 type BotTestSuite struct {
@@ -62,6 +65,46 @@ func (s *BotTestSuite) registerRequestCheck(method string, exceptedRequest strin
 		}
 
 		s.Equal(exceptedRequest, strings.TrimSpace(string(body)))
+		return httpmock.NewStringResponse(200, `{"ok":true, "result": {}}`), nil
+	})
+}
+
+func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValues url.Values, exceptedFile mhttp.File) {
+	url := s.bot.buildURL(method)
+
+	httpmock.RegisterResponder("POST", url, func(request *http.Request) (*http.Response, error) {
+		err := request.ParseMultipartForm(1024)
+		if err != nil {
+			return nil, err
+		}
+
+		form := request.MultipartForm
+		for field, value := range exceptedValues {
+			s.Equal(value, form.Value[field])
+		}
+
+		files := form.File[exceptedFile.Fieldname]
+		s.Equal(1, len(files))
+
+		file, err := files[0].Open()
+		if err != nil {
+			return nil, err
+		}
+
+		defer file.Close()
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			return nil, err
+		}
+
+		defer exceptedFile.Source.Close()
+		exceptedData, err := ioutil.ReadAll(exceptedFile.Source)
+		if err != nil {
+			return nil, err
+		}
+
+		s.Equal(exceptedData, data)
+
 		return httpmock.NewStringResponse(200, `{"ok":true, "result": {}}`), nil
 	})
 }
@@ -216,6 +259,27 @@ func (s *BotTestSuite) TestSendPhoto() {
 	s.NotEqual(message, nil)
 }
 
+func (s *BotTestSuite) TestSendPhotoFile() {
+	params := url.Values{
+		"chat_id": {"112"},
+		"caption": {"capt"},
+	}
+	data := ioutil.NopCloser(bytes.NewBufferString("sadkf"))
+	file := mhttp.File{
+		Source:    ioutil.NopCloser(bytes.NewBufferString("sadkf")),
+		Fieldname: "photo",
+		Filename:  "photo.png",
+	}
+	s.registeMultipartrRequestCheck("sendPhoto", params, file)
+
+	message, err := s.bot.SendPhotoFile(112, data, "photo.png", &SendPhotoOptions{
+		Caption: "capt",
+	})
+
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
 func (s *BotTestSuite) TestSendAudio() {
 	request := `{"chat_id":123,"audio":"061c2810391f44f6beffa3ee8a7e5af4","duration":36,"performer":"John Doe","title":"Single","reply_to_message_id":143}`
 	s.registerRequestCheck("sendAudio", request)
@@ -225,6 +289,31 @@ func (s *BotTestSuite) TestSendAudio() {
 		Performer:        "John Doe",
 		Title:            "Single",
 		ReplyToMessageID: 143,
+	})
+
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
+func (s *BotTestSuite) TestSendAudioFile() {
+	params := url.Values{
+		"chat_id":   {"522"},
+		"duration":  {"133"},
+		"performer": {"perf"},
+		"title":     {"Hit"},
+	}
+	data := ioutil.NopCloser(bytes.NewBufferString("audio data"))
+	file := mhttp.File{
+		Source:    ioutil.NopCloser(bytes.NewBufferString("audio data")),
+		Fieldname: "audio",
+		Filename:  "song.mp3",
+	}
+	s.registeMultipartrRequestCheck("sendAudio", params, file)
+
+	message, err := s.bot.SendAudioFile(522, data, "song.mp3", &SendAudioOptions{
+		Duration:  133,
+		Performer: "perf",
+		Title:     "Hit",
 	})
 
 	s.Equal(err, nil)
@@ -244,6 +333,27 @@ func (s *BotTestSuite) TestSendDocument() {
 	s.NotEqual(message, nil)
 }
 
+func (s *BotTestSuite) TestSendDocumentFile() {
+	params := url.Values{
+		"chat_id": {"89"},
+		"caption": {"top secret"},
+	}
+	data := ioutil.NopCloser(bytes.NewBufferString("..."))
+	file := mhttp.File{
+		Source:    ioutil.NopCloser(bytes.NewBufferString("...")),
+		Fieldname: "document",
+		Filename:  "x-files.txt",
+	}
+	s.registeMultipartrRequestCheck("sendDocument", params, file)
+
+	message, err := s.bot.SendDocumentFile(89, data, "x-files.txt", &SendDocumentOptions{
+		Caption: "top secret",
+	})
+
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
 func (s *BotTestSuite) TestSendSticker() {
 	request := `{"chat_id":125,"sticker":"070114a7fa964322acb3d65e6e36eb2b","reply_to_message_id":145}`
 	s.registerRequestCheck("sendSticker", request)
@@ -251,6 +361,24 @@ func (s *BotTestSuite) TestSendSticker() {
 	message, err := s.bot.SendSticker(125, "070114a7fa964322acb3d65e6e36eb2b", &SendStickerOptions{
 		ReplyToMessageID: 145,
 	})
+
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
+func (s *BotTestSuite) TestSendStickerFile() {
+	params := url.Values{
+		"chat_id": {"100"},
+	}
+	data := ioutil.NopCloser(bytes.NewBufferString("sticker data"))
+	file := mhttp.File{
+		Source:    ioutil.NopCloser(bytes.NewBufferString("sticker data")),
+		Fieldname: "sticker",
+		Filename:  "sticker.webp",
+	}
+	s.registeMultipartrRequestCheck("sendSticker", params, file)
+
+	message, err := s.bot.SendStickerFile(100, data, "sticker.webp", nil)
 
 	s.Equal(err, nil)
 	s.NotEqual(message, nil)
@@ -272,6 +400,33 @@ func (s *BotTestSuite) TestSendVideo() {
 	s.NotEqual(message, nil)
 }
 
+func (s *BotTestSuite) TestSendVideoFile() {
+	params := url.Values{
+		"chat_id":  {"789"},
+		"duration": {"61"},
+		"width":    {"1280"},
+		"height":   {"720"},
+		"caption":  {"funny cats"},
+	}
+	data := ioutil.NopCloser(bytes.NewBufferString("video data"))
+	file := mhttp.File{
+		Source:    ioutil.NopCloser(bytes.NewBufferString("video data")),
+		Fieldname: "video",
+		Filename:  "cats.mp4",
+	}
+	s.registeMultipartrRequestCheck("sendVideo", params, file)
+
+	message, err := s.bot.SendVideoFile(789, data, "cats.mp4", &SendVideoOptions{
+		Duration: 61,
+		Width:    1280,
+		Height:   720,
+		Caption:  "funny cats",
+	})
+
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
 func (s *BotTestSuite) TestSendVoice() {
 	request := `{"chat_id":127,"voice":"75ac50947bc34a3ea2efdca5000d9ad5","duration":56,"reply_to_message_id":147}`
 	s.registerRequestCheck("sendVoice", request)
@@ -279,6 +434,27 @@ func (s *BotTestSuite) TestSendVoice() {
 	message, err := s.bot.SendVoice(127, "75ac50947bc34a3ea2efdca5000d9ad5", &SendVoiceOptions{
 		Duration:         56,
 		ReplyToMessageID: 147,
+	})
+
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
+func (s *BotTestSuite) TestSendVoiceFile() {
+	params := url.Values{
+		"chat_id":  {"101"},
+		"duration": {"15"},
+	}
+	data := ioutil.NopCloser(bytes.NewBufferString("voice data"))
+	file := mhttp.File{
+		Source:    ioutil.NopCloser(bytes.NewBufferString("voice data")),
+		Fieldname: "voice",
+		Filename:  "voice.ogg",
+	}
+	s.registeMultipartrRequestCheck("sendVoice", params, file)
+
+	message, err := s.bot.SendVoiceFile(101, data, "voice.ogg", &SendVoiceOptions{
+		Duration: 15,
 	})
 
 	s.Equal(err, nil)

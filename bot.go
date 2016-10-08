@@ -192,7 +192,7 @@ func (bot *Bot) SendPhoto(chatID int64, photoID string, options *SendPhotoOption
 }
 
 // Send photo file
-func (bot *Bot) SendPhotoFile(chatID int64, file io.ReadCloser, options *SendPhotoOptions) (*Message, error) {
+func (bot *Bot) SendPhotoFile(chatID int64, file io.ReadCloser, fileName string, options *SendPhotoOptions) (*Message, error) {
 	params := newSendPhotoParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -202,7 +202,7 @@ func (bot *Bot) SendPhotoFile(chatID int64, file io.ReadCloser, options *SendPho
 	f := &http.File{
 		Source:    file,
 		Fieldname: "photo",
-		Filename:  "photo.png",
+		Filename:  fileName,
 	}
 
 	message := new(Message)
@@ -222,7 +222,7 @@ func (bot *Bot) SendAudio(chatID int64, audioID string, options *SendAudioOption
 }
 
 // Send audio file
-func (bot *Bot) SendAudioFile(chatID int64, file io.ReadCloser, options *SendAudioOptions) (*Message, error) {
+func (bot *Bot) SendAudioFile(chatID int64, file io.ReadCloser, fileName string, options *SendAudioOptions) (*Message, error) {
 	params := newSendAudioParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -232,7 +232,7 @@ func (bot *Bot) SendAudioFile(chatID int64, file io.ReadCloser, options *SendAud
 	f := &http.File{
 		Source:    file,
 		Fieldname: "audio",
-		Filename:  "audio.mp3",
+		Filename:  fileName,
 	}
 
 	message := new(Message)
@@ -252,7 +252,7 @@ func (bot *Bot) SendDocument(chatID int64, documentID string, options *SendDocum
 }
 
 // Send file
-func (bot *Bot) SendDocumentFile(chatID int64, documentName string, file io.ReadCloser, options *SendDocumentOptions) (*Message, error) {
+func (bot *Bot) SendDocumentFile(chatID int64, file io.ReadCloser, fileName string, options *SendDocumentOptions) (*Message, error) {
 	params := newSendDocumentParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -262,7 +262,7 @@ func (bot *Bot) SendDocumentFile(chatID int64, documentName string, file io.Read
 	f := &http.File{
 		Source:    file,
 		Fieldname: "document",
-		Filename:  documentName,
+		Filename:  fileName,
 	}
 
 	message := new(Message)
@@ -282,7 +282,7 @@ func (bot *Bot) SendSticker(chatID int64, stickerID string, options *SendSticker
 }
 
 // Send .webp sticker file
-func (bot *Bot) SendStickerFile(chatID int64, file io.ReadCloser, options *SendStickerOptions) (*Message, error) {
+func (bot *Bot) SendStickerFile(chatID int64, file io.ReadCloser, fileName string, options *SendStickerOptions) (*Message, error) {
 	params := newSendStickerParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -292,7 +292,7 @@ func (bot *Bot) SendStickerFile(chatID int64, file io.ReadCloser, options *SendS
 	f := &http.File{
 		Source:    file,
 		Fieldname: "sticker",
-		Filename:  "sticker.webp",
+		Filename:  fileName,
 	}
 
 	message := new(Message)
@@ -312,7 +312,7 @@ func (bot *Bot) SendVideo(chatID int64, videoID string, options *SendVideoOption
 }
 
 // Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document).
-func (bot *Bot) SendVideoFile(chatID int64, file io.ReadCloser, options *SendVideoOptions) (*Message, error) {
+func (bot *Bot) SendVideoFile(chatID int64, file io.ReadCloser, fileName string, options *SendVideoOptions) (*Message, error) {
 	params := newSendVideoParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -322,7 +322,7 @@ func (bot *Bot) SendVideoFile(chatID int64, file io.ReadCloser, options *SendVid
 	f := &http.File{
 		Source:    file,
 		Fieldname: "video",
-		Filename:  "video.mp4",
+		Filename:  fileName,
 	}
 
 	message := new(Message)
@@ -344,7 +344,7 @@ func (bot *Bot) SendVoice(chatID int64, voiceID string, options *SendVoiceOption
 // Use this method to send audio files,
 // if you want Telegram clients to display the file as a playable voice message.
 // For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document).
-func (bot *Bot) SendVoiceFile(chatID int64, file io.ReadCloser, options *SendVoiceOptions) (*Message, error) {
+func (bot *Bot) SendVoiceFile(chatID int64, file io.ReadCloser, fileName string, options *SendVoiceOptions) (*Message, error) {
 	params := newSendVoiceParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -352,9 +352,9 @@ func (bot *Bot) SendVoiceFile(chatID int64, file io.ReadCloser, options *SendVoi
 	}
 
 	f := &http.File{
-		File:      file,
+		Source:    file,
 		Fieldname: "voice",
-		Filename:  "voice.ogg",
+		Filename:  fileName,
 	}
 
 	message := new(Message)
