@@ -43,7 +43,7 @@ func (s *BotTestSuite) TearDownTest() {
 }
 
 func (s *BotTestSuite) registerResponse(method string, params url.Values, response string) {
-	url := s.bot.buildUrl(method)
+	url := s.bot.buildURL(method)
 	if params != nil {
 		url += fmt.Sprintf("?%s", params.Encode())
 	}
@@ -52,7 +52,7 @@ func (s *BotTestSuite) registerResponse(method string, params url.Values, respon
 }
 
 func (s *BotTestSuite) registerRequestCheck(method string, exceptedRequest string) {
-	url := s.bot.buildUrl(method)
+	url := s.bot.buildURL(method)
 
 	httpmock.RegisterResponder("POST", url, func(request *http.Request) (*http.Response, error) {
 		defer request.Body.Close()
@@ -88,7 +88,7 @@ func (s *BotTestSuite) TestErrorsHandle() {
 }
 
 func (s *BotTestSuite) TestBuildUrl() {
-	url := s.bot.buildUrl("someMethod")
+	url := s.bot.buildURL("someMethod")
 	s.Equal(url, "https://api.telegram.org/bot111/someMethod")
 }
 

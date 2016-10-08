@@ -61,7 +61,7 @@ func NewBot(token string) (*Bot, error) {
 }
 
 // Build url for API method
-func (bot *Bot) buildUrl(method string) string {
+func (bot *Bot) buildURL(method string) string {
 	return fmt.Sprintf(API_URL, bot.token, method)
 }
 
@@ -90,7 +90,7 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 
 // Make GET request to Telegram API
 func (bot *Bot) get(method string, params url.Values, target interface{}) error {
-	response, err := http.Get(bot.buildUrl(method) + "?" + params.Encode())
+	response, err := http.Get(bot.buildURL(method) + "?" + params.Encode())
 	if err != nil {
 		return err
 	} else {
@@ -100,7 +100,7 @@ func (bot *Bot) get(method string, params url.Values, target interface{}) error 
 
 // Make POST request to Telegram API
 func (bot *Bot) post(method string, data, target interface{}) error {
-	response, err := http.Post(bot.buildUrl(method), data)
+	response, err := http.Post(bot.buildURL(method), data)
 	if err != nil {
 		return err
 	} else {
@@ -110,7 +110,7 @@ func (bot *Bot) post(method string, data, target interface{}) error {
 
 // Make POST request to Telegram API
 func (bot *Bot) postMultipart(method string, file *http.File, params url.Values, target interface{}) error {
-	response, err := http.PostMultipart(bot.buildUrl(method), file, params)
+	response, err := http.PostMultipart(bot.buildURL(method), file, params)
 	if err != nil {
 		return err
 	} else {
@@ -453,7 +453,7 @@ func (bot *Bot) GetFile(fileID string) (*File, error) {
 }
 
 // Return absolute url for file downloading by file path
-func (bot *Bot) DownloadFileUrl(filePath string) string {
+func (bot *Bot) DownloadFileURL(filePath string) string {
 	return fmt.Sprintf(FILE_API_URL, bot.token, filePath)
 }
 

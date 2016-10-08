@@ -15,7 +15,7 @@ func main() {
 
 	for update := range bot.Updates() {
 		if update.Message != nil {
-			bot.SendMessage(update.Message.Chat.Id, update.Message.Text, nil)
+			bot.SendMessage(update.Message.Chat.ID, update.Message.Text, nil)
 		}
 	}
 }
