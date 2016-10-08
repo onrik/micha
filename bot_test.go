@@ -198,8 +198,8 @@ func (s *BotTestSuite) TestGetFile() {
 	s.Equal(file.FilePath, "document/file_3.txt")
 }
 
-func (s *BotTestSuite) TestDownloadFileUrl() {
-	url := s.bot.DownloadFileUrl("file.mp3")
+func (s *BotTestSuite) TestDownloadFileURL() {
+	url := s.bot.DownloadFileURL("file.mp3")
 	s.Equal(url, "https://api.telegram.org/file/bot111/file.mp3")
 }
 
