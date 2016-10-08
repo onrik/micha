@@ -30,14 +30,14 @@ func (i InlineQueryResultImplementation) _ItsInlineQueryResult() {}
 type InlineQueryResultArticle struct {
 	InlineQueryResultImplementation
 	Type  InlineResultType `json:"type"`
-	Id    string           `json:"id"`
+	ID    string           `json:"id"`
 	Title string           `json:"title"`
 
 	// Optional
-	Url                 string                `json:"url,omitempty"`
-	HideUrl             bool                  `json:"hide_url,omitempty"`
+	URL                 string                `json:"url,omitempty"`
+	HideURL             bool                  `json:"hide_url,omitempty"`
 	Description         string                `json:"description,omitempty"`
-	ThumbUrl            string                `json:"thumb_url,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
 	ThumbWidth          int                   `json:"thumb_width,omitempty"`
 	ThumbHeight         int                   `json:"thumb_height,omitempty"`
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -50,14 +50,14 @@ type InlineQueryResultArticle struct {
 type InlineQueryResultPhoto struct {
 	InlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
-	Id       string           `json:"id"`
-	PhotoUrl string           `json:"photo_url"`
+	ID       string           `json:"id"`
+	PhotoURL string           `json:"photo_url"`
 
 	// Optional
 	MimeType            string                `json:"mime_type,omitempty"`
 	PhotoWidth          int                   `json:"photo_width,omitempty"`
 	PhotoHeight         int                   `json:"photo_height,omitempty"`
-	ThumbUrl            string                `json:"thumb_url,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
 	Title               string                `json:"title,omitempty"`
 	Description         string                `json:"description,omitempty"`
 	Caption             string                `json:"caption,omitempty"`
@@ -71,8 +71,8 @@ type InlineQueryResultPhoto struct {
 type InlineQueryResultCachedPhoto struct {
 	InlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
-	Id          string           `json:"id"`
-	PhotoFileId string           `json:"photo_file_id"`
+	ID          string           `json:"id"`
+	PhotoFileID string           `json:"photo_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -88,13 +88,13 @@ type InlineQueryResultCachedPhoto struct {
 type InlineQueryResultGif struct {
 	InlineQueryResultImplementation
 	Type   InlineResultType `json:"type"`
-	Id     string           `json:"id"`
-	GifUrl string           `json:"gif_url"`
+	ID     string           `json:"id"`
+	GifURL string           `json:"gif_url"`
 
 	// Optional
 	GifWidth            int                   `json:"gif_width,omitempty"`
 	GifHeight           int                   `json:"gif_height,omitempty"`
-	ThumbUrl            string                `json:"thumb_url,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
 	Title               string                `json:"title,omitempty"`
 	Caption             string                `json:"caption,omitempty"`
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -107,8 +107,8 @@ type InlineQueryResultGif struct {
 type InlineQueryResultCachedGif struct {
 	InlineQueryResultImplementation
 	Type      InlineResultType `json:"type"`
-	Id        string           `json:"id"`
-	GifFileId string           `json:"gif_file_id"`
+	ID        string           `json:"id"`
+	GifFileID string           `json:"gif_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -123,13 +123,13 @@ type InlineQueryResultCachedGif struct {
 type InlineQueryResultMpeg4Gif struct {
 	InlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
-	Id       string           `json:"id"`
-	Mpeg4Url string           `json:"mpeg4_url"`
+	ID       string           `json:"id"`
+	Mpeg4URL string           `json:"mpeg4_url"`
 
 	// Optional
 	Mpeg4Width          int                   `json:"mpeg4_width,omitempty"`
 	Mpeg4Height         int                   `json:"mpeg4_height,omitempty"`
-	ThumbUrl            string                `json:"thumb_url,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
 	Title               string                `json:"title,omitempty"`
 	Caption             string                `json:"caption,omitempty"`
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -142,8 +142,8 @@ type InlineQueryResultMpeg4Gif struct {
 type InlineQueryResultCachedMpeg4Gif struct {
 	InlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
-	Id          string           `json:"id"`
-	Mpeg4FileId string           `json:"mpeg4_file_id"`
+	ID          string           `json:"id"`
+	Mpeg4FileID string           `json:"mpeg4_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -158,12 +158,12 @@ type InlineQueryResultCachedMpeg4Gif struct {
 type InlineQueryResultVideo struct {
 	InlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
-	Id       string           `json:"id"`
-	VideoUrl string           `json:"video_url"`
+	ID       string           `json:"id"`
+	VideoURL string           `json:"video_url"`
 	MimeType string           `json:"mime_type"`
 
 	// Optional
-	ThumbUrl            string                `json:"thumb_url,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
 	Title               string                `json:"title,omitempty"`
 	Caption             string                `json:"caption,omitempty"`
 	VideoWidth          int                   `json:"video_width,omitempty"`
@@ -180,8 +180,8 @@ type InlineQueryResultVideo struct {
 type InlineQueryResultCachedVideo struct {
 	InlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
-	Id          string           `json:"id"`
-	VideoFileId string           `json:"video_file_id"`
+	ID          string           `json:"id"`
+	VideoFileID string           `json:"video_file_id"`
 
 	// Optional
 	Title               string                `json:"title,omitempty"`
@@ -197,8 +197,8 @@ type InlineQueryResultCachedVideo struct {
 type InlineQueryResultAudio struct {
 	InlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
-	Id       string           `json:"id"`
-	AudioUrl string           `json:"audio_url"`
+	ID       string           `json:"id"`
+	AudioURL string           `json:"audio_url"`
 	Title    string           `json:"title"`
 
 	// Optional
@@ -214,8 +214,8 @@ type InlineQueryResultAudio struct {
 type InlineQueryResultCachedAudio struct {
 	InlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
-	Id          string           `json:"id"`
-	AudioFileId string           `json:"audio_file_id"`
+	ID          string           `json:"id"`
+	AudioFileID string           `json:"audio_file_id"`
 
 	// Optional
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -228,8 +228,8 @@ type InlineQueryResultCachedAudio struct {
 type InlineQueryResultVoice struct {
 	InlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
-	Id       string           `json:"id"`
-	VoiceUrl string           `json:"voice_url"`
+	ID       string           `json:"id"`
+	VoiceURL string           `json:"voice_url"`
 	Title    string           `json:"title"`
 
 	// Optional
@@ -244,8 +244,8 @@ type InlineQueryResultVoice struct {
 type InlineQueryResultCachedVoice struct {
 	InlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
-	Id          string           `json:"id"`
-	VoiceFileId string           `json:"voice_file_id"`
+	ID          string           `json:"id"`
+	VoiceFileID string           `json:"voice_file_id"`
 
 	// Optional
 	Title               string                `json:"title"`
@@ -259,9 +259,9 @@ type InlineQueryResultCachedVoice struct {
 type InlineQueryResultDocument struct {
 	InlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
-	Id          string           `json:"id"`
+	ID          string           `json:"id"`
 	Title       string           `json:"title"`
-	DocumentUrl string           `json:"document_url"`
+	DocumentURL string           `json:"document_url"`
 	MimeType    string           `json:"mime_type"`
 
 	// Optional
@@ -281,9 +281,9 @@ type InlineQueryResultDocument struct {
 type InlineQueryResultCachedDocument struct {
 	InlineQueryResultImplementation
 	Type           InlineResultType `json:"type"`
-	Id             string           `json:"id"`
+	ID             string           `json:"id"`
 	Title          string           `json:"title"`
-	DocumentFileId string           `json:"document_file_id"`
+	DocumentFileID string           `json:"document_file_id"`
 
 	// Optional
 	Description         string                `json:"description,omitempty"`
@@ -298,13 +298,13 @@ type InlineQueryResultCachedDocument struct {
 type InlineQueryResultLocation struct {
 	InlineQueryResultImplementation
 	Type      InlineResultType `json:"type"`
-	Id        string           `json:"id"`
+	ID        string           `json:"id"`
 	Latitude  float64          `json:"latitude"`
 	Longitude float64          `json:"longitude"`
 	Title     string           `json:"title"`
 
 	// Optional
-	ThumbUrl            string                `json:"thumb_url,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
 	ThumbWidth          int                   `json:"thumb_width,omitempty"`
 	ThumbHeight         int                   `json:"thumb_height,omitempty"`
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -317,8 +317,8 @@ type InlineQueryResultLocation struct {
 type InlineQueryResultCachedSticker struct {
 	InlineQueryResultImplementation
 	Type          InlineResultType `json:"type"`
-	Id            string           `json:"id"`
-	StickerFileId string           `json:"sticker_file_id"`
+	ID            string           `json:"id"`
+	StickerFileID string           `json:"sticker_file_id"`
 
 	// Optional
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
@@ -329,7 +329,7 @@ type InlineQueryResultCachedSticker struct {
 type InlineQueryResultGame struct {
 	InlineQueryResultImplementation
 	Type          InlineResultType `json:"type"`
-	Id            string           `json:"id"`
+	ID            string           `json:"id"`
 	GameShortName string           `json:"game_short_name"`
 
 	// Optional
@@ -366,7 +366,7 @@ type InputVenueMessageContent struct {
 	Longitude    float64 `json:"longitude"`
 	Title        string  `json:"title"`
 	Address      string  `json:"address"`
-	FoursquareId string  `json:"foursquare_id"`
+	FoursquareID string  `json:"foursquare_id"`
 }
 
 // InputContactMessageContent contains a contact for displaying as an inline query result.

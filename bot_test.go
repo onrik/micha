@@ -28,7 +28,7 @@ func (s *BotTestSuite) SetupSuite() {
 	bot, err := NewBot("111")
 	s.Equal(err, nil)
 	s.Equal(bot.Me.FirstName, "Micha")
-	s.Equal(bot.Me.Id, int64(1))
+	s.Equal(bot.Me.ID, int64(1))
 	s.Equal(bot.Me.Username, "michabot")
 
 	s.bot = bot
@@ -107,7 +107,7 @@ func (s *BotTestSuite) TestGetChat() {
 
 	chat, err := s.bot.GetChat(123)
 	s.Equal(err, nil)
-	s.Equal(chat.Id, int64(123))
+	s.Equal(chat.ID, int64(123))
 	s.Equal(chat.Type, CHAT_TYPE_GROUP)
 	s.Equal(chat.Title, "ChatTitle")
 	s.Equal(chat.FirstName, "fn")
@@ -143,13 +143,13 @@ func (s *BotTestSuite) TestGetChatAdministrators() {
 	administrators, err := s.bot.GetChatAdministrators(123)
 	s.Equal(err, nil)
 	s.Equal(len(administrators), 2)
-	s.Equal(administrators[0].User.Id, int64(456))
+	s.Equal(administrators[0].User.ID, int64(456))
 	s.Equal(administrators[0].User.FirstName, "John")
 	s.Equal(administrators[0].User.LastName, "Doe")
 	s.Equal(administrators[0].User.Username, "john_doe")
 	s.Equal(administrators[0].Status, MEMBER_STATUS_ADMINISTRATOR)
 
-	s.Equal(administrators[1].User.Id, int64(789))
+	s.Equal(administrators[1].User.ID, int64(789))
 	s.Equal(administrators[1].User.FirstName, "Mohammad")
 	s.Equal(administrators[1].User.LastName, "Li")
 	s.Equal(administrators[1].User.Username, "mli")
@@ -172,7 +172,7 @@ func (s *BotTestSuite) TestGetChatMember() {
 
 	chatMember, err := s.bot.GetChatMember(123, 456)
 	s.Equal(err, nil)
-	s.Equal(chatMember.User.Id, int64(456))
+	s.Equal(chatMember.User.ID, int64(456))
 	s.Equal(chatMember.User.FirstName, "John")
 	s.Equal(chatMember.User.LastName, "Doe")
 	s.Equal(chatMember.User.Username, "john_doe")
@@ -193,7 +193,7 @@ func (s *BotTestSuite) TestGetFile() {
 
 	file, err := s.bot.GetFile("222")
 	s.Equal(err, nil)
-	s.Equal(file.FileId, "222")
+	s.Equal(file.FileID, "222")
 	s.Equal(file.FileSize, uint64(5))
 	s.Equal(file.FilePath, "document/file_3.txt")
 }
@@ -209,7 +209,7 @@ func (s *BotTestSuite) TestSendPhoto() {
 
 	message, err := s.bot.SendPhoto(111, "35f9f497a879436fbb6e682f6dd75986", &SendPhotoOptions{
 		Caption:          "test caption",
-		ReplyToMessageId: 143,
+		ReplyToMessageID: 143,
 	})
 
 	s.Equal(err, nil)
@@ -224,7 +224,7 @@ func (s *BotTestSuite) TestSendAudio() {
 		Duration:         36,
 		Performer:        "John Doe",
 		Title:            "Single",
-		ReplyToMessageId: 143,
+		ReplyToMessageID: 143,
 	})
 
 	s.Equal(err, nil)
@@ -237,7 +237,7 @@ func (s *BotTestSuite) TestSendDocument() {
 
 	message, err := s.bot.SendDocument(124, "efd8d08958894a6781873b9830634483", &SendDocumentOptions{
 		Caption:          "document caption",
-		ReplyToMessageId: 144,
+		ReplyToMessageID: 144,
 	})
 
 	s.Equal(err, nil)
@@ -249,7 +249,7 @@ func (s *BotTestSuite) TestSendSticker() {
 	s.registerRequestCheck("sendSticker", request)
 
 	message, err := s.bot.SendSticker(125, "070114a7fa964322acb3d65e6e36eb2b", &SendStickerOptions{
-		ReplyToMessageId: 145,
+		ReplyToMessageID: 145,
 	})
 
 	s.Equal(err, nil)
@@ -265,7 +265,7 @@ func (s *BotTestSuite) TestSendVideo() {
 		Width:            320,
 		Height:           240,
 		Caption:          "video caption",
-		ReplyToMessageId: 146,
+		ReplyToMessageID: 146,
 	})
 
 	s.Equal(err, nil)
@@ -278,7 +278,7 @@ func (s *BotTestSuite) TestSendVoice() {
 
 	message, err := s.bot.SendVoice(127, "75ac50947bc34a3ea2efdca5000d9ad5", &SendVoiceOptions{
 		Duration:         56,
-		ReplyToMessageId: 147,
+		ReplyToMessageID: 147,
 	})
 
 	s.Equal(err, nil)
@@ -290,7 +290,7 @@ func (s *BotTestSuite) TestSendLocation() {
 	s.registerRequestCheck("sendLocation", request)
 
 	message, err := s.bot.SendLocation(128, 22.532434, -44.8243324, &SendLocationOptions{
-		ReplyToMessageId: 148,
+		ReplyToMessageID: 148,
 	})
 
 	s.Equal(err, nil)
@@ -302,8 +302,8 @@ func (s *BotTestSuite) TestSendVenue() {
 	s.registerRequestCheck("sendVenue", request)
 
 	message, err := s.bot.SendVenue(129, 22.532434, -44.8243324, "Kremlin", "Red Square 1", &SendVenueOptions{
-		FoursquareId:     "1",
-		ReplyToMessageId: 149,
+		FoursquareID:     "1",
+		ReplyToMessageID: 149,
 	})
 
 	s.Equal(err, nil)
@@ -315,7 +315,7 @@ func (s *BotTestSuite) TestSendContact() {
 	s.registerRequestCheck("sendContact", request)
 
 	message, err := s.bot.SendContact(130, "+79998887766", "John", "Doe", &SendContactOptions{
-		ReplyToMessageId: 150,
+		ReplyToMessageID: 150,
 	})
 
 	s.Equal(err, nil)
@@ -399,7 +399,7 @@ func (s *BotTestSuite) TestGetUserProfilePhotos() {
 	userPhotos, err := s.bot.GetUserProfilePhotos(55, &offset, &limit)
 	s.Equal(err, nil)
 	s.Equal(userPhotos.TotalCount, 1)
-	s.Equal(userPhotos.Photos[0][0].FileId, "111")
+	s.Equal(userPhotos.Photos[0][0].FileID, "111")
 	s.Equal(userPhotos.Photos[0][0].FileSize, uint64(15320))
 	s.Equal(userPhotos.Photos[0][0].Width, 320)
 	s.Equal(userPhotos.Photos[0][0].Height, 240)
@@ -411,7 +411,7 @@ func (s *BotTestSuite) TestSendMessage() {
 	s.registerRequestCheck("sendMessage", request)
 
 	_, err := s.bot.SendMessage(3434, "mss", &SendMessageOptions{
-		ReplyToMessageId: 89,
+		ReplyToMessageID: 89,
 		ParseMode:        PARSE_MODE_HTML,
 	})
 	s.Equal(err, nil)
@@ -458,7 +458,7 @@ func (s *BotTestSuite) TestAnswerInlineQuery() {
 	results := InlineQueryResults{}
 	results = append(results, InlineQueryResultArticle{
 		Type:  INLINE_TYPE_RESULT_ARTICLE,
-		Id:    "124",
+		ID:    "124",
 		Title: "Article",
 	})
 	err := s.bot.AnswerInlineQuery("aaa", results, &AnswerInlineQueryOptions{

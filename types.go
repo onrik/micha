@@ -46,7 +46,7 @@ type MessageEntityType string
 
 // User object represents a Telegram user, bot
 type User struct {
-	Id        int64  `json:"id"`
+	ID        int64  `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Username  string `json:"username"`
@@ -54,7 +54,7 @@ type User struct {
 
 // Chat object represents a Telegram user, bot or group chat.
 type Chat struct {
-	Id        int64    `json:"id"`
+	ID        int64    `json:"id"`
 	Type      ChatType `json:"type"`
 	Title     string   `json:"title"`
 	FirstName string   `json:"first_name"`
@@ -68,7 +68,7 @@ type ChatMember struct {
 }
 
 type FileBase struct {
-	FileId   string `json:"file_id"`
+	FileID   string `json:"file_id"`
 	FileSize uint64 `json:"file_size"`
 }
 
@@ -130,7 +130,7 @@ type Video struct {
 
 // Voice object represents a voice note.
 type Voice struct {
-	FileId   string `json:"file_id"`
+	FileID   string `json:"file_id"`
 	Duration int    `json:"duration"`
 	MimeType string `json:"mime_type"`
 	FileSize int    `json:"file_size"`
@@ -138,7 +138,7 @@ type Voice struct {
 
 // Contact object represents a contact to Telegram user
 type Contact struct {
-	UserId      int64  `json:"user_id"`
+	UserID      int64  `json:"user_id"`
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
@@ -155,7 +155,7 @@ type Venue struct {
 	Location     Location `json:"location"`
 	Title        string   `json:"title"`
 	Address      string   `json:"address"`
-	FoursquareId string   `json:"foursquare_id"`
+	FoursquareID string   `json:"foursquare_id"`
 }
 
 type UserProfilePhotos struct {
@@ -174,7 +174,7 @@ type MessageEntity struct {
 	Limit  int               `json:"limit"`
 
 	// Optional
-	Url  string `json:"url"`  // For “text_link” only, url that will be opened after user taps on the text
+	URL  string `json:"url"`  // For “text_link” only, url that will be opened after user taps on the text
 	User *User  `json:"user"` // For “text_mention” only, the mentioned user
 }
 
@@ -212,7 +212,7 @@ type GameHighScore struct {
 
 // Message object represents a message.
 type Message struct {
-	MessageId int64  `json:"message_id"`
+	MessageID int64  `json:"message_id"`
 	From      User   `json:"from"`
 	Date      uint64 `json:"date"`
 	Chat      Chat   `json:"chat"`
@@ -244,8 +244,8 @@ type Message struct {
 	GroupChatCreated      bool            `json:"group_chat_created"`
 	SupergroupChatCreated bool            `json:"supergroup_chat_created"`
 	ChannelChatCreated    bool            `json:"channel_chat_created"`
-	MigrateToChatId       int64           `json:"migrate_to_chat_id"`
-	MigrateFromChatId     int64           `json:"migrate_from_chat_id"`
+	MigrateToChatID       int64           `json:"migrate_to_chat_id"`
+	MigrateFromChatID     int64           `json:"migrate_from_chat_id"`
 	PinnedMessage         *Message        `json:"pinned_message"`
 }
 
@@ -292,7 +292,7 @@ type InlineKeyboardButton struct {
 	Text string `json:"text,omitempty"`
 
 	// Optional
-	Url               string `json:"url,omitempty"`
+	URL               string `json:"url,omitempty"`
 	CallbackData      string `json:"callback_data,omitempty"`
 	SwitchInlineQuery string `json:"switch_inline_query,omitempty"`
 }
@@ -314,10 +314,10 @@ type ForceReply struct {
 
 // Represents a result of an inline query that was chosen by the user and sent to their chat partner.
 type ChosenInlineResult struct {
-	ResultId        string    `json:"result_id"`
+	ResultID        string    `json:"result_id"`
 	From            User      `json:"from"`
 	Location        *Location `json:"location"`
-	InlineMessageId string    `json:"inline_message_id"`
+	InlineMessageID string    `json:"inline_message_id"`
 	Query           string    `json:"query"`
 }
 
@@ -325,7 +325,7 @@ type ChosenInlineResult struct {
 // If the button that originated the query was attached to a message sent by the bot, the field message will be presented.
 // If the button was attached to a message sent via the bot (in inline mode), the field inline_message_id will be presented.
 type CallbackQuery struct {
-	Id              string   `json:"id"`
+	ID              string   `json:"id"`
 	From            User     `json:"from"`
 	Message         *Message `json:"message"`
 	InlineMessageID string   `json:"inline_message_id"`
@@ -335,7 +335,7 @@ type CallbackQuery struct {
 // This object represents an incoming inline query.
 // When the user sends an empty query, your bot could return some default or trending results.
 type InlineQuery struct {
-	Id     string `json:"id"`
+	ID     string `json:"id"`
 	From   User   `json:"from"`
 	Query  string `json:"query"`
 	Offset string `json:"offset"`
@@ -344,7 +344,7 @@ type InlineQuery struct {
 // This object represents an incoming update.
 // Only one of the optional parameters can be present in any given update.
 type Update struct {
-	UpdateId uint64 `json:"update_id"`
+	UpdateID uint64 `json:"update_id"`
 
 	// Optional
 	Message            *Message            `json:"message"`

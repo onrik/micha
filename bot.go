@@ -146,7 +146,7 @@ func (bot *Bot) Start() {
 		for _, update := range updates {
 			bot.updates <- update
 
-			offset = update.UpdateId
+			offset = update.UpdateID
 		}
 	}
 }
@@ -166,9 +166,9 @@ func (bot *Bot) GetMe() (*User, error) {
 }
 
 // Use this method to send text messages.
-func (bot *Bot) SendMessage(chatId int64, text string, options *SendMessageOptions) (*Message, error) {
-	params := SendMessageParams{
-		ChatId: chatId,
+func (bot *Bot) SendMessage(chatID int64, text string, options *SendMessageOptions) (*Message, error) {
+	params := sendMessageParams{
+		ChatID: chatID,
 		Text:   text,
 	}
 	if options != nil {
@@ -182,8 +182,8 @@ func (bot *Bot) SendMessage(chatId int64, text string, options *SendMessageOptio
 }
 
 // Send exists photo by file_id
-func (bot *Bot) SendPhoto(chatId int64, photoId string, options *SendPhotoOptions) (*Message, error) {
-	params := NewSendPhotoParams(chatId, photoId, options)
+func (bot *Bot) SendPhoto(chatID int64, photoID string, options *SendPhotoOptions) (*Message, error) {
+	params := newSendPhotoParams(chatID, photoID, options)
 
 	message := new(Message)
 	err := bot.post("sendPhoto", params, message)
@@ -192,8 +192,8 @@ func (bot *Bot) SendPhoto(chatId int64, photoId string, options *SendPhotoOption
 }
 
 // Send photo file
-func (bot *Bot) SendPhotoFile(chatId int64, file io.ReadCloser, options *SendPhotoOptions) (*Message, error) {
-	params := NewSendPhotoParams(chatId, "", options)
+func (bot *Bot) SendPhotoFile(chatID int64, file io.ReadCloser, options *SendPhotoOptions) (*Message, error) {
+	params := newSendPhotoParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
 		return nil, err
@@ -212,8 +212,8 @@ func (bot *Bot) SendPhotoFile(chatId int64, file io.ReadCloser, options *SendPho
 }
 
 // Send exists audio by file_id
-func (bot *Bot) SendAudio(chatId int64, audioId string, options *SendAudioOptions) (*Message, error) {
-	params := NewSendAudioParams(chatId, audioId, options)
+func (bot *Bot) SendAudio(chatID int64, audioID string, options *SendAudioOptions) (*Message, error) {
+	params := newSendAudioParams(chatID, audioID, options)
 
 	message := new(Message)
 	err := bot.post("sendAudio", params, message)
@@ -222,8 +222,8 @@ func (bot *Bot) SendAudio(chatId int64, audioId string, options *SendAudioOption
 }
 
 // Send audio file
-func (bot *Bot) SendAudioFile(chatId int64, file io.ReadCloser, options *SendAudioOptions) (*Message, error) {
-	params := NewSendAudioParams(chatId, "", options)
+func (bot *Bot) SendAudioFile(chatID int64, file io.ReadCloser, options *SendAudioOptions) (*Message, error) {
+	params := newSendAudioParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
 		return nil, err
@@ -242,8 +242,8 @@ func (bot *Bot) SendAudioFile(chatId int64, file io.ReadCloser, options *SendAud
 }
 
 // Send exists document by file_id
-func (bot *Bot) SendDocument(chatId int64, documentId string, options *SendDocumentOptions) (*Message, error) {
-	params := NewSendDocumentParams(chatId, documentId, options)
+func (bot *Bot) SendDocument(chatID int64, documentID string, options *SendDocumentOptions) (*Message, error) {
+	params := newSendDocumentParams(chatID, documentID, options)
 
 	message := new(Message)
 	err := bot.post("sendDocument", params, message)
@@ -252,8 +252,8 @@ func (bot *Bot) SendDocument(chatId int64, documentId string, options *SendDocum
 }
 
 // Send file
-func (bot *Bot) SendDocumentFile(chatId int64, documentName string, file io.ReadCloser, options *SendDocumentOptions) (*Message, error) {
-	params := NewSendDocumentParams(chatId, "", options)
+func (bot *Bot) SendDocumentFile(chatID int64, documentName string, file io.ReadCloser, options *SendDocumentOptions) (*Message, error) {
+	params := newSendDocumentParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
 		return nil, err
@@ -272,8 +272,8 @@ func (bot *Bot) SendDocumentFile(chatId int64, documentName string, file io.Read
 }
 
 // Send exists sticker by file_id
-func (bot *Bot) SendSticker(chatId int64, stickerId string, options *SendStickerOptions) (*Message, error) {
-	params := NewSendStickerParams(chatId, stickerId, options)
+func (bot *Bot) SendSticker(chatID int64, stickerID string, options *SendStickerOptions) (*Message, error) {
+	params := newSendStickerParams(chatID, stickerID, options)
 
 	message := new(Message)
 	err := bot.post("sendSticker", params, message)
@@ -282,8 +282,8 @@ func (bot *Bot) SendSticker(chatId int64, stickerId string, options *SendSticker
 }
 
 // Send .webp sticker file
-func (bot *Bot) SendStickerFile(chatId int64, file io.ReadCloser, options *SendStickerOptions) (*Message, error) {
-	params := NewSendStickerParams(chatId, "", options)
+func (bot *Bot) SendStickerFile(chatID int64, file io.ReadCloser, options *SendStickerOptions) (*Message, error) {
+	params := newSendStickerParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
 		return nil, err
@@ -302,8 +302,8 @@ func (bot *Bot) SendStickerFile(chatId int64, file io.ReadCloser, options *SendS
 }
 
 // Send exists video by file_id
-func (bot *Bot) SendVideo(chatId int64, videoId string, options *SendVideoOptions) (*Message, error) {
-	params := NewSendVideoParams(chatId, videoId, options)
+func (bot *Bot) SendVideo(chatID int64, videoID string, options *SendVideoOptions) (*Message, error) {
+	params := newSendVideoParams(chatID, videoID, options)
 
 	message := new(Message)
 	err := bot.post("sendVideo", params, message)
@@ -312,8 +312,8 @@ func (bot *Bot) SendVideo(chatId int64, videoId string, options *SendVideoOption
 }
 
 // Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document).
-func (bot *Bot) SendVideoFile(chatId int64, file io.ReadCloser, options *SendVideoOptions) (*Message, error) {
-	params := NewSendVideoParams(chatId, "", options)
+func (bot *Bot) SendVideoFile(chatID int64, file io.ReadCloser, options *SendVideoOptions) (*Message, error) {
+	params := newSendVideoParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
 		return nil, err
@@ -332,8 +332,8 @@ func (bot *Bot) SendVideoFile(chatId int64, file io.ReadCloser, options *SendVid
 }
 
 // Send exists voice by file_id
-func (bot *Bot) SendVoice(chatId int64, voiceId string, options *SendVoiceOptions) (*Message, error) {
-	params := NewSendVoiceParams(chatId, voiceId, options)
+func (bot *Bot) SendVoice(chatID int64, voiceID string, options *SendVoiceOptions) (*Message, error) {
+	params := newSendVoiceParams(chatID, voiceID, options)
 
 	message := new(Message)
 	err := bot.post("sendVoice", params, message)
@@ -344,8 +344,8 @@ func (bot *Bot) SendVoice(chatId int64, voiceId string, options *SendVoiceOption
 // Use this method to send audio files,
 // if you want Telegram clients to display the file as a playable voice message.
 // For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document).
-func (bot *Bot) SendVoiceFile(chatId int64, file io.ReadCloser, options *SendVoiceOptions) (*Message, error) {
-	params := NewSendVoiceParams(chatId, "", options)
+func (bot *Bot) SendVoiceFile(chatID int64, file io.ReadCloser, options *SendVoiceOptions) (*Message, error) {
+	params := newSendVoiceParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
 		return nil, err
@@ -364,8 +364,8 @@ func (bot *Bot) SendVoiceFile(chatId int64, file io.ReadCloser, options *SendVoi
 }
 
 // Use this method to send point on the map
-func (bot *Bot) SendLocation(chatId int64, latitude, longitude float64, options *SendLocationOptions) (*Message, error) {
-	params := NewSendLocationParams(chatId, latitude, longitude, options)
+func (bot *Bot) SendLocation(chatID int64, latitude, longitude float64, options *SendLocationOptions) (*Message, error) {
+	params := newSendLocationParams(chatID, latitude, longitude, options)
 
 	message := new(Message)
 	err := bot.post("sendLocation", params, message)
@@ -374,8 +374,8 @@ func (bot *Bot) SendLocation(chatId int64, latitude, longitude float64, options 
 }
 
 // Use this method to send information about a venue
-func (bot *Bot) SendVenue(chatId int64, latitude, longitude float64, title, address string, options *SendVenueOptions) (*Message, error) {
-	params := NewSendVenueParams(chatId, latitude, longitude, title, address, options)
+func (bot *Bot) SendVenue(chatID int64, latitude, longitude float64, title, address string, options *SendVenueOptions) (*Message, error) {
+	params := newSendVenueParams(chatID, latitude, longitude, title, address, options)
 
 	message := new(Message)
 	err := bot.post("sendVenue", params, message)
@@ -384,8 +384,8 @@ func (bot *Bot) SendVenue(chatId int64, latitude, longitude float64, title, addr
 }
 
 // Use this method to send phone contacts
-func (bot *Bot) SendContact(chatId int64, phoneNumber, firstName, lastName string, options *SendContactOptions) (*Message, error) {
-	params := NewSendContactParams(chatId, phoneNumber, firstName, lastName, options)
+func (bot *Bot) SendContact(chatID int64, phoneNumber, firstName, lastName string, options *SendContactOptions) (*Message, error) {
+	params := newSendContactParams(chatID, phoneNumber, firstName, lastName, options)
 
 	message := new(Message)
 	err := bot.post("sendContact", params, message)
@@ -394,11 +394,11 @@ func (bot *Bot) SendContact(chatId int64, phoneNumber, firstName, lastName strin
 }
 
 // Use this method to forward messages of any kind.
-func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotification bool) (*Message, error) {
+func (bot *Bot) ForwardMessage(chatID, fromChatID, messageID int64, disableNotification bool) (*Message, error) {
 	params := map[string]interface{}{
-		"chat_id":              chatId,
-		"from_chat_id":         fromChatId,
-		"message_id":           messageId,
+		"chat_id":              chatID,
+		"from_chat_id":         fromChatID,
+		"message_id":           messageID,
 		"disable_notification": disableNotification,
 	}
 
@@ -410,9 +410,9 @@ func (bot *Bot) ForwardMessage(chatId, fromChatId, messageId int64, disableNotif
 
 // Use this method when you need to tell the user that something is happening on the bot's side.
 // The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status).
-func (bot *Bot) SendChatAction(chatId int64, action ChatAction) error {
+func (bot *Bot) SendChatAction(chatID int64, action ChatAction) error {
 	params := map[string]interface{}{
-		"chat_id": chatId,
+		"chat_id": chatID,
 		"action":  action,
 	}
 
@@ -458,11 +458,11 @@ func (bot *Bot) DownloadFileUrl(filePath string) string {
 }
 
 // Use this method to edit text messages sent by the bot or via the bot (for inline bots).
-func (bot *Bot) EditMessageText(chatId, messageId int64, inlineMessageId, text string, options *EditMessageTextOptions) (*Message, error) {
-	params := EditMessageTextParams{
-		ChatId:          chatId,
-		MessageId:       messageId,
-		InlineMessageId: inlineMessageId,
+func (bot *Bot) EditMessageText(chatID, messageID int64, inlineMessageID, text string, options *EditMessageTextOptions) (*Message, error) {
+	params := editMessageTextParams{
+		ChatID:          chatID,
+		MessageID:       messageID,
+		InlineMessageID: inlineMessageID,
 		Text:            text,
 	}
 	if options != nil {
@@ -476,11 +476,11 @@ func (bot *Bot) EditMessageText(chatId, messageId int64, inlineMessageId, text s
 }
 
 // Use this method to edit captions of messages sent by the bot or via the bot (for inline bots).
-func (bot *Bot) EditMessageCaption(chatId, messageId int64, inlineMessageId string, options *EditMessageCationOptions) (*Message, error) {
-	params := EditMessageCationParams{
-		ChatId:          chatId,
-		MessageId:       messageId,
-		InlineMessageId: inlineMessageId,
+func (bot *Bot) EditMessageCaption(chatID, messageID int64, inlineMessageID string, options *EditMessageCationOptions) (*Message, error) {
+	params := editMessageCationParams{
+		ChatID:          chatID,
+		MessageID:       messageID,
+		InlineMessageID: inlineMessageID,
 	}
 	if options != nil {
 		params.EditMessageCationOptions = *options
@@ -493,11 +493,11 @@ func (bot *Bot) EditMessageCaption(chatId, messageId int64, inlineMessageId stri
 }
 
 // Use this method to edit only the reply markup of messages sent by the bot or via the bot (for inline bots).
-func (bot *Bot) EditMessageReplyMarkup(chatId, messageId int64, inlineMessageId string, replyMarkup ReplyMarkup) (*Message, error) {
-	params := EditMessageReplyMarkupParams{
-		ChatId:          chatId,
-		MessageId:       messageId,
-		InlineMessageId: inlineMessageId,
+func (bot *Bot) EditMessageReplyMarkup(chatID, messageID int64, inlineMessageID string, replyMarkup ReplyMarkup) (*Message, error) {
+	params := editMessageReplyMarkupParams{
+		ChatID:          chatID,
+		MessageID:       messageID,
+		InlineMessageID: inlineMessageID,
 		ReplyMarkup:     replyMarkup,
 	}
 
@@ -509,9 +509,9 @@ func (bot *Bot) EditMessageReplyMarkup(chatId, messageId int64, inlineMessageId 
 
 // Use this method to send answers to an inline query.
 // No more than 50 results per query are allowed.
-func (bot *Bot) AnswerInlineQuery(inlineQueryId string, results InlineQueryResults, options *AnswerInlineQueryOptions) error {
-	params := AnswerInlineQueryParams{
-		InlineQueryId: inlineQueryId,
+func (bot *Bot) AnswerInlineQuery(inlineQueryID string, results InlineQueryResults, options *AnswerInlineQueryOptions) error {
+	params := answerInlineQueryParams{
+		InlineQueryID: inlineQueryID,
 		Results:       results,
 	}
 	if options != nil {
@@ -524,19 +524,19 @@ func (bot *Bot) AnswerInlineQuery(inlineQueryId string, results InlineQueryResul
 // Use this method to kick a user from a group or a supergroup.
 // In the case of supergroups, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
 // The bot must be an administrator in the group for this to work.
-func (bot *Bot) KickChatMember(chatId, userId int64) error {
+func (bot *Bot) KickChatMember(chatID, userID int64) error {
 	params := map[string]interface{}{
-		"chat_id": chatId,
-		"user_id": userId,
+		"chat_id": chatID,
+		"user_id": userID,
 	}
 
 	return bot.post("kickChatMember", params, nil)
 }
 
 // Use this method for your bot to leave a group, supergroup or channel
-func (bot *Bot) LeaveChat(chatId int64) error {
+func (bot *Bot) LeaveChat(chatID int64) error {
 	params := map[string]interface{}{
-		"chat_id": chatId,
+		"chat_id": chatID,
 	}
 
 	return bot.post("leaveChat", params, nil)
@@ -545,19 +545,19 @@ func (bot *Bot) LeaveChat(chatId int64) error {
 // Use this method to unban a previously kicked user in a supergroup.
 // The user will not return to the group automatically, but will be able to join via link, etc.
 // The bot must be an administrator in the group for this to work.
-func (bot *Bot) UnbanChatMember(chatId, userId int64) error {
+func (bot *Bot) UnbanChatMember(chatID, userID int64) error {
 	params := map[string]interface{}{
-		"chat_id": chatId,
-		"user_id": userId,
+		"chat_id": chatID,
+		"user_id": userID,
 	}
 
 	return bot.post("unbanChatMember", params, nil)
 }
 
 // Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
-func (bot *Bot) GetChat(chatId int64) (*Chat, error) {
+func (bot *Bot) GetChat(chatID int64) (*Chat, error) {
 	params := url.Values{
-		"chat_id": {fmt.Sprintf("%d", chatId)},
+		"chat_id": {fmt.Sprintf("%d", chatID)},
 	}
 
 	chat := new(Chat)
@@ -568,9 +568,9 @@ func (bot *Bot) GetChat(chatId int64) (*Chat, error) {
 
 // Use this method to get a list of administrators in a chat.
 // If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
-func (bot *Bot) GetChatAdministrators(chatId int64) ([]ChatMember, error) {
+func (bot *Bot) GetChatAdministrators(chatID int64) ([]ChatMember, error) {
 	params := url.Values{
-		"chat_id": {fmt.Sprintf("%d", chatId)},
+		"chat_id": {fmt.Sprintf("%d", chatID)},
 	}
 
 	administrators := []ChatMember{}
@@ -580,9 +580,9 @@ func (bot *Bot) GetChatAdministrators(chatId int64) ([]ChatMember, error) {
 }
 
 // Use this method to get the number of members in a chat.
-func (bot *Bot) GetChatMembersCount(chatId int64) (int, error) {
+func (bot *Bot) GetChatMembersCount(chatID int64) (int, error) {
 	params := url.Values{
-		"chat_id": {fmt.Sprintf("%d", chatId)},
+		"chat_id": {fmt.Sprintf("%d", chatID)},
 	}
 
 	count := 0
@@ -592,10 +592,10 @@ func (bot *Bot) GetChatMembersCount(chatId int64) (int, error) {
 }
 
 // Use this method to get information about a member of a chat.
-func (bot *Bot) GetChatMember(chatId, userId int64) (*ChatMember, error) {
+func (bot *Bot) GetChatMember(chatID, userID int64) (*ChatMember, error) {
 	params := url.Values{
-		"chat_id": {fmt.Sprintf("%d", chatId)},
-		"user_id": {fmt.Sprintf("%d", userId)},
+		"chat_id": {fmt.Sprintf("%d", chatID)},
+		"user_id": {fmt.Sprintf("%d", userID)},
 	}
 
 	chatMember := new(ChatMember)
@@ -607,14 +607,14 @@ func (bot *Bot) GetChatMember(chatId, userId int64) (*ChatMember, error) {
 // Use this method to send answers to callback queries sent from inline keyboards.
 // The answer will be displayed to the user as a notification at the top of the chat screen or as an alert.
 func (bot *Bot) AnswerCallbackQuery(callbackQueryID string, options *AnswerCallbackQueryOptions) error {
-	params := NewAnswerCallbackQueryParams(callbackQueryID, options)
+	params := newAnswerCallbackQueryParams(callbackQueryID, options)
 
 	return bot.post("answerCallbackQuery", params, nil)
 }
 
 // Use this method to send a game.
 func (bot *Bot) SendGame(chatID int64, gameShortName string, options *SendGameOptions) (*Message, error) {
-	params := SendGameParams{
+	params := sendGameParams{
 		ChatID:        chatID,
 		GameShortName: gameShortName,
 	}
@@ -631,7 +631,7 @@ func (bot *Bot) SendGame(chatID int64, gameShortName string, options *SendGameOp
 
 // Use this method to set the score of the specified user in a game.
 func (bot *Bot) SetGameScore(userID int64, score int, options *SetGameScoreOptions) (*Message, error) {
-	params := SetGameScoreParams{
+	params := setGameScoreParams{
 		UserID: userID,
 		Score:  score,
 	}
@@ -649,7 +649,7 @@ func (bot *Bot) SetGameScore(userID int64, score int, options *SetGameScoreOptio
 // Use this method to get data for high score tables.
 // Will return the score of the specified user and several of his neighbors in a game.
 func (bot *Bot) GetGameHighScores(userID int64, options *GetGameHighScoresOptions) ([]GameHighScore, error) {
-	params := GetGameHighScoresParams{
+	params := getGameHighScoresParams{
 		UserID: userID,
 	}
 
