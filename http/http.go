@@ -12,7 +12,7 @@ import (
 )
 
 type File struct {
-	File      io.ReadCloser
+	Source    io.ReadCloser
 	Fieldname string
 	Filename  string
 }
@@ -65,8 +65,8 @@ func PostMultipart(url string, file *File, params url.Values) ([]byte, error) {
 		return nil, err
 	}
 
-	defer file.File.Close()
-	if _, err := io.Copy(part, file.File); err != nil {
+	defer file.Source.Close()
+	if _, err := io.Copy(part, file.Source); err != nil {
 		return nil, err
 	}
 

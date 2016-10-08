@@ -200,7 +200,7 @@ func (bot *Bot) SendPhotoFile(chatID int64, file io.ReadCloser, options *SendPho
 	}
 
 	f := &http.File{
-		File:      file,
+		Source:    file,
 		Fieldname: "photo",
 		Filename:  "photo.png",
 	}
@@ -230,7 +230,7 @@ func (bot *Bot) SendAudioFile(chatID int64, file io.ReadCloser, options *SendAud
 	}
 
 	f := &http.File{
-		File:      file,
+		Source:    file,
 		Fieldname: "audio",
 		Filename:  "audio.mp3",
 	}
@@ -260,7 +260,7 @@ func (bot *Bot) SendDocumentFile(chatID int64, documentName string, file io.Read
 	}
 
 	f := &http.File{
-		File:      file,
+		Source:    file,
 		Fieldname: "document",
 		Filename:  documentName,
 	}
@@ -290,7 +290,7 @@ func (bot *Bot) SendStickerFile(chatID int64, file io.ReadCloser, options *SendS
 	}
 
 	f := &http.File{
-		File:      file,
+		Source:    file,
 		Fieldname: "sticker",
 		Filename:  "sticker.webp",
 	}
@@ -320,7 +320,7 @@ func (bot *Bot) SendVideoFile(chatID int64, file io.ReadCloser, options *SendVid
 	}
 
 	f := &http.File{
-		File:      file,
+		Source:    file,
 		Fieldname: "video",
 		Filename:  "video.mp4",
 	}
