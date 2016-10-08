@@ -222,14 +222,9 @@ type sendGameParams struct {
 }
 
 type setGameScoreParams struct {
-	UserID int64 `json:"chat_id"`
+	UserID int64 `json:"user_id"`
 	Score  int   `json:"score"`
 	SetGameScoreOptions
-}
-
-type getGameHighScoresParams struct {
-	UserID int64 `json:"chat_id"`
-	GetGameHighScoresOptions
 }
 
 type answerCallbackQueryParams struct {

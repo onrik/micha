@@ -649,15 +649,15 @@ func (bot *Bot) SetGameScore(userID int64, score int, options *SetGameScoreOptio
 // Use this method to get data for high score tables.
 // Will return the score of the specified user and several of his neighbors in a game.
 func (bot *Bot) GetGameHighScores(userID int64, options *GetGameHighScoresOptions) ([]GameHighScore, error) {
-	params := getGameHighScoresParams{
-		UserID: userID,
+	params, err := structToValues(options)
+	if err != nil {
+		return nil, err
 	}
 
-	if options != nil {
-		params.GetGameHighScoresOptions = *options
-	}
+	params.Set("user_id", fmt.Sprintf("%d", userID))
 
 	scores := []GameHighScore{}
-	err := bot.post("getGameHighScores", params, &scores)
+	err = bot.get("getGameHighScores", params, &scores)
+
 	return scores, err
 }

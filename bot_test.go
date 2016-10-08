@@ -417,6 +417,76 @@ func (s *BotTestSuite) TestSendMessage() {
 	s.Equal(err, nil)
 }
 
+func (s *BotTestSuite) TestSendGame() {
+	request := `{"chat_id":298,"game_short_name":"ggg","reply_to_message_id":892}`
+	s.registerRequestCheck("sendGame", request)
+
+	_, err := s.bot.SendGame(298, "ggg", &SendGameOptions{
+		ReplyToMessageID: 892,
+	})
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestSetGameScore() {
+	request := `{"user_id":1,"score":777,"chat_id":552,"message_id":892,"inline_message_id":"stf","edit_message":true}`
+	s.registerRequestCheck("setGameScore", request)
+
+	_, err := s.bot.SetGameScore(1, 777, &SetGameScoreOptions{
+		ChatID:          int64(552),
+		MessageID:       int64(892),
+		InlineMessageID: "stf",
+		EditMessage:     true,
+	})
+	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestGetGameHighScorese() {
+	s.registerResponse("getGameHighScores", url.Values{
+		"user_id":    {"91247"},
+		"chat_id":    {"123"},
+		"message_id": {"892"},
+	}, `{
+		"ok": true,
+		"result": [
+			{
+				"position": 1,
+				"score": 22,
+				"user": {
+					"id": 456,
+					"first_name": "John",
+					"last_name": "Doe",
+					"username": "john_doe"
+				}
+			},
+			{
+				"position": 2,
+				"score": 11,
+				"user": {
+					"id": 789,
+					"first_name": "Mohammad",
+					"last_name": "Li",
+					"username": "mli"
+				}
+			}
+		]
+	}`)
+
+	scores, err := s.bot.GetGameHighScores(91247, &GetGameHighScoresOptions{
+		ChatID:    int64(123),
+		MessageID: int64(892),
+	})
+	s.Equal(err, nil)
+	s.Equal(len(scores), 2)
+	s.Equal(scores[0].Position, 1)
+	s.Equal(scores[0].Score, 22)
+	s.Equal(scores[0].User, User{456, "John", "Doe", "john_doe"})
+
+	s.Equal(scores[1].Position, 2)
+	s.Equal(scores[1].Score, 11)
+	s.Equal(scores[1].User, User{789, "Mohammad", "Li", "mli"})
+
+}
+
 func (s *BotTestSuite) TestEditMessageText() {
 	request := `{"chat_id":143,"message_id":67,"inline_message_id":"gyt","text":"new text","parse_mode":"Markdown"}`
 	s.registerRequestCheck("editMessageText", request)
