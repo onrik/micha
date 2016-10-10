@@ -12,4 +12,4 @@ before_install:
   - go get github.com/jarcoal/httpmock
   
 after_success:
-  - goveralls -service=travis-ci -ignore=examples
+  - goveralls -service=travis-ci -ignore=examples/*/*
