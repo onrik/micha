@@ -7,9 +7,11 @@ const (
 	INLINE_TYPE_RESULT_MPEG4_GIF InlineResultType = "mpeg4_gif"
 	INLINE_TYPE_RESULT_VIDEO     InlineResultType = "video"
 	INLINE_TYPE_RESULT_AUDIO     InlineResultType = "audio"
-	INLINE_TYPE_RESULT_DOCUMENT  InlineResultType = "document"
 	INLINE_TYPE_RESULT_VOICE     InlineResultType = "voice"
+	INLINE_TYPE_RESULT_DOCUMENT  InlineResultType = "document"
 	INLINE_TYPE_RESULT_LOCATION  InlineResultType = "location"
+	INLINE_TYPE_RESULT_VENUE     InlineResultType = "venue"
+	INLINE_TYPE_RESULT_CONTACT   InlineResultType = "contact"
 	INLINE_TYPE_RESULT_STICKER   InlineResultType = "sticker"
 	INLINE_TYPE_RESULT_GAME      InlineResultType = "game"
 )
@@ -311,6 +313,27 @@ type InlineQueryResultLocation struct {
 	InputMessageContent InputMessageContent   `json:"input_message_content,omitempty"`
 }
 
+// Represents a venue.
+// By default, the venue will be sent by the user.
+// Alternatively, you can use input_message_content to send a message with the specified content instead of the venue.
+type InlineQueryResultVenue struct {
+	InlineQueryResultImplementation
+	Type      InlineResultType `json:"type"`
+	ID        string           `json:"id"`
+	Latitude  float64          `json:"latitude"`
+	Longitude float64          `json:"longitude"`
+	Title     string           `json:"title"`
+	Address   string           `json:"address"`
+
+	// Optional
+	FoursquareID        string                `json:"foursquare_id,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
+	ThumbWidth          int                   `json:"thumb_width,omitempty"`
+	ThumbHeight         int                   `json:"thumb_height,omitempty"`
+	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
+	InputMessageContent InputMessageContent   `json:"input_message_content,omitempty"`
+}
+
 // Represents a link to a sticker stored on the Telegram servers.
 // By default, this sticker will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the sticker.
@@ -321,6 +344,24 @@ type InlineQueryResultCachedSticker struct {
 	StickerFileID string           `json:"sticker_file_id"`
 
 	// Optional
+	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
+	InputMessageContent InputMessageContent   `json:"input_message_content,omitempty"`
+}
+
+// Represents a contact with a phone number.
+// By default, this contact will be sent by the user.
+// Alternatively, you can use input_message_content to send a message with the specified content instead of the contact.
+type InlineQueryResultContact struct {
+	Type        InlineResultType `json:"type"`
+	ID          string           `json:"id"`
+	PhoneNumber string           `json:"phone_number"`
+	FirstName   string           `json:"first_name"`
+
+	// Optional
+	LastName            string                `json:"last_name,omitempty"`
+	ThumbURL            string                `json:"thumb_url,omitempty"`
+	ThumbWidth          int                   `json:"thumb_width,omitempty"`
+	ThumbHeight         int                   `json:"thumb_height,omitempty"`
 	ReplyMarkup         *InlineKeyboardMarkup `json:"reply_markup,omitempty"`
 	InputMessageContent InputMessageContent   `json:"input_message_content,omitempty"`
 }
