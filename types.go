@@ -257,12 +257,12 @@ type Message struct {
 }
 
 type ReplyMarkup interface {
-	_ItsReplyMarkup()
+	itsReplyMarkup()
 }
 
-type ReplyMarkupImplementation struct{}
+type replyMarkupImplementation struct{}
 
-func (r ReplyMarkupImplementation) _ItsReplyMarkup() {}
+func (r replyMarkupImplementation) itsReplyMarkup() {}
 
 // This object represents one button of the reply keyboard.
 // For simple text buttons String can be used instead of this object to specify text of the button.
@@ -277,7 +277,7 @@ type KeyboardButton struct {
 
 // This object represents a custom keyboard with reply options
 type ReplyKeyboardMarkup struct {
-	ReplyMarkupImplementation
+	replyMarkupImplementation
 	Keyboard        [][]KeyboardButton `json:"keyboard"`
 	ResizeKeyboard  bool               `json:"resize_keyboard,omitempty"`
 	OneTimeKeyboard bool               `json:"one_time_keyboard,omitempty"`
@@ -289,7 +289,7 @@ type ReplyKeyboardMarkup struct {
 // By default, custom keyboards are displayed until a new keyboard is sent by a bot.
 // An exception is made for one-time keyboards that are hidden immediately after the user presses a button
 type ReplyKeyboardHide struct {
-	ReplyMarkupImplementation
+	replyMarkupImplementation
 	HideKeyboard bool `json:"hide_keyboard,omitempty"`
 	Selective    bool `json:"selective,omitempty"`
 }
@@ -306,7 +306,7 @@ type InlineKeyboardButton struct {
 
 // This object represents an inline keyboard that appears right next to the message it belongs to.
 type InlineKeyboardMarkup struct {
-	ReplyMarkupImplementation
+	replyMarkupImplementation
 	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard"`
 }
 
@@ -314,7 +314,7 @@ type InlineKeyboardMarkup struct {
 // Telegram clients will display a reply interface to the user.
 // This can be extremely useful if you want to create user-friendly step-by-step interfaces without having to sacrifice privacy mode.
 type ForceReply struct {
-	ReplyMarkupImplementation
+	replyMarkupImplementation
 	ForceReply bool `json:"force_reply"`
 	Selective  bool `json:"selective,omitempty"`
 }

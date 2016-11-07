@@ -21,16 +21,16 @@ type InlineResultType string
 type InlineQueryResults []InlineQueryResult
 
 type InlineQueryResult interface {
-	_ItsInlineQueryResult()
+	itsInlineQueryResult()
 }
 
-type InlineQueryResultImplementation struct{}
+type inlineQueryResultImplementation struct{}
 
-func (i InlineQueryResultImplementation) _ItsInlineQueryResult() {}
+func (i inlineQueryResultImplementation) itsInlineQueryResult() {}
 
 // Represents a link to an article or web page.
 type InlineQueryResultArticle struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type  InlineResultType `json:"type"`
 	ID    string           `json:"id"`
 	Title string           `json:"title"`
@@ -50,7 +50,7 @@ type InlineQueryResultArticle struct {
 // By default, this photo will be sent by the user with optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
 type InlineQueryResultPhoto struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
 	ID       string           `json:"id"`
 	PhotoURL string           `json:"photo_url"`
@@ -71,7 +71,7 @@ type InlineQueryResultPhoto struct {
 // By default, this photo will be sent by the user with an optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
 type InlineQueryResultCachedPhoto struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
 	ID          string           `json:"id"`
 	PhotoFileID string           `json:"photo_file_id"`
@@ -88,7 +88,7 @@ type InlineQueryResultCachedPhoto struct {
 // By default, this animated GIF file will be sent by the user with optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultGif struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type   InlineResultType `json:"type"`
 	ID     string           `json:"id"`
 	GifURL string           `json:"gif_url"`
@@ -107,7 +107,7 @@ type InlineQueryResultGif struct {
 // By default, this animated GIF file will be sent by the user with an optional caption.
 // Alternatively, you can use input_message_content to send a message with specified content instead of the animation.
 type InlineQueryResultCachedGif struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type      InlineResultType `json:"type"`
 	ID        string           `json:"id"`
 	GifFileID string           `json:"gif_file_id"`
@@ -123,7 +123,7 @@ type InlineQueryResultCachedGif struct {
 // By default, this animated MPEG-4 file will be sent by the user with optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultMpeg4Gif struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
 	ID       string           `json:"id"`
 	Mpeg4URL string           `json:"mpeg4_url"`
@@ -142,7 +142,7 @@ type InlineQueryResultMpeg4Gif struct {
 // By default, this animated MPEG-4 file will be sent by the user with an optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the animation.
 type InlineQueryResultCachedMpeg4Gif struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
 	ID          string           `json:"id"`
 	Mpeg4FileID string           `json:"mpeg4_file_id"`
@@ -158,7 +158,7 @@ type InlineQueryResultCachedMpeg4Gif struct {
 // By default, this video file will be sent by the user with an optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
 type InlineQueryResultVideo struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
 	ID       string           `json:"id"`
 	VideoURL string           `json:"video_url"`
@@ -180,7 +180,7 @@ type InlineQueryResultVideo struct {
 // By default, this video file will be sent by the user with an optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the video.
 type InlineQueryResultCachedVideo struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
 	ID          string           `json:"id"`
 	VideoFileID string           `json:"video_file_id"`
@@ -197,7 +197,7 @@ type InlineQueryResultCachedVideo struct {
 // By default, this audio file will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
 type InlineQueryResultAudio struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
 	ID       string           `json:"id"`
 	AudioURL string           `json:"audio_url"`
@@ -214,7 +214,7 @@ type InlineQueryResultAudio struct {
 // By default, this audio file will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the audio.
 type InlineQueryResultCachedAudio struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
 	ID          string           `json:"id"`
 	AudioFileID string           `json:"audio_file_id"`
@@ -228,7 +228,7 @@ type InlineQueryResultCachedAudio struct {
 // By default, this voice recording will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the the voice message.
 type InlineQueryResultVoice struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type     InlineResultType `json:"type"`
 	ID       string           `json:"id"`
 	VoiceURL string           `json:"voice_url"`
@@ -244,7 +244,7 @@ type InlineQueryResultVoice struct {
 // By default, this voice message will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the voice message.
 type InlineQueryResultCachedVoice struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
 	ID          string           `json:"id"`
 	VoiceFileID string           `json:"voice_file_id"`
@@ -259,7 +259,7 @@ type InlineQueryResultCachedVoice struct {
 // By default, this file will be sent by the user with an optional caption.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the file. Currently, only .PDF and .ZIP files can be sent using this method.
 type InlineQueryResultDocument struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
 	ID          string           `json:"id"`
 	Title       string           `json:"title"`
@@ -281,7 +281,7 @@ type InlineQueryResultDocument struct {
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the file.
 // Currently, only pdf-files and zip archives can be sent using this method.
 type InlineQueryResultCachedDocument struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type           InlineResultType `json:"type"`
 	ID             string           `json:"id"`
 	Title          string           `json:"title"`
@@ -298,7 +298,7 @@ type InlineQueryResultCachedDocument struct {
 // By default, the location will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the location.
 type InlineQueryResultLocation struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type      InlineResultType `json:"type"`
 	ID        string           `json:"id"`
 	Latitude  float64          `json:"latitude"`
@@ -317,7 +317,7 @@ type InlineQueryResultLocation struct {
 // By default, the venue will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the venue.
 type InlineQueryResultVenue struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type      InlineResultType `json:"type"`
 	ID        string           `json:"id"`
 	Latitude  float64          `json:"latitude"`
@@ -338,7 +338,7 @@ type InlineQueryResultVenue struct {
 // By default, this sticker will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the sticker.
 type InlineQueryResultCachedSticker struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type          InlineResultType `json:"type"`
 	ID            string           `json:"id"`
 	StickerFileID string           `json:"sticker_file_id"`
@@ -352,6 +352,7 @@ type InlineQueryResultCachedSticker struct {
 // By default, this contact will be sent by the user.
 // Alternatively, you can use input_message_content to send a message with the specified content instead of the contact.
 type InlineQueryResultContact struct {
+	inlineQueryResultImplementation
 	Type        InlineResultType `json:"type"`
 	ID          string           `json:"id"`
 	PhoneNumber string           `json:"phone_number"`
@@ -368,7 +369,7 @@ type InlineQueryResultContact struct {
 
 // Represents a Game.
 type InlineQueryResultGame struct {
-	InlineQueryResultImplementation
+	inlineQueryResultImplementation
 	Type          InlineResultType `json:"type"`
 	ID            string           `json:"id"`
 	GameShortName string           `json:"game_short_name"`
@@ -378,16 +379,16 @@ type InlineQueryResultGame struct {
 }
 
 type InputMessageContent interface {
-	_ItsInputMessageContent()
+	itsInputMessageContent()
 }
 
-type InputMessageContentImplementation struct{}
+type inputMessageContentImplementation struct{}
 
-func (i InputMessageContentImplementation) _ItsInputMessageContent() {}
+func (i inputMessageContentImplementation) itsInlineQueryResult() {}
 
 // InputTextMessageContent contains text for displaying as an inline query result.
 type InputTextMessageContent struct {
-	InputMessageContentImplementation
+	inputMessageContentImplementation
 	MessageText           string    `json:"message_text"`
 	ParseMode             ParseMode `json:"parse_mode"`
 	DisableWebPagePreview bool      `json:"disable_web_page_preview"`
@@ -395,14 +396,14 @@ type InputTextMessageContent struct {
 
 // InputLocationMessageContent contains a location for displaying as an inline query result.
 type InputLocationMessageContent struct {
-	InputMessageContentImplementation
+	inputMessageContentImplementation
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 }
 
 // InputVenueMessageContent contains a venue for displaying an inline query result.
 type InputVenueMessageContent struct {
-	InputMessageContentImplementation
+	inputMessageContentImplementation
 	Latitude     float64 `json:"latitude"`
 	Longitude    float64 `json:"longitude"`
 	Title        string  `json:"title"`
@@ -412,7 +413,7 @@ type InputVenueMessageContent struct {
 
 // InputContactMessageContent contains a contact for displaying as an inline query result.
 type InputContactMessageContent struct {
-	InputMessageContentImplementation
+	inputMessageContentImplementation
 	PhoneNumber string `json:"phone_number"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
