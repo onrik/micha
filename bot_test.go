@@ -97,7 +97,6 @@ func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValu
 			return nil, err
 		}
 
-		defer exceptedFile.Source.Close()
 		exceptedData, err := ioutil.ReadAll(exceptedFile.Source)
 		if err != nil {
 			return nil, err
@@ -264,9 +263,9 @@ func (s *BotTestSuite) TestSendPhotoFile() {
 		"chat_id": {"112"},
 		"caption": {"capt"},
 	}
-	data := ioutil.NopCloser(bytes.NewBufferString("sadkf"))
+	data := bytes.NewBufferString("sadkf")
 	file := mhttp.File{
-		Source:    ioutil.NopCloser(bytes.NewBufferString("sadkf")),
+		Source:    bytes.NewBufferString("sadkf"),
 		Fieldname: "photo",
 		Filename:  "photo.png",
 	}
@@ -302,9 +301,9 @@ func (s *BotTestSuite) TestSendAudioFile() {
 		"performer": {"perf"},
 		"title":     {"Hit"},
 	}
-	data := ioutil.NopCloser(bytes.NewBufferString("audio data"))
+	data := bytes.NewBufferString("audio data")
 	file := mhttp.File{
-		Source:    ioutil.NopCloser(bytes.NewBufferString("audio data")),
+		Source:    bytes.NewBufferString("audio data"),
 		Fieldname: "audio",
 		Filename:  "song.mp3",
 	}
@@ -338,9 +337,9 @@ func (s *BotTestSuite) TestSendDocumentFile() {
 		"chat_id": {"89"},
 		"caption": {"top secret"},
 	}
-	data := ioutil.NopCloser(bytes.NewBufferString("..."))
+	data := bytes.NewBufferString("...")
 	file := mhttp.File{
-		Source:    ioutil.NopCloser(bytes.NewBufferString("...")),
+		Source:    bytes.NewBufferString("..."),
 		Fieldname: "document",
 		Filename:  "x-files.txt",
 	}
@@ -370,9 +369,9 @@ func (s *BotTestSuite) TestSendStickerFile() {
 	params := url.Values{
 		"chat_id": {"100"},
 	}
-	data := ioutil.NopCloser(bytes.NewBufferString("sticker data"))
+	data := bytes.NewBufferString("sticker data")
 	file := mhttp.File{
-		Source:    ioutil.NopCloser(bytes.NewBufferString("sticker data")),
+		Source:    bytes.NewBufferString("sticker data"),
 		Fieldname: "sticker",
 		Filename:  "sticker.webp",
 	}
@@ -408,9 +407,9 @@ func (s *BotTestSuite) TestSendVideoFile() {
 		"height":   {"720"},
 		"caption":  {"funny cats"},
 	}
-	data := ioutil.NopCloser(bytes.NewBufferString("video data"))
+	data := bytes.NewBufferString("video data")
 	file := mhttp.File{
-		Source:    ioutil.NopCloser(bytes.NewBufferString("video data")),
+		Source:    bytes.NewBufferString("video data"),
 		Fieldname: "video",
 		Filename:  "cats.mp4",
 	}
@@ -445,9 +444,9 @@ func (s *BotTestSuite) TestSendVoiceFile() {
 		"chat_id":  {"101"},
 		"duration": {"15"},
 	}
-	data := ioutil.NopCloser(bytes.NewBufferString("voice data"))
+	data := bytes.NewBufferString("voice data")
 	file := mhttp.File{
-		Source:    ioutil.NopCloser(bytes.NewBufferString("voice data")),
+		Source:    bytes.NewBufferString("voice data"),
 		Fieldname: "voice",
 		Filename:  "voice.ogg",
 	}

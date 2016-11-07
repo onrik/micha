@@ -192,7 +192,7 @@ func (bot *Bot) SendPhoto(chatID ChatID, photoID string, options *SendPhotoOptio
 }
 
 // Send photo file
-func (bot *Bot) SendPhotoFile(chatID ChatID, file io.ReadCloser, fileName string, options *SendPhotoOptions) (*Message, error) {
+func (bot *Bot) SendPhotoFile(chatID ChatID, file io.Reader, fileName string, options *SendPhotoOptions) (*Message, error) {
 	params := newSendPhotoParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -222,7 +222,7 @@ func (bot *Bot) SendAudio(chatID ChatID, audioID string, options *SendAudioOptio
 }
 
 // Send audio file
-func (bot *Bot) SendAudioFile(chatID ChatID, file io.ReadCloser, fileName string, options *SendAudioOptions) (*Message, error) {
+func (bot *Bot) SendAudioFile(chatID ChatID, file io.Reader, fileName string, options *SendAudioOptions) (*Message, error) {
 	params := newSendAudioParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -252,7 +252,7 @@ func (bot *Bot) SendDocument(chatID ChatID, documentID string, options *SendDocu
 }
 
 // Send file
-func (bot *Bot) SendDocumentFile(chatID ChatID, file io.ReadCloser, fileName string, options *SendDocumentOptions) (*Message, error) {
+func (bot *Bot) SendDocumentFile(chatID ChatID, file io.Reader, fileName string, options *SendDocumentOptions) (*Message, error) {
 	params := newSendDocumentParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -282,7 +282,7 @@ func (bot *Bot) SendSticker(chatID ChatID, stickerID string, options *SendSticke
 }
 
 // Send .webp sticker file
-func (bot *Bot) SendStickerFile(chatID ChatID, file io.ReadCloser, fileName string, options *SendStickerOptions) (*Message, error) {
+func (bot *Bot) SendStickerFile(chatID ChatID, file io.Reader, fileName string, options *SendStickerOptions) (*Message, error) {
 	params := newSendStickerParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -312,7 +312,7 @@ func (bot *Bot) SendVideo(chatID ChatID, videoID string, options *SendVideoOptio
 }
 
 // Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document).
-func (bot *Bot) SendVideoFile(chatID ChatID, file io.ReadCloser, fileName string, options *SendVideoOptions) (*Message, error) {
+func (bot *Bot) SendVideoFile(chatID ChatID, file io.Reader, fileName string, options *SendVideoOptions) (*Message, error) {
 	params := newSendVideoParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
@@ -344,7 +344,7 @@ func (bot *Bot) SendVoice(chatID ChatID, voiceID string, options *SendVoiceOptio
 // Use this method to send audio files,
 // if you want Telegram clients to display the file as a playable voice message.
 // For this to work, your audio must be in an .ogg file encoded with OPUS (other formats may be sent as Audio or Document).
-func (bot *Bot) SendVoiceFile(chatID ChatID, file io.ReadCloser, fileName string, options *SendVoiceOptions) (*Message, error) {
+func (bot *Bot) SendVoiceFile(chatID ChatID, file io.Reader, fileName string, options *SendVoiceOptions) (*Message, error) {
 	params := newSendVoiceParams(chatID, "", options)
 	values, err := structToValues(params)
 	if err != nil {
