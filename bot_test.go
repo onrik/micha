@@ -149,16 +149,17 @@ func (s *BotTestSuite) TestGetUpdates() {
 		}]
 	}`)
 
-	go s.bot.Start()
-
-	for update := range s.bot.Updates() {
+	go func() {
+		update := <-s.bot.Updates()
 		s.bot.Stop()
 		s.Equal(uint64(463249624), update.UpdateID)
 		s.Equal(update.UpdateID, s.bot.offset)
-		break
-	}
 
-	s.True(true, s.bot.stop)
+		s.True(true, s.bot.stop)
+		<-s.bot.Updates()
+	}()
+
+	s.bot.Start()
 }
 
 func (s *BotTestSuite) TestGetChat() {
