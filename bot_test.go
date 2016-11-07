@@ -134,6 +134,33 @@ func (s *BotTestSuite) TestBuildUrl() {
 	s.Equal(url, "https://api.telegram.org/bot111/someMethod")
 }
 
+func (s *BotTestSuite) TestGetUpdates() {
+	s.registerResponse("getUpdates", url.Values{"offset": {"1"}, "timeout": {"25"}}, `{
+		"ok": true,
+		"result": [{
+			"update_id": 463249624
+		}]
+	}`)
+
+	s.registerResponse("getUpdates", url.Values{"offset": {"463249625"}, "timeout": {"25"}}, `{
+		"ok": true,
+		"result": [{
+			"update_id": 463249625
+		}]
+	}`)
+
+	go s.bot.Start()
+
+	for update := range s.bot.Updates() {
+		s.bot.Stop()
+		s.Equal(uint64(463249624), update.UpdateID)
+		s.Equal(update.UpdateID, s.bot.offset)
+		break
+	}
+
+	s.True(true, s.bot.stop)
+}
+
 func (s *BotTestSuite) TestGetChat() {
 	s.registerResponse("getChat", url.Values{"chat_id": {"123"}}, `{
 		"ok": true,

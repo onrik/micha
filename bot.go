@@ -40,6 +40,8 @@ type Response struct {
 type Bot struct {
 	token   string
 	updates chan Update
+	stop    bool
+	offset  uint64
 	Me      User
 	Timeout time.Duration
 }
@@ -134,10 +136,12 @@ func (bot *Bot) getUpdates(offset uint64) ([]Update, error) {
 
 // Start getting updates
 func (bot *Bot) Start() {
-	offset := uint64(0)
-
 	for {
-		updates, err := bot.getUpdates(offset + 1)
+		if bot.stop {
+			return
+		}
+
+		updates, err := bot.getUpdates(bot.offset + 1)
 		if err != nil {
 			logger.Printf("Get updates error (%s)\n", err.Error())
 			continue
@@ -145,10 +149,14 @@ func (bot *Bot) Start() {
 
 		for _, update := range updates {
 			bot.updates <- update
-
-			offset = update.UpdateID
+			bot.offset = update.UpdateID
 		}
 	}
+}
+
+// Stop getting updates
+func (bot *Bot) Stop() {
+	bot.stop = true
 }
 
 // Updates channel
