@@ -52,9 +52,16 @@ type User struct {
 	Username  string `json:"username"`
 }
 
+type ChatID string
+
+func (chatID *ChatID) UnmarshalJSON(value []byte) error {
+	*chatID = ChatID(value)
+	return nil
+}
+
 // Chat object represents a Telegram user, bot or group chat.
 type Chat struct {
-	ID        int64    `json:"id"`
+	ID        ChatID   `json:"id"`
 	Type      ChatType `json:"type"`
 	Title     string   `json:"title"`
 	FirstName string   `json:"first_name"`
@@ -244,8 +251,8 @@ type Message struct {
 	GroupChatCreated      bool            `json:"group_chat_created"`
 	SupergroupChatCreated bool            `json:"supergroup_chat_created"`
 	ChannelChatCreated    bool            `json:"channel_chat_created"`
-	MigrateToChatID       int64           `json:"migrate_to_chat_id"`
-	MigrateFromChatID     int64           `json:"migrate_from_chat_id"`
+	MigrateToChatID       ChatID          `json:"migrate_to_chat_id"`
+	MigrateFromChatID     ChatID          `json:"migrate_from_chat_id"`
 	PinnedMessage         *Message        `json:"pinned_message"`
 }
 

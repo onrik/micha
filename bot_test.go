@@ -148,9 +148,9 @@ func (s *BotTestSuite) TestGetChat() {
 		}
 	}`)
 
-	chat, err := s.bot.GetChat(123)
+	chat, err := s.bot.GetChat("123")
 	s.Equal(err, nil)
-	s.Equal(chat.ID, int64(123))
+	s.Equal(chat.ID, ChatID("123"))
 	s.Equal(chat.Type, CHAT_TYPE_GROUP)
 	s.Equal(chat.Title, "ChatTitle")
 	s.Equal(chat.FirstName, "fn")
@@ -183,7 +183,7 @@ func (s *BotTestSuite) TestGetChatAdministrators() {
 		]
 	}`)
 
-	administrators, err := s.bot.GetChatAdministrators(123)
+	administrators, err := s.bot.GetChatAdministrators("123")
 	s.Equal(err, nil)
 	s.Equal(len(administrators), 2)
 	s.Equal(administrators[0].User.ID, int64(456))
@@ -213,7 +213,7 @@ func (s *BotTestSuite) TestGetChatMember() {
 		}
 	}`)
 
-	chatMember, err := s.bot.GetChatMember(123, 456)
+	chatMember, err := s.bot.GetChatMember("123", 456)
 	s.Equal(err, nil)
 	s.Equal(chatMember.User.ID, int64(456))
 	s.Equal(chatMember.User.FirstName, "John")
@@ -226,7 +226,7 @@ func (s *BotTestSuite) TestGetChatMember() {
 func (s *BotTestSuite) TestGetChatMembersCount() {
 	s.registerResponse("getChatMembersCount", url.Values{"chat_id": {"123"}}, `{"ok":true, "result": 25}`)
 
-	count, err := s.bot.GetChatMembersCount(123)
+	count, err := s.bot.GetChatMembersCount("123")
 	s.Equal(err, nil)
 	s.Equal(count, 25)
 }
@@ -247,10 +247,10 @@ func (s *BotTestSuite) TestDownloadFileURL() {
 }
 
 func (s *BotTestSuite) TestSendPhoto() {
-	request := `{"chat_id":111,"photo":"35f9f497a879436fbb6e682f6dd75986","caption":"test caption","reply_to_message_id":143}`
+	request := `{"chat_id":"111","photo":"35f9f497a879436fbb6e682f6dd75986","caption":"test caption","reply_to_message_id":143}`
 	s.registerRequestCheck("sendPhoto", request)
 
-	message, err := s.bot.SendPhoto(111, "35f9f497a879436fbb6e682f6dd75986", &SendPhotoOptions{
+	message, err := s.bot.SendPhoto("111", "35f9f497a879436fbb6e682f6dd75986", &SendPhotoOptions{
 		Caption:          "test caption",
 		ReplyToMessageID: 143,
 	})
@@ -272,7 +272,7 @@ func (s *BotTestSuite) TestSendPhotoFile() {
 	}
 	s.registeMultipartrRequestCheck("sendPhoto", params, file)
 
-	message, err := s.bot.SendPhotoFile(112, data, "photo.png", &SendPhotoOptions{
+	message, err := s.bot.SendPhotoFile("112", data, "photo.png", &SendPhotoOptions{
 		Caption: "capt",
 	})
 
@@ -281,10 +281,10 @@ func (s *BotTestSuite) TestSendPhotoFile() {
 }
 
 func (s *BotTestSuite) TestSendAudio() {
-	request := `{"chat_id":123,"audio":"061c2810391f44f6beffa3ee8a7e5af4","duration":36,"performer":"John Doe","title":"Single","reply_to_message_id":143}`
+	request := `{"chat_id":"123","audio":"061c2810391f44f6beffa3ee8a7e5af4","duration":36,"performer":"John Doe","title":"Single","reply_to_message_id":143}`
 	s.registerRequestCheck("sendAudio", request)
 
-	message, err := s.bot.SendAudio(123, "061c2810391f44f6beffa3ee8a7e5af4", &SendAudioOptions{
+	message, err := s.bot.SendAudio("123", "061c2810391f44f6beffa3ee8a7e5af4", &SendAudioOptions{
 		Duration:         36,
 		Performer:        "John Doe",
 		Title:            "Single",
@@ -310,7 +310,7 @@ func (s *BotTestSuite) TestSendAudioFile() {
 	}
 	s.registeMultipartrRequestCheck("sendAudio", params, file)
 
-	message, err := s.bot.SendAudioFile(522, data, "song.mp3", &SendAudioOptions{
+	message, err := s.bot.SendAudioFile("522", data, "song.mp3", &SendAudioOptions{
 		Duration:  133,
 		Performer: "perf",
 		Title:     "Hit",
@@ -321,10 +321,10 @@ func (s *BotTestSuite) TestSendAudioFile() {
 }
 
 func (s *BotTestSuite) TestSendDocument() {
-	request := `{"chat_id":124,"document":"efd8d08958894a6781873b9830634483","caption":"document caption","reply_to_message_id":144}`
+	request := `{"chat_id":"124","document":"efd8d08958894a6781873b9830634483","caption":"document caption","reply_to_message_id":144}`
 	s.registerRequestCheck("sendDocument", request)
 
-	message, err := s.bot.SendDocument(124, "efd8d08958894a6781873b9830634483", &SendDocumentOptions{
+	message, err := s.bot.SendDocument("124", "efd8d08958894a6781873b9830634483", &SendDocumentOptions{
 		Caption:          "document caption",
 		ReplyToMessageID: 144,
 	})
@@ -346,7 +346,7 @@ func (s *BotTestSuite) TestSendDocumentFile() {
 	}
 	s.registeMultipartrRequestCheck("sendDocument", params, file)
 
-	message, err := s.bot.SendDocumentFile(89, data, "x-files.txt", &SendDocumentOptions{
+	message, err := s.bot.SendDocumentFile("89", data, "x-files.txt", &SendDocumentOptions{
 		Caption: "top secret",
 	})
 
@@ -355,10 +355,10 @@ func (s *BotTestSuite) TestSendDocumentFile() {
 }
 
 func (s *BotTestSuite) TestSendSticker() {
-	request := `{"chat_id":125,"sticker":"070114a7fa964322acb3d65e6e36eb2b","reply_to_message_id":145}`
+	request := `{"chat_id":"125","sticker":"070114a7fa964322acb3d65e6e36eb2b","reply_to_message_id":145}`
 	s.registerRequestCheck("sendSticker", request)
 
-	message, err := s.bot.SendSticker(125, "070114a7fa964322acb3d65e6e36eb2b", &SendStickerOptions{
+	message, err := s.bot.SendSticker("125", "070114a7fa964322acb3d65e6e36eb2b", &SendStickerOptions{
 		ReplyToMessageID: 145,
 	})
 
@@ -378,17 +378,17 @@ func (s *BotTestSuite) TestSendStickerFile() {
 	}
 	s.registeMultipartrRequestCheck("sendSticker", params, file)
 
-	message, err := s.bot.SendStickerFile(100, data, "sticker.webp", nil)
+	message, err := s.bot.SendStickerFile("100", data, "sticker.webp", nil)
 
 	s.Equal(err, nil)
 	s.NotEqual(message, nil)
 }
 
 func (s *BotTestSuite) TestSendVideo() {
-	request := `{"chat_id":126,"video":"b169f647c020405b8c9035cf3f315ff0","duration":22,"width":320,"height":240,"caption":"video caption","reply_to_message_id":146}`
+	request := `{"chat_id":"126","video":"b169f647c020405b8c9035cf3f315ff0","duration":22,"width":320,"height":240,"caption":"video caption","reply_to_message_id":146}`
 	s.registerRequestCheck("sendVideo", request)
 
-	message, err := s.bot.SendVideo(126, "b169f647c020405b8c9035cf3f315ff0", &SendVideoOptions{
+	message, err := s.bot.SendVideo("126", "b169f647c020405b8c9035cf3f315ff0", &SendVideoOptions{
 		Duration:         22,
 		Width:            320,
 		Height:           240,
@@ -416,7 +416,7 @@ func (s *BotTestSuite) TestSendVideoFile() {
 	}
 	s.registeMultipartrRequestCheck("sendVideo", params, file)
 
-	message, err := s.bot.SendVideoFile(789, data, "cats.mp4", &SendVideoOptions{
+	message, err := s.bot.SendVideoFile("789", data, "cats.mp4", &SendVideoOptions{
 		Duration: 61,
 		Width:    1280,
 		Height:   720,
@@ -428,10 +428,10 @@ func (s *BotTestSuite) TestSendVideoFile() {
 }
 
 func (s *BotTestSuite) TestSendVoice() {
-	request := `{"chat_id":127,"voice":"75ac50947bc34a3ea2efdca5000d9ad5","duration":56,"reply_to_message_id":147}`
+	request := `{"chat_id":"127","voice":"75ac50947bc34a3ea2efdca5000d9ad5","duration":56,"reply_to_message_id":147}`
 	s.registerRequestCheck("sendVoice", request)
 
-	message, err := s.bot.SendVoice(127, "75ac50947bc34a3ea2efdca5000d9ad5", &SendVoiceOptions{
+	message, err := s.bot.SendVoice("127", "75ac50947bc34a3ea2efdca5000d9ad5", &SendVoiceOptions{
 		Duration:         56,
 		ReplyToMessageID: 147,
 	})
@@ -453,7 +453,7 @@ func (s *BotTestSuite) TestSendVoiceFile() {
 	}
 	s.registeMultipartrRequestCheck("sendVoice", params, file)
 
-	message, err := s.bot.SendVoiceFile(101, data, "voice.ogg", &SendVoiceOptions{
+	message, err := s.bot.SendVoiceFile("101", data, "voice.ogg", &SendVoiceOptions{
 		Duration: 15,
 	})
 
@@ -462,10 +462,10 @@ func (s *BotTestSuite) TestSendVoiceFile() {
 }
 
 func (s *BotTestSuite) TestSendLocation() {
-	request := `{"chat_id":128,"latitude":22.532434,"longitude":-44.8243324,"reply_to_message_id":148}`
+	request := `{"chat_id":"128","latitude":22.532434,"longitude":-44.8243324,"reply_to_message_id":148}`
 	s.registerRequestCheck("sendLocation", request)
 
-	message, err := s.bot.SendLocation(128, 22.532434, -44.8243324, &SendLocationOptions{
+	message, err := s.bot.SendLocation("128", 22.532434, -44.8243324, &SendLocationOptions{
 		ReplyToMessageID: 148,
 	})
 
@@ -474,10 +474,10 @@ func (s *BotTestSuite) TestSendLocation() {
 }
 
 func (s *BotTestSuite) TestSendVenue() {
-	request := `{"chat_id":129,"latitude":22.532434,"longitude":-44.8243324,"title":"Kremlin","address":"Red Square 1","foursquare_id":"1","reply_to_message_id":149}`
+	request := `{"chat_id":"129","latitude":22.532434,"longitude":-44.8243324,"title":"Kremlin","address":"Red Square 1","foursquare_id":"1","reply_to_message_id":149}`
 	s.registerRequestCheck("sendVenue", request)
 
-	message, err := s.bot.SendVenue(129, 22.532434, -44.8243324, "Kremlin", "Red Square 1", &SendVenueOptions{
+	message, err := s.bot.SendVenue("129", 22.532434, -44.8243324, "Kremlin", "Red Square 1", &SendVenueOptions{
 		FoursquareID:     "1",
 		ReplyToMessageID: 149,
 	})
@@ -487,10 +487,10 @@ func (s *BotTestSuite) TestSendVenue() {
 }
 
 func (s *BotTestSuite) TestSendContact() {
-	request := `{"chat_id":130,"phone_number":"+79998887766","first_name":"John","last_name":"Doe","reply_to_message_id":150}`
+	request := `{"chat_id":"130","phone_number":"+79998887766","first_name":"John","last_name":"Doe","reply_to_message_id":150}`
 	s.registerRequestCheck("sendContact", request)
 
-	message, err := s.bot.SendContact(130, "+79998887766", "John", "Doe", &SendContactOptions{
+	message, err := s.bot.SendContact("130", "+79998887766", "John", "Doe", &SendContactOptions{
 		ReplyToMessageID: 150,
 	})
 
@@ -499,20 +499,20 @@ func (s *BotTestSuite) TestSendContact() {
 }
 
 func (s *BotTestSuite) TestForwardMessage() {
-	request := `{"chat_id":131,"disable_notification":true,"from_chat_id":99,"message_id":543}`
+	request := `{"chat_id":"131","disable_notification":true,"from_chat_id":"99","message_id":543}`
 	s.registerRequestCheck("forwardMessage", request)
 
-	message, err := s.bot.ForwardMessage(131, 99, 543, true)
+	message, err := s.bot.ForwardMessage("131", "99", 543, true)
 
 	s.Equal(err, nil)
 	s.NotEqual(message, nil)
 }
 
 func (s *BotTestSuite) TestSendChatAction() {
-	request := `{"action":"typing","chat_id":132}`
+	request := `{"action":"typing","chat_id":"132"}`
 	s.registerRequestCheck("sendChatAction", request)
 
-	err := s.bot.SendChatAction(132, CHAT_ACTION_TYPING)
+	err := s.bot.SendChatAction("132", CHAT_ACTION_TYPING)
 	s.Equal(err, nil)
 }
 
@@ -528,26 +528,26 @@ func (s *BotTestSuite) TestAnswerCallbackQuery() {
 }
 
 func (s *BotTestSuite) TestKickChatMember() {
-	request := `{"chat_id":1,"user_id":2}`
+	request := `{"chat_id":"1","user_id":2}`
 	s.registerRequestCheck("kickChatMember", request)
 
-	err := s.bot.KickChatMember(1, 2)
+	err := s.bot.KickChatMember("1", 2)
 	s.Equal(err, nil)
 }
 
 func (s *BotTestSuite) TestLeaveChat() {
-	request := `{"chat_id":143}`
+	request := `{"chat_id":"143"}`
 	s.registerRequestCheck("leaveChat", request)
 
-	err := s.bot.LeaveChat(143)
+	err := s.bot.LeaveChat("143")
 	s.Equal(err, nil)
 }
 
 func (s *BotTestSuite) TestUnbanChatMember() {
-	request := `{"chat_id":22,"user_id":33}`
+	request := `{"chat_id":"22","user_id":33}`
 	s.registerRequestCheck("unbanChatMember", request)
 
-	err := s.bot.UnbanChatMember(22, 33)
+	err := s.bot.UnbanChatMember("22", 33)
 	s.Equal(err, nil)
 }
 
@@ -583,10 +583,10 @@ func (s *BotTestSuite) TestGetUserProfilePhotos() {
 }
 
 func (s *BotTestSuite) TestSendMessage() {
-	request := `{"reply_to_message_id":89,"parse_mode":"HTML","chat_id":3434,"text":"mss"}`
+	request := `{"reply_to_message_id":89,"parse_mode":"HTML","chat_id":"3434","text":"mss"}`
 	s.registerRequestCheck("sendMessage", request)
 
-	_, err := s.bot.SendMessage(3434, "mss", &SendMessageOptions{
+	_, err := s.bot.SendMessage("3434", "mss", &SendMessageOptions{
 		ReplyToMessageID: 89,
 		ParseMode:        PARSE_MODE_HTML,
 	})
@@ -594,21 +594,21 @@ func (s *BotTestSuite) TestSendMessage() {
 }
 
 func (s *BotTestSuite) TestSendGame() {
-	request := `{"chat_id":298,"game_short_name":"ggg","reply_to_message_id":892}`
+	request := `{"chat_id":"298","game_short_name":"ggg","reply_to_message_id":892}`
 	s.registerRequestCheck("sendGame", request)
 
-	_, err := s.bot.SendGame(298, "ggg", &SendGameOptions{
+	_, err := s.bot.SendGame("298", "ggg", &SendGameOptions{
 		ReplyToMessageID: 892,
 	})
 	s.Equal(err, nil)
 }
 
 func (s *BotTestSuite) TestSetGameScore() {
-	request := `{"user_id":1,"score":777,"chat_id":552,"message_id":892,"inline_message_id":"stf","edit_message":true}`
+	request := `{"user_id":1,"score":777,"chat_id":"552","message_id":892,"inline_message_id":"stf","edit_message":true}`
 	s.registerRequestCheck("setGameScore", request)
 
 	_, err := s.bot.SetGameScore(1, 777, &SetGameScoreOptions{
-		ChatID:          int64(552),
+		ChatID:          "552",
 		MessageID:       int64(892),
 		InlineMessageID: "stf",
 		EditMessage:     true,
@@ -648,7 +648,7 @@ func (s *BotTestSuite) TestGetGameHighScorese() {
 	}`)
 
 	scores, err := s.bot.GetGameHighScores(91247, &GetGameHighScoresOptions{
-		ChatID:    int64(123),
+		ChatID:    "123",
 		MessageID: int64(892),
 	})
 	s.Equal(err, nil)
@@ -664,10 +664,10 @@ func (s *BotTestSuite) TestGetGameHighScorese() {
 }
 
 func (s *BotTestSuite) TestEditMessageText() {
-	request := `{"chat_id":143,"message_id":67,"inline_message_id":"gyt","text":"new text","parse_mode":"Markdown"}`
+	request := `{"chat_id":"143","message_id":67,"inline_message_id":"gyt","text":"new text","parse_mode":"Markdown"}`
 	s.registerRequestCheck("editMessageText", request)
 
-	_, err := s.bot.EditMessageText(143, 67, "gyt", "new text", &EditMessageTextOptions{
+	_, err := s.bot.EditMessageText("143", 67, "gyt", "new text", &EditMessageTextOptions{
 		ParseMode: PARSE_MODE_MARKDOWN,
 	})
 
@@ -675,10 +675,10 @@ func (s *BotTestSuite) TestEditMessageText() {
 }
 
 func (s *BotTestSuite) TestEditMessageCaption() {
-	request := `{"chat_id":490,"message_id":87,"inline_message_id":"ubl","caption":"ca"}`
+	request := `{"chat_id":"490","message_id":87,"inline_message_id":"ubl","caption":"ca"}`
 	s.registerRequestCheck("editMessageCaption", request)
 
-	_, err := s.bot.EditMessageCaption(490, 87, "ubl", &EditMessageCationOptions{
+	_, err := s.bot.EditMessageCaption("490", 87, "ubl", &EditMessageCationOptions{
 		Caption: "ca",
 	})
 
@@ -686,10 +686,10 @@ func (s *BotTestSuite) TestEditMessageCaption() {
 }
 
 func (s *BotTestSuite) TestEditMessageReplyMarkup() {
-	request := `{"chat_id":781,"message_id":32,"inline_message_id":"zzt","reply_markup":{"force_reply":true,"selective":true}}`
+	request := `{"chat_id":"781","message_id":32,"inline_message_id":"zzt","reply_markup":{"force_reply":true,"selective":true}}`
 	s.registerRequestCheck("editMessageReplyMarkup", request)
 
-	_, err := s.bot.EditMessageReplyMarkup(781, 32, "zzt", ForceReply{
+	_, err := s.bot.EditMessageReplyMarkup("781", 32, "zzt", ForceReply{
 		ForceReply: true,
 		Selective:  true,
 	})
