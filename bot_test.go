@@ -142,24 +142,16 @@ func (s *BotTestSuite) TestGetUpdates() {
 		}]
 	}`)
 
-	s.registerResponse("getUpdates", url.Values{"offset": {"463249625"}, "timeout": {"25"}}, `{
-		"ok": true,
-		"result": [{
-			"update_id": 463249625
-		}]
-	}`)
-
 	go func() {
-		update := <-s.bot.Updates()
 		s.bot.Stop()
+		update := <-s.bot.Updates()
 		s.Equal(uint64(463249624), update.UpdateID)
-		s.Equal(update.UpdateID, s.bot.offset)
 
-		s.True(true, s.bot.stop)
-		<-s.bot.Updates()
 	}()
 
 	s.bot.Start()
+	s.True(true, s.bot.stop)
+	s.Equal(uint64(463249624), s.bot.offset)
 }
 
 func (s *BotTestSuite) TestGetChat() {

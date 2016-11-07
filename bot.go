@@ -137,19 +137,18 @@ func (bot *Bot) getUpdates(offset uint64) ([]Update, error) {
 // Start getting updates
 func (bot *Bot) Start() {
 	for {
-		if bot.stop {
-			return
-		}
-
 		updates, err := bot.getUpdates(bot.offset + 1)
 		if err != nil {
 			logger.Printf("Get updates error (%s)\n", err.Error())
-			continue
 		}
 
 		for _, update := range updates {
 			bot.updates <- update
 			bot.offset = update.UpdateID
+		}
+
+		if bot.stop {
+			return
 		}
 	}
 }
