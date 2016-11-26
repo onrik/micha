@@ -181,7 +181,7 @@ func (s *BotTestSuite) TestGetChat() {
 }
 
 func (s *BotTestSuite) TestGetWebhookInfo() {
-	s.registerResponse("getWebhookInfo", url.Values{}, `{
+	s.registerResponse("getWebhookInfo", nil, `{
 		"ok": true,
 		"result": {
 			"url": "someurl",
