@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	bot, err := micha.NewBot("<token>")
+	bot, err := micha.NewBot("164644784:AAH8ZAXl-naLedvGqf7X2nIGYL184dpJICQ")
 	if err != nil {
 		log.Fatal(err)
 	}

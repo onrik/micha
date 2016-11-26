@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/suite"
@@ -33,6 +34,8 @@ func (s *BotTestSuite) SetupSuite() {
 	s.Equal(bot.Me.FirstName, "Micha")
 	s.Equal(bot.Me.ID, int64(1))
 	s.Equal(bot.Me.Username, "michabot")
+	s.Equal(100, bot.Limit)
+	s.Equal(25*time.Second, bot.Timeout)
 
 	s.bot = bot
 }
@@ -135,7 +138,7 @@ func (s *BotTestSuite) TestBuildUrl() {
 }
 
 func (s *BotTestSuite) TestGetUpdates() {
-	s.registerResponse("getUpdates", url.Values{"offset": {"1"}, "timeout": {"25"}}, `{
+	s.registerResponse("getUpdates", url.Values{"offset": {"1"}, "timeout": {"25"}, "limit": {"100"}}, `{
 		"ok": true,
 		"result": [{
 			"update_id": 463249624
@@ -175,6 +178,44 @@ func (s *BotTestSuite) TestGetChat() {
 	s.Equal(chat.FirstName, "fn")
 	s.Equal(chat.LastName, "ln")
 	s.Equal(chat.Username, "un")
+}
+
+func (s *BotTestSuite) TestGetWebhookInfo() {
+	s.registerResponse("getWebhookInfo", url.Values{}, `{
+		"ok": true,
+		"result": {
+			"url": "someurl",
+			"has_custom_certificate": true,
+			"pending_update_count": 33,
+			"last_error_date": 1480190406,
+			"last_error_message": "No way"
+		}
+	}`)
+	webhookInfo, err := s.bot.GetWebhookInfo()
+	s.Nil(err)
+	s.NotNil(webhookInfo)
+	s.Equal("someurl", webhookInfo.URL)
+	s.True(webhookInfo.HasCustomCertificate)
+	s.Equal(33, webhookInfo.PendingUpdateCount)
+	s.Equal(uint64(1480190406), webhookInfo.LastErrorDate)
+	s.Equal("No way", webhookInfo.LastErrorMessage)
+}
+
+func (s *BotTestSuite) TestSetWebhook() {
+	params := url.Values{
+		"url": {"hookurl"},
+	}
+	data := "92839727433"
+	file := mhttp.File{
+		Source:    bytes.NewBufferString(data),
+		Fieldname: "certificate",
+		Filename:  "certificate",
+	}
+	s.registeMultipartrRequestCheck("setWebhook", params, file)
+
+	err := s.bot.SetWebhook("hookurl", []byte(data))
+
+	s.Nil(err)
 }
 
 func (s *BotTestSuite) TestGetChatAdministrators() {
@@ -623,14 +664,14 @@ func (s *BotTestSuite) TestSendGame() {
 }
 
 func (s *BotTestSuite) TestSetGameScore() {
-	request := `{"user_id":1,"score":777,"chat_id":"552","message_id":892,"inline_message_id":"stf","edit_message":true}`
+	request := `{"user_id":1,"score":777,"chat_id":"552","message_id":892,"inline_message_id":"stf","disable_edit_message":true}`
 	s.registerRequestCheck("setGameScore", request)
 
 	_, err := s.bot.SetGameScore(1, 777, &SetGameScoreOptions{
-		ChatID:          "552",
-		MessageID:       int64(892),
-		InlineMessageID: "stf",
-		EditMessage:     true,
+		ChatID:             "552",
+		MessageID:          int64(892),
+		InlineMessageID:    "stf",
+		DisableEditMessage: true,
 	})
 	s.Equal(err, nil)
 }

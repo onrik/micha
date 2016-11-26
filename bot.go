@@ -1,6 +1,7 @@
 package micha
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -42,8 +43,9 @@ type Bot struct {
 	updates chan Update
 	stop    bool
 	offset  uint64
-	Me      User
+	Limit   int
 	Timeout time.Duration
+	Me      User
 }
 
 // Create new bot instance
@@ -51,6 +53,7 @@ func NewBot(token string) (*Bot, error) {
 	bot := Bot{
 		token:   token,
 		updates: make(chan Update),
+		Limit:   100,
 		Timeout: 25 * time.Second,
 	}
 
@@ -124,6 +127,7 @@ func (bot *Bot) postMultipart(method string, file *http.File, params url.Values,
 // An Array of Update objects is returned.
 func (bot *Bot) getUpdates(offset uint64) ([]Update, error) {
 	params := url.Values{
+		"limit":   {fmt.Sprintf("%d", bot.Limit)},
 		"offset":  {fmt.Sprintf("%d", offset)},
 		"timeout": {fmt.Sprintf("%d", bot.Timeout/time.Second)},
 	}
@@ -161,6 +165,25 @@ func (bot *Bot) Stop() {
 // Updates channel
 func (bot *Bot) Updates() <-chan Update {
 	return bot.updates
+}
+
+func (bot *Bot) GetWebhookInfo() (*WebhookInfo, error) {
+	webhookInfo := new(WebhookInfo)
+	err := bot.get("getWebhookInfo", url.Values{}, webhookInfo)
+
+	return webhookInfo, err
+}
+
+func (bot *Bot) SetWebhook(webhookURL string, certificateData []byte) error {
+	params := url.Values{
+		"url": {webhookURL},
+	}
+	file := &http.File{
+		Source:    bytes.NewBuffer(certificateData),
+		Fieldname: "certificate",
+		Filename:  "certificate",
+	}
+	return bot.postMultipart("setWebhook", file, params, nil)
 }
 
 // A simple method for testing your bot's auth token.

@@ -384,7 +384,7 @@ type InputMessageContent interface {
 
 type inputMessageContentImplementation struct{}
 
-func (i inputMessageContentImplementation) itsInlineQueryResult() {}
+func (i inputMessageContentImplementation) itsInputMessageContent() {}
 
 // InputTextMessageContent contains text for displaying as an inline query result.
 type InputTextMessageContent struct {

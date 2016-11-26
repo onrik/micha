@@ -227,6 +227,7 @@ type Message struct {
 	// Optional
 	ForwardFrom           *User           `json:"forward_from"`
 	ForwardFromChat       *Chat           `json:"forward_from_chat"`
+	ForwardFromMessageID  int64           `json:"forward_from_message_id"`
 	ForwardDate           uint64          `json:"forward_date"`
 	ReplyToMessage        *Message        `json:"reply_to_message"`
 	EditDate              uint64          `json:"edit_date"`
@@ -285,13 +286,13 @@ type ReplyKeyboardMarkup struct {
 }
 
 // Upon receiving a message with this object,
-// Telegram clients will hide the current custom keyboard and display the default letter-keyboard.
+// Telegram clients will remove the current custom keyboard and display the default letter-keyboard.
 // By default, custom keyboards are displayed until a new keyboard is sent by a bot.
 // An exception is made for one-time keyboards that are hidden immediately after the user presses a button
-type ReplyKeyboardHide struct {
+type ReplyKeyboardRemove struct {
 	replyMarkupImplementation
-	HideKeyboard bool `json:"hide_keyboard,omitempty"`
-	Selective    bool `json:"selective,omitempty"`
+	RemoveKeyboard bool `json:"remove_keyboard,omitempty"`
+	Selective      bool `json:"selective,omitempty"`
 }
 
 // This object represents one button of an inline keyboard. You must use exactly one of the optional fields.
@@ -356,7 +357,17 @@ type Update struct {
 	// Optional
 	Message            *Message            `json:"message"`
 	EditedMessage      *Message            `json:"edited_message"`
+	ChannelPost        *Message            `json:"channel_post"`
+	EditedChannelPost  *Message            `json:"edited_channel_post"`
 	InlineQuery        *InlineQuery        `json:"inline_query"`
 	ChosenInlineResult *ChosenInlineResult `json:"chosen_inline_result"`
 	CallbackQuery      *CallbackQuery      `json:"callback_query"`
+}
+
+type WebhookInfo struct {
+	URL                  string `json:"url"`
+	HasCustomCertificate bool   `json:"has_custom_certificate"`
+	PendingUpdateCount   int    `json:"pending_update_count"`
+	LastErrorDate        uint64 `json:"last_error_date"`
+	LastErrorMessage     string `json:"last_error_message"`
 }

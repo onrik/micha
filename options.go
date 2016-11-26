@@ -92,10 +92,11 @@ type SendGameOptions struct {
 
 // Set game score optional params
 type SetGameScoreOptions struct {
-	ChatID          ChatID `json:"chat_id,omitempty"`
-	MessageID       int64  `json:"message_id,omitempty"`
-	InlineMessageID string `json:"inline_message_id,omitempty"`
-	EditMessage     bool   `json:"edit_message,omitempty"`
+	ChatID             ChatID `json:"chat_id,omitempty"`
+	MessageID          int64  `json:"message_id,omitempty"`
+	InlineMessageID    string `json:"inline_message_id,omitempty"`
+	DisableEditMessage bool   `json:"disable_edit_message,omitempty"`
+	Force              bool   `json:"force,omitempty"`
 }
 
 // Get game high scopres optional params
@@ -123,6 +124,7 @@ type AnswerCallbackQueryOptions struct {
 	Text      string `json:"text,omitempty"`
 	ShowAlert bool   `json:"show_alert,omitempty"`
 	URL       string `json:"url,omitempty"`
+	CacheTime int    `json:"cache_time,omitempty"`
 }
 
 // Answer inline query optional params
