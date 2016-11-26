@@ -5,15 +5,7 @@
 [![GoDoc](https://godoc.org/github.com/onrik/micha?status.svg)](https://godoc.org/github.com/onrik/micha)
 [![Gitter](https://badges.gitter.im/onrik/micha.svg)](https://gitter.im/onrik/micha)
 
-Client lib for [Telegram bot api](https://core.telegram.org/bots/api)
-
-- [x] Sending messages
-- [x] Sending files
-- [x] Forward messages
-- [x] Updating messages
-- [x] Inline mode
-- [x] Games
-
+Client lib for [Telegram bot api](https://core.telegram.org/bots/api). Supports **Bot API v2.3** (of 21th Nov 2016).
 
 ##### Simple echo bot example:
 ```go
