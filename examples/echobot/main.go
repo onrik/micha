@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/onrik/micha"
 	"log"
+
+	"github.com/onrik/micha"
 )
 
 func main() {
-	bot, err := micha.NewBot("164644784:AAH8ZAXl-naLedvGqf7X2nIGYL184dpJICQ")
+	bot, err := micha.NewBot("<token>")
 	if err != nil {
 		log.Fatal(err)
 	}
