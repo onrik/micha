@@ -60,13 +60,15 @@ func PostMultipart(url string, file *File, params url.Values) ([]byte, error) {
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
 
-	part, err := writer.CreateFormFile(file.Fieldname, file.Filename)
-	if err != nil {
-		return nil, err
-	}
+	if file != nil {
+		part, err := writer.CreateFormFile(file.Fieldname, file.Filename)
+		if err != nil {
+			return nil, err
+		}
 
-	if _, err := io.Copy(part, file.Source); err != nil {
-		return nil, err
+		if _, err := io.Copy(part, file.Source); err != nil {
+			return nil, err
+		}
 	}
 
 	for field, values := range params {

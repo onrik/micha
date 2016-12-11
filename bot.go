@@ -125,11 +125,15 @@ func (bot *Bot) postMultipart(method string, file *http.File, params url.Values,
 
 // Use this method to receive incoming updates using long polling.
 // An Array of Update objects is returned.
-func (bot *Bot) getUpdates(offset uint64) ([]Update, error) {
+func (bot *Bot) getUpdates(offset uint64, allowedUpdates ...string) ([]Update, error) {
 	params := url.Values{
 		"limit":   {fmt.Sprintf("%d", bot.Limit)},
 		"offset":  {fmt.Sprintf("%d", offset)},
 		"timeout": {fmt.Sprintf("%d", bot.Timeout/time.Second)},
+	}
+
+	if len(allowedUpdates) > 0 {
+		params["allowed_updates"] = allowedUpdates
 	}
 
 	updates := []Update{}
@@ -139,9 +143,9 @@ func (bot *Bot) getUpdates(offset uint64) ([]Update, error) {
 }
 
 // Start getting updates
-func (bot *Bot) Start() {
+func (bot *Bot) Start(allowedUpdates ...string) {
 	for {
-		updates, err := bot.getUpdates(bot.offset + 1)
+		updates, err := bot.getUpdates(bot.offset+1, allowedUpdates...)
 		if err != nil {
 			logger.Printf("Get updates error (%s)\n", err.Error())
 		}
@@ -174,23 +178,39 @@ func (bot *Bot) GetWebhookInfo() (*WebhookInfo, error) {
 	return webhookInfo, err
 }
 
-func (bot *Bot) SetWebhook(webhookURL string, certificateData []byte) error {
+func (bot *Bot) SetWebhook(webhookURL string, options *SetWebhookOptions) error {
+	var file *http.File
 	params := url.Values{
 		"url": {webhookURL},
 	}
-	file := &http.File{
-		Source:    bytes.NewBuffer(certificateData),
-		Fieldname: "certificate",
-		Filename:  "certificate",
+	if options != nil {
+		if options.MaxConnections > 0 {
+			params.Set("max_connections", fmt.Sprintf("%d", options.MaxConnections))
+		}
+		if len(options.AllowedUpdates) > 0 {
+			params["allowed_updates"] = options.AllowedUpdates
+		}
+		if len(options.Certificate) > 0 {
+			file = &http.File{
+				Source:    bytes.NewBuffer(options.Certificate),
+				Fieldname: "certificate",
+				Filename:  "certificate",
+			}
+		}
 	}
+
 	return bot.postMultipart("setWebhook", file, params, nil)
+}
+
+func (bot *Bot) DeleteWebhook() error {
+	return bot.post("deleteWebhook", nil, nil)
 }
 
 // A simple method for testing your bot's auth token.
 // Returns basic information about the bot in form of a User object.
 func (bot *Bot) GetMe() (*User, error) {
 	me := new(User)
-	err := bot.get("getMe", url.Values{}, me)
+	err := bot.get("getMe", nil, me)
 
 	return me, err
 }

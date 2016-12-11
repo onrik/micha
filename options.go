@@ -135,3 +135,10 @@ type AnswerInlineQueryOptions struct {
 	SwitchPmText      string `json:"switch_pm_text,omitempty"`
 	SwitchPmParameter string `json:"switch_pm_parameter,omitempty"`
 }
+
+// Set webhook query optional params
+type SetWebhookOptions struct {
+	Certificate    []byte   `json:"certificate,omitempty"`
+	MaxConnections int      `json:"max_connections,omitempty"`
+	AllowedUpdates []string `json:"allowed_updates,omitempty"`
+}

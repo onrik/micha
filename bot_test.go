@@ -138,7 +138,13 @@ func (s *BotTestSuite) TestBuildUrl() {
 }
 
 func (s *BotTestSuite) TestGetUpdates() {
-	s.registerResponse("getUpdates", url.Values{"offset": {"1"}, "timeout": {"25"}, "limit": {"100"}}, `{
+	values := url.Values{
+		"offset":          {"1"},
+		"timeout":         {"25"},
+		"limit":           {"100"},
+		"allowed_updates": {"message", "callback_query"},
+	}
+	s.registerResponse("getUpdates", values, `{
 		"ok": true,
 		"result": [{
 			"update_id": 463249624
@@ -152,8 +158,8 @@ func (s *BotTestSuite) TestGetUpdates() {
 
 	}()
 
-	s.bot.Start()
-	s.True(true, s.bot.stop)
+	s.bot.Start("message", "callback_query")
+	s.True(s.bot.stop)
 	s.Equal(uint64(463249624), s.bot.offset)
 }
 
@@ -188,7 +194,9 @@ func (s *BotTestSuite) TestGetWebhookInfo() {
 			"has_custom_certificate": true,
 			"pending_update_count": 33,
 			"last_error_date": 1480190406,
-			"last_error_message": "No way"
+			"last_error_message": "No way",
+			"max_connections": 4,
+			"allowed_updates": ["message", "callback_query"]
 		}
 	}`)
 	webhookInfo, err := s.bot.GetWebhookInfo()
@@ -199,13 +207,23 @@ func (s *BotTestSuite) TestGetWebhookInfo() {
 	s.Equal(33, webhookInfo.PendingUpdateCount)
 	s.Equal(uint64(1480190406), webhookInfo.LastErrorDate)
 	s.Equal("No way", webhookInfo.LastErrorMessage)
+	s.Equal(4, webhookInfo.MaxConnections)
+	s.Equal([]string{"message", "callback_query"}, webhookInfo.AllowedUpdates)
 }
 
 func (s *BotTestSuite) TestSetWebhook() {
 	params := url.Values{
-		"url": {"hookurl"},
+		"url":             {"hookurl"},
+		"max_connections": {"9"},
+		"allowed_updates": {"message"},
 	}
 	data := "92839727433"
+	options := &SetWebhookOptions{
+		Certificate:    []byte(data),
+		MaxConnections: 9,
+		AllowedUpdates: []string{"message"},
+	}
+
 	file := mhttp.File{
 		Source:    bytes.NewBufferString(data),
 		Fieldname: "certificate",
@@ -213,7 +231,7 @@ func (s *BotTestSuite) TestSetWebhook() {
 	}
 	s.registeMultipartrRequestCheck("setWebhook", params, file)
 
-	err := s.bot.SetWebhook("hookurl", []byte(data))
+	err := s.bot.SetWebhook("hookurl", options)
 
 	s.Nil(err)
 }
