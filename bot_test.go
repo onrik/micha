@@ -215,13 +215,13 @@ func (s *BotTestSuite) TestSetWebhook() {
 	params := url.Values{
 		"url":             {"hookurl"},
 		"max_connections": {"9"},
-		"allowed_updates": {"message"},
+		"allowed_updates": {"message", "callback_query"},
 	}
 	data := "92839727433"
 	options := &SetWebhookOptions{
 		Certificate:    []byte(data),
 		MaxConnections: 9,
-		AllowedUpdates: []string{"message"},
+		AllowedUpdates: []string{"message", "callback_query"},
 	}
 
 	file := mhttp.File{
@@ -233,6 +233,13 @@ func (s *BotTestSuite) TestSetWebhook() {
 
 	err := s.bot.SetWebhook("hookurl", options)
 
+	s.Nil(err)
+}
+
+func (s *BotTestSuite) TestDeleteWebhook() {
+	s.registerRequestCheck("deleteWebhook", "")
+
+	err := s.bot.DeleteWebhook()
 	s.Nil(err)
 }
 

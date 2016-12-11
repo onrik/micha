@@ -37,8 +37,10 @@ func Get(url string) ([]byte, error) {
 
 func Post(url string, data interface{}) ([]byte, error) {
 	body := new(bytes.Buffer)
-	if err := json.NewEncoder(body).Encode(data); err != nil {
-		return nil, fmt.Errorf("Encode data error (%s)", err.Error())
+	if data != nil {
+		if err := json.NewEncoder(body).Encode(data); err != nil {
+			return nil, fmt.Errorf("Encode data error (%s)", err.Error())
+		}
 	}
 
 	request, err := http.NewRequest("POST", url, body)
@@ -72,8 +74,8 @@ func PostMultipart(url string, file *File, params url.Values) ([]byte, error) {
 	}
 
 	for field, values := range params {
-		if len(values) > 0 {
-			if err := writer.WriteField(field, values[0]); err != nil {
+		for i := range values {
+			if err := writer.WriteField(field, values[i]); err != nil {
 				return nil, err
 			}
 		}
