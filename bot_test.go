@@ -10,7 +10,6 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/suite"
@@ -26,18 +25,13 @@ type BotTestSuite struct {
 func (s *BotTestSuite) SetupSuite() {
 	httpmock.Activate()
 
-	httpmock.RegisterResponder("GET", "https://api.telegram.org/bot111/getMe",
-		httpmock.NewStringResponder(200, `{"ok":true,"result":{"id":1,"first_name":"Micha","username":"michabot"}}`))
-
-	bot, err := NewBot("111")
-	s.Equal(err, nil)
-	s.Equal(bot.Me.FirstName, "Micha")
-	s.Equal(bot.Me.ID, int64(1))
-	s.Equal(bot.Me.Username, "michabot")
-	s.Equal(100, bot.Limit)
-	s.Equal(25*time.Second, bot.Timeout)
-
-	s.bot = bot
+	s.bot = &Bot{
+		token:   "111",
+		timeout: 25,
+		limit:   100,
+		logger:  newLogger("micha"),
+		updates: make(chan Update),
+	}
 }
 
 func (s *BotTestSuite) TearDownSuite() {
@@ -111,6 +105,34 @@ func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValu
 	})
 }
 
+func (s *BotTestSuite) TestNewBot() {
+	s.registerResponse("getMe", nil, `{
+		"ok":true,
+		"result": {
+			"id":1,
+			"first_name": "Micha",
+			"username": "michabot"
+		}
+	}`)
+
+	// Without options
+	bot, err := NewBot("111")
+	s.Require().Nil(err)
+	s.Require().NotNil(bot)
+	s.Require().Equal(25, bot.timeout)
+	s.Require().Equal(100, bot.limit)
+	s.Require().Equal(newLogger("michabot"), bot.logger)
+
+	// With options
+	logger := log.New(os.Stderr, "", log.LstdFlags)
+	bot, err = NewBot("111", WithLimit(50), WithTimeout(10), WithLogger(logger))
+	s.Require().Nil(err)
+	s.Require().NotNil(bot)
+	s.Require().Equal(10, bot.timeout)
+	s.Require().Equal(50, bot.limit)
+	s.Require().Equal(logger, bot.logger)
+}
+
 func (s *BotTestSuite) TestErrorsHandle() {
 	s.registerResponse("method", nil, `{dsfkdf`)
 
@@ -122,7 +144,7 @@ func (s *BotTestSuite) TestErrorsHandle() {
 	s.registerResponse("method", nil, `{"ok":false, "error_code": 111}`)
 	err = s.bot.get("method", nil, nil)
 	s.NotEqual(err, nil)
-	s.True(strings.Contains(err.Error(), "Response status: 111"))
+	s.True(strings.Contains(err.Error(), "Error 111"))
 
 	httpmock.Reset()
 	s.registerResponse("method", nil, `{"ok":true, "result": "dssdd"}`)
@@ -161,6 +183,26 @@ func (s *BotTestSuite) TestGetUpdates() {
 	s.bot.Start("message", "callback_query")
 	s.True(s.bot.stop)
 	s.Equal(uint64(463249624), s.bot.offset)
+}
+
+func (s *BotTestSuite) TestGetMe() {
+	s.registerResponse("getMe", nil, `{
+		"ok":true,
+		"result": {
+			"id": 143,
+			"first_name": "John",
+			"last_name": "Doe",
+			"username": "jdbot"
+		}
+	}`)
+
+	me, err := s.bot.GetMe()
+	s.Require().Nil(err)
+	s.Require().NotNil(me)
+	s.Require().Equal(int64(143), me.ID)
+	s.Require().Equal("John", me.FirstName)
+	s.Require().Equal("Doe", me.LastName)
+	s.Require().Equal("jdbot", me.Username)
 }
 
 func (s *BotTestSuite) TestGetChat() {
@@ -800,12 +842,6 @@ func (s *BotTestSuite) TestAnswerInlineQuery() {
 		SwitchPmParameter: "no",
 	})
 	s.Equal(err, nil)
-}
-
-func (s *BotTestSuite) TestSetLogger() {
-	l := log.New(os.Stdout, "", log.Ldate)
-	SetLogger(l)
-	s.Equal(logger, l)
 }
 
 func TestBotTestSuite(t *testing.T) {

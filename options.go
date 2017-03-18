@@ -1,5 +1,36 @@
 package micha
 
+type Options struct {
+	Limit   int
+	Timeout int
+	Logger  Logger
+}
+
+type Option func(*Options)
+
+// WithLimit - set getUpdates limit
+// Values between 1—100 are accepted. Defaults to 100.
+func WithLimit(limit int) Option {
+	return func(o *Options) {
+		o.Limit = limit
+	}
+}
+
+// WithTimeout - set timeout in seconds for getUpdates long polling
+// Defaults to 25
+func WithTimeout(timeout int) Option {
+	return func(o *Options) {
+		o.Timeout = timeout
+	}
+}
+
+// WithLogger - set logger
+func WithLogger(logger Logger) Option {
+	return func(o *Options) {
+		o.Logger = logger
+	}
+}
+
 // Send message optional params
 type SendMessageOptions struct {
 	DisableNotification   bool        `json:"disable_notification,omitempty"`

@@ -5,10 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/url"
-	"os"
-	"time"
 
 	"github.com/onrik/micha/http"
 )
@@ -18,19 +15,6 @@ const (
 	FILE_API_URL = "https://api.telegram.org/file/bot%s/%s"
 )
 
-var (
-	logger *log.Logger
-)
-
-func init() {
-	logger = log.New(os.Stdout, "micha ", log.Ldate|log.Ltime|log.Lshortfile)
-}
-
-// Set logger
-func SetLogger(l *log.Logger) {
-	logger = l
-}
-
 type Response struct {
 	Ok          bool            `json:"ok"`
 	ErrorCode   int             `json:"error_code"`
@@ -39,30 +23,44 @@ type Response struct {
 }
 
 type Bot struct {
+	Me User
+
 	token   string
 	updates chan Update
 	stop    bool
 	offset  uint64
-	Limit   int
-	Timeout time.Duration
-	Me      User
+	limit   int
+	timeout int
+	logger  Logger
 }
 
-// Create new bot instance
-func NewBot(token string) (*Bot, error) {
+// NewBot - create new bot instance
+func NewBot(token string, opts ...Option) (*Bot, error) {
 	bot := Bot{
 		token:   token,
 		updates: make(chan Update),
-		Limit:   100,
-		Timeout: 25 * time.Second,
 	}
 
-	if me, err := bot.GetMe(); err != nil {
+	me, err := bot.GetMe()
+	if err != nil {
 		return nil, err
-	} else {
-		bot.Me = *me
-		return &bot, nil
 	}
+
+	options := &Options{
+		Limit:   100,
+		Timeout: 25,
+		Logger:  newLogger(me.Username),
+	}
+
+	for _, opt := range opts {
+		opt(options)
+	}
+
+	bot.Me = *me
+	bot.limit = options.Limit
+	bot.timeout = options.Timeout
+	bot.logger = options.Logger
+	return &bot, nil
 }
 
 // Build url for API method
@@ -78,7 +76,7 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 	}
 
 	if !response.Ok {
-		return fmt.Errorf("Response status: %d (%s)", response.ErrorCode, response.Description)
+		return fmt.Errorf("Error %d (%s)", response.ErrorCode, response.Description)
 	}
 
 	if target == nil {
@@ -127,9 +125,9 @@ func (bot *Bot) postMultipart(method string, file *http.File, params url.Values,
 // An Array of Update objects is returned.
 func (bot *Bot) getUpdates(offset uint64, allowedUpdates ...string) ([]Update, error) {
 	params := url.Values{
-		"limit":   {fmt.Sprintf("%d", bot.Limit)},
+		"limit":   {fmt.Sprintf("%d", bot.limit)},
 		"offset":  {fmt.Sprintf("%d", offset)},
-		"timeout": {fmt.Sprintf("%d", bot.Timeout/time.Second)},
+		"timeout": {fmt.Sprintf("%d", bot.timeout)},
 	}
 
 	if len(allowedUpdates) > 0 {
@@ -147,7 +145,7 @@ func (bot *Bot) Start(allowedUpdates ...string) {
 	for {
 		updates, err := bot.getUpdates(bot.offset+1, allowedUpdates...)
 		if err != nil {
-			logger.Printf("Get updates error (%s)\n", err.Error())
+			bot.logger.Printf("Get updates error (%s)\n", err.Error())
 		}
 
 		for _, update := range updates {
