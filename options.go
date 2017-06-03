@@ -92,6 +92,15 @@ type SendVoiceOptions struct {
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
+// Send video note optional params
+type SendVideoNoteOptions struct {
+	Duration            int         `json:"duration,omitempty"`
+	Length              int         `json:"length,omitempty"`
+	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
+	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
+}
+
 // Send location optional params
 type SendLocationOptions struct {
 	DisableNotification bool        `json:"disable_notification,omitempty"`

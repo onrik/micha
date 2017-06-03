@@ -52,6 +52,10 @@ func (s *BotTestSuite) registerResponse(method string, params url.Values, respon
 }
 
 func (s *BotTestSuite) registerRequestCheck(method string, exceptedRequest string) {
+	s.registerResultWithRequestCheck(method, `{}`, exceptedRequest)
+}
+
+func (s *BotTestSuite) registerResultWithRequestCheck(method, result, exceptedRequest string) {
 	url := s.bot.buildURL(method)
 
 	httpmock.RegisterResponder("POST", url, func(request *http.Request) (*http.Response, error) {
@@ -60,9 +64,12 @@ func (s *BotTestSuite) registerRequestCheck(method string, exceptedRequest strin
 		if err != nil {
 			return nil, err
 		}
-
-		s.Equal(exceptedRequest, strings.TrimSpace(string(body)))
-		return httpmock.NewStringResponse(200, `{"ok":true, "result": {}}`), nil
+		if exceptedRequest == "" {
+			s.Require().Equal(exceptedRequest, strings.TrimSpace(string(body)))
+		} else {
+			s.JSONEq(exceptedRequest, string(body))
+		}
+		return httpmock.NewStringResponse(200, fmt.Sprintf(`{"ok":true, "result": %s}`, result)), nil
 	})
 }
 
@@ -588,6 +595,62 @@ func (s *BotTestSuite) TestSendVoiceFile() {
 	s.NotEqual(message, nil)
 }
 
+func (s *BotTestSuite) TestSendVideoNote() {
+	// Test without options
+	s.registerResultWithRequestCheck("sendVideoNote", "{}", `{
+		"chat_id": "123",
+		"video_note": "837y7w6gdf6sd"
+	}`)
+
+	message, err := s.bot.SendVideoNote("123", "837y7w6gdf6sd", nil)
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+
+	httpmock.Reset()
+
+	// Test with options
+	s.registerResultWithRequestCheck("sendVideoNote", "{}", `{
+		"chat_id": "123",
+		"video_note": "837y7w6gdf6sd",
+		"duration": 22,
+		"length": 133,
+		"disable_notification": true,
+		"reply_to_message_id": 39047324
+	}`)
+	message, err = s.bot.SendVideoNote("123", "837y7w6gdf6sd", &SendVideoNoteOptions{
+		Duration:            22,
+		Length:              133,
+		DisableNotification: true,
+		ReplyToMessageID:    39047324,
+	})
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
+func (s *BotTestSuite) TestSendVideoNoteFile() {
+	params := url.Values{
+		"chat_id":             {"522"},
+		"duration":            {"347"},
+		"length":              {"3847"},
+		"reply_to_message_id": {"3904834"},
+	}
+	data := bytes.NewBufferString("video note data")
+	file := mhttp.File{
+		Source:    bytes.NewBufferString("video note data"),
+		Fieldname: "video_note",
+		Filename:  "aaa.mp4",
+	}
+	s.registeMultipartrRequestCheck("sendVideoNote", params, file)
+
+	message, err := s.bot.SendVideoNoteFile("522", data, "aaa.mp4", &SendVideoNoteOptions{
+		Duration:         347,
+		Length:           3847,
+		ReplyToMessageID: 3904834,
+	})
+	s.Equal(err, nil)
+	s.NotEqual(message, nil)
+}
+
 func (s *BotTestSuite) TestSendLocation() {
 	request := `{"chat_id":"128","latitude":22.532434,"longitude":-44.8243324,"reply_to_message_id":148}`
 	s.registerRequestCheck("sendLocation", request)
@@ -782,11 +845,11 @@ func (s *BotTestSuite) TestGetGameHighScorese() {
 	s.Equal(len(scores), 2)
 	s.Equal(scores[0].Position, 1)
 	s.Equal(scores[0].Score, 22)
-	s.Equal(scores[0].User, User{456, "John", "Doe", "john_doe"})
+	s.Equal(scores[0].User, User{456, "John", "Doe", "john_doe", ""})
 
 	s.Equal(scores[1].Position, 2)
 	s.Equal(scores[1].Score, 11)
-	s.Equal(scores[1].User, User{789, "Mohammad", "Li", "mli"})
+	s.Equal(scores[1].User, User{789, "Mohammad", "Li", "mli", ""})
 
 }
 
@@ -822,6 +885,27 @@ func (s *BotTestSuite) TestEditMessageReplyMarkup() {
 	})
 
 	s.Equal(err, nil)
+}
+
+func (s *BotTestSuite) TestDeleteMessage() {
+	s.registerResultWithRequestCheck("deleteMessage", "true", `{
+		"chat_id": "111",
+		"message_id": 124
+	}`)
+
+	success, err := s.bot.DeleteMessage("111", 124)
+	s.Require().Nil(err)
+	s.Require().True(success)
+
+	httpmock.Reset()
+	s.registerResultWithRequestCheck("deleteMessage", "false", `{
+		"chat_id": "222",
+		"message_id": 431
+	}`)
+
+	success, err = s.bot.DeleteMessage("222", 431)
+	s.Require().Nil(err)
+	s.Require().False(success)
 }
 
 func (s *BotTestSuite) TestAnswerInlineQuery() {

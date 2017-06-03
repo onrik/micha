@@ -411,6 +411,36 @@ func (bot *Bot) SendVoiceFile(chatID ChatID, file io.Reader, fileName string, op
 	return message, err
 }
 
+// Send exists video note by file_id
+func (bot *Bot) SendVideoNote(chatID ChatID, videoNoteID string, options *SendVideoNoteOptions) (*Message, error) {
+	params := newSendVideoNoteParams(chatID, videoNoteID, options)
+
+	message := new(Message)
+	err := bot.post("sendVideoNote", params, message)
+
+	return message, err
+}
+
+// Use this method to send video messages
+func (bot *Bot) SendVideoNoteFile(chatID ChatID, file io.Reader, fileName string, options *SendVideoNoteOptions) (*Message, error) {
+	params := newSendVideoNoteParams(chatID, "", options)
+	values, err := structToValues(params)
+	if err != nil {
+		return nil, err
+	}
+
+	f := &http.File{
+		Source:    file,
+		Fieldname: "video_note",
+		Filename:  fileName,
+	}
+
+	message := new(Message)
+	err = bot.postMultipart("sendVideoNote", f, values, message)
+
+	return message, err
+}
+
 // Use this method to send point on the map
 func (bot *Bot) SendLocation(chatID ChatID, latitude, longitude float64, options *SendLocationOptions) (*Message, error) {
 	params := newSendLocationParams(chatID, latitude, longitude, options)
@@ -553,6 +583,23 @@ func (bot *Bot) EditMessageReplyMarkup(chatID ChatID, messageID int64, inlineMes
 	err := bot.post("editMessageReplyMarkup", params, message)
 
 	return message, err
+}
+
+// Use this method to delete a message.
+// A message can only be deleted if it was sent less than 48 hours ago.
+// Any such recently sent outgoing message may be deleted.
+// Additionally, if the bot is an administrator in a group chat, it can delete any message.
+// If the bot is an administrator in a supergroup, it can delete messages from any other user and service messages about people joining or leaving the group (other types of service messages may only be removed by the group creator). In channels, bots can only remove their own messages.
+func (bot *Bot) DeleteMessage(chatID ChatID, messageID int64) (bool, error) {
+	params := map[string]interface{}{
+		"chat_id":    chatID,
+		"message_id": messageID,
+	}
+
+	var success bool
+	err := bot.post("deleteMessage", params, &success)
+
+	return success, err
 }
 
 // Use this method to send answers to an inline query.

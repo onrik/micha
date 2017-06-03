@@ -10,14 +10,16 @@ const (
 	CHAT_TYPE_SUPERGROUP ChatType = "supergroup"
 	CHAT_TYPE_CHANNEL    ChatType = "channel"
 
-	CHAT_ACTION_TYPING          ChatAction = "typing"
-	CHAT_ACTION_UPLOAD_PHOTO    ChatAction = "upload_photo"
-	CHAT_ACTION_RECORD_VIDEO    ChatAction = "record_video"
-	CHAT_ACTION_UPLOAD_VIDEO    ChatAction = "upload_video"
-	CHAT_ACTION_RECORD_AUDIO    ChatAction = "record_audio"
-	CHAT_ACTION_UPLOAD_AUDIO    ChatAction = "upload_audio"
-	CHAT_ACTION_UPLOAD_DOCUMENT ChatAction = "upload_document"
-	CHAT_ACTION_FIND_LOCATION   ChatAction = "find_location"
+	CHAT_ACTION_TYPING            ChatAction = "typing"
+	CHAT_ACTION_UPLOAD_PHOTO      ChatAction = "upload_photo"
+	CHAT_ACTION_RECORD_VIDEO      ChatAction = "record_video"
+	CHAT_ACTION_UPLOAD_VIDEO      ChatAction = "upload_video"
+	CHAT_ACTION_RECORD_AUDIO      ChatAction = "record_audio"
+	CHAT_ACTION_UPLOAD_AUDIO      ChatAction = "upload_audio"
+	CHAT_ACTION_UPLOAD_DOCUMENT   ChatAction = "upload_document"
+	CHAT_ACTION_FIND_LOCATION     ChatAction = "find_location"
+	CHAT_ACTION_RECORD_VIDEO_NOTE ChatAction = "record_video_note"
+	CHAT_ACTION_UPLOAD_VIDEO_NOTE ChatAction = "upload_video_note"
 
 	MEMBER_STATUS_CREATOR       MemberStatus = "creator"
 	MEMBER_STATUS_ADMINISTRATOR MemberStatus = "administrator"
@@ -46,10 +48,11 @@ type MessageEntityType string
 
 // User object represents a Telegram user, bot
 type User struct {
-	ID        int64  `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Username  string `json:"username"`
+	ID           int64  `json:"id"`
+	FirstName    string `json:"first_name"`
+	LastName     string `json:"last_name"`
+	Username     string `json:"username"`
+	LanguageCode string `json:"language_code"`
 }
 
 type ChatID string
@@ -133,6 +136,15 @@ type Video struct {
 	Width    int        `json:"width"`
 	Height   int        `json:"height"`
 	Thumb    *PhotoSize `json:"thumb"`
+}
+
+// VideoNote object represents a video message.
+type VideoNote struct {
+	FileBase
+
+	Length   int       `json:"length"`
+	Duration int       `json:"duration"`
+	Thumb    PhotoSize `json:"thumb"`
 }
 
 // Voice object represents a voice note.
@@ -239,6 +251,8 @@ type Message struct {
 	Photo                 []PhotoSize     `json:"photo"`
 	Sticker               *Sticker        `json:"sticker"`
 	Video                 *Video          `json:"video"`
+	VideoNote             *VideoNote      `json:"video_note"`
+	NewChatMembers        []User          `json:"new_chat_members"`
 	Voice                 *Voice          `json:"voice"`
 	Caption               string          `json:"caption"`
 	Contact               *Contact        `json:"contact"`

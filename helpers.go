@@ -147,6 +147,25 @@ func newSendVoiceParams(chatID ChatID, voice string, options *SendVoiceOptions) 
 	return params
 }
 
+type sendVideoNoteParams struct {
+	ChatID    ChatID `json:"chat_id"`
+	VideoNote string `json:"video_note,omitempty"`
+	SendVideoNoteOptions
+}
+
+func newSendVideoNoteParams(chatID ChatID, videoNote string, options *SendVideoNoteOptions) *sendVideoNoteParams {
+	params := &sendVideoNoteParams{
+		ChatID:    chatID,
+		VideoNote: videoNote,
+	}
+
+	if options != nil {
+		params.SendVideoNoteOptions = *options
+	}
+
+	return params
+}
+
 type sendLocationParams struct {
 	ChatID    ChatID  `json:"chat_id"`
 	Latitude  float64 `json:"latitude,omitempty"`
