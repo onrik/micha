@@ -1,9 +1,10 @@
 package micha
 
 type Options struct {
-	Limit   int
-	Timeout int
-	Logger  Logger
+	limit      int
+	timeout    int
+	logger     Logger
+	httpClient HttpClient
 }
 
 type Option func(*Options)
@@ -12,7 +13,7 @@ type Option func(*Options)
 // Values between 1—100 are accepted. Defaults to 100.
 func WithLimit(limit int) Option {
 	return func(o *Options) {
-		o.Limit = limit
+		o.limit = limit
 	}
 }
 
@@ -20,14 +21,21 @@ func WithLimit(limit int) Option {
 // Defaults to 25
 func WithTimeout(timeout int) Option {
 	return func(o *Options) {
-		o.Timeout = timeout
+		o.timeout = timeout
 	}
 }
 
 // WithLogger - set logger
 func WithLogger(logger Logger) Option {
 	return func(o *Options) {
-		o.Logger = logger
+		o.logger = logger
+	}
+}
+
+// WithHttpClient - set custom http client
+func WithHttpClient(httpClient HttpClient) Option {
+	return func(o *Options) {
+		o.httpClient = httpClient
 	}
 }
 

@@ -314,9 +314,11 @@ type InlineKeyboardButton struct {
 	Text string `json:"text,omitempty"`
 
 	// Optional
-	URL               string `json:"url,omitempty"`
-	CallbackData      string `json:"callback_data,omitempty"`
-	SwitchInlineQuery string `json:"switch_inline_query,omitempty"`
+	URL                          string `json:"url,omitempty"`
+	CallbackData                 string `json:"callback_data,omitempty"`
+	SwitchInlineQuery            string `json:"switch_inline_query,omitempty"`
+	SwitchInlineQueryCurrentChat string `json:"switch_inline_query_current_chat,omitempty"`
+	Pay                          bool   `json:"pay,omitempty"`
 }
 
 // This object represents an inline keyboard that appears right next to the message it belongs to.
@@ -351,7 +353,9 @@ type CallbackQuery struct {
 	From            User     `json:"from"`
 	Message         *Message `json:"message"`
 	InlineMessageID string   `json:"inline_message_id"`
+	ChatInstance    string   `json:"chat_instance"`
 	Data            string   `json:"data"`
+	GameShortName   string   `json:"game_short_name"`
 }
 
 // This object represents an incoming inline query.
@@ -386,4 +390,15 @@ type WebhookInfo struct {
 	LastErrorMessage     string   `json:"last_error_message"`
 	MaxConnections       int      `json:"max_connections"`
 	AllowedUpdates       []string `json:"allowed_updates"`
+}
+
+type Invoice struct {
+	Title          string
+	Description    string
+	StartParameter string
+	Currency       string
+	TotalAmount    int
+}
+
+type ShippingAddress struct {
 }

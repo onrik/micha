@@ -5,9 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"net/url"
-
-	"github.com/onrik/micha/http"
 )
 
 const (
@@ -22,21 +21,32 @@ type Response struct {
 	Result      json.RawMessage `json:"result"`
 }
 
+// Bot telegram bot
 type Bot struct {
+	Options
 	Me User
 
 	token   string
 	updates chan Update
 	stop    bool
 	offset  uint64
-	limit   int
-	timeout int
-	logger  Logger
 }
 
 // NewBot - create new bot instance
 func NewBot(token string, opts ...Option) (*Bot, error) {
+	options := Options{
+		limit:      100,
+		timeout:    25,
+		logger:     newLogger("micha"),
+		httpClient: http.DefaultClient,
+	}
+
+	for _, opt := range opts {
+		opt(&options)
+	}
+
 	bot := Bot{
+		Options: options,
 		token:   token,
 		updates: make(chan Update),
 	}
@@ -46,20 +56,8 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 		return nil, err
 	}
 
-	options := &Options{
-		Limit:   100,
-		Timeout: 25,
-		Logger:  newLogger(me.Username),
-	}
-
-	for _, opt := range opts {
-		opt(options)
-	}
-
 	bot.Me = *me
-	bot.limit = options.Limit
-	bot.timeout = options.Timeout
-	bot.logger = options.Logger
+
 	return &bot, nil
 }
 
@@ -86,39 +84,67 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 
 	if err := json.Unmarshal(response.Result, target); err != nil {
 		return fmt.Errorf("Decode result error (%s)", err.Error())
-	} else {
-		return nil
 	}
+
+	return nil
 }
 
-// Make GET request to Telegram API
+// Send GET request to Telegram API
 func (bot *Bot) get(method string, params url.Values, target interface{}) error {
-	response, err := http.Get(bot.buildURL(method) + "?" + params.Encode())
+	request, err := newGetRequest(bot.buildURL(method), params)
 	if err != nil {
 		return err
-	} else {
-		return bot.decodeResponse(response, target)
 	}
+
+	response, err := bot.httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	body, err := handleResponse(response)
+	if err != nil {
+		return err
+	}
+
+	return bot.decodeResponse(body, target)
 }
 
-// Make POST request to Telegram API
+// Send POST request to Telegram API
 func (bot *Bot) post(method string, data, target interface{}) error {
-	response, err := http.Post(bot.buildURL(method), data)
+	request, err := newPostRequest(bot.buildURL(method), data)
 	if err != nil {
 		return err
-	} else {
-		return bot.decodeResponse(response, target)
 	}
+	response, err := bot.httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	body, err := handleResponse(response)
+	if err != nil {
+		return err
+	}
+
+	return bot.decodeResponse(body, target)
 }
 
-// Make POST request to Telegram API
-func (bot *Bot) postMultipart(method string, file *http.File, params url.Values, target interface{}) error {
-	response, err := http.PostMultipart(bot.buildURL(method), file, params)
+// Send POST multipart request to Telegram API
+func (bot *Bot) postMultipart(method string, file *fileField, params url.Values, target interface{}) error {
+	request, err := newMultipartRequest(bot.buildURL(method), file, params)
 	if err != nil {
 		return err
-	} else {
-		return bot.decodeResponse(response, target)
 	}
+	response, err := bot.httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	body, err := handleResponse(response)
+	if err != nil {
+		return err
+	}
+
+	return bot.decodeResponse(body, target)
 }
 
 // Use this method to receive incoming updates using long polling.
@@ -177,7 +203,7 @@ func (bot *Bot) GetWebhookInfo() (*WebhookInfo, error) {
 }
 
 func (bot *Bot) SetWebhook(webhookURL string, options *SetWebhookOptions) error {
-	var file *http.File
+	var file *fileField
 	params := url.Values{
 		"url": {webhookURL},
 	}
@@ -189,7 +215,7 @@ func (bot *Bot) SetWebhook(webhookURL string, options *SetWebhookOptions) error 
 			params["allowed_updates"] = options.AllowedUpdates
 		}
 		if len(options.Certificate) > 0 {
-			file = &http.File{
+			file = &fileField{
 				Source:    bytes.NewBuffer(options.Certificate),
 				Fieldname: "certificate",
 				Filename:  "certificate",
@@ -247,7 +273,7 @@ func (bot *Bot) SendPhotoFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &http.File{
+	f := &fileField{
 		Source:    file,
 		Fieldname: "photo",
 		Filename:  fileName,
@@ -277,7 +303,7 @@ func (bot *Bot) SendAudioFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &http.File{
+	f := &fileField{
 		Source:    file,
 		Fieldname: "audio",
 		Filename:  fileName,
@@ -307,7 +333,7 @@ func (bot *Bot) SendDocumentFile(chatID ChatID, file io.Reader, fileName string,
 		return nil, err
 	}
 
-	f := &http.File{
+	f := &fileField{
 		Source:    file,
 		Fieldname: "document",
 		Filename:  fileName,
@@ -337,7 +363,7 @@ func (bot *Bot) SendStickerFile(chatID ChatID, file io.Reader, fileName string, 
 		return nil, err
 	}
 
-	f := &http.File{
+	f := &fileField{
 		Source:    file,
 		Fieldname: "sticker",
 		Filename:  fileName,
@@ -367,7 +393,7 @@ func (bot *Bot) SendVideoFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &http.File{
+	f := &fileField{
 		Source:    file,
 		Fieldname: "video",
 		Filename:  fileName,
@@ -399,7 +425,7 @@ func (bot *Bot) SendVoiceFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &http.File{
+	f := &fileField{
 		Source:    file,
 		Fieldname: "voice",
 		Filename:  fileName,
@@ -429,7 +455,7 @@ func (bot *Bot) SendVideoNoteFile(chatID ChatID, file io.Reader, fileName string
 		return nil, err
 	}
 
-	f := &http.File{
+	f := &fileField{
 		Source:    file,
 		Fieldname: "video_note",
 		Filename:  fileName,

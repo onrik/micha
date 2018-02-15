@@ -1,4 +1,4 @@
-package http
+package micha
 
 import (
 	"bytes"
@@ -11,7 +11,12 @@ import (
 	"net/url"
 )
 
-type File struct {
+// HttpClient interface
+type HttpClient interface {
+	Do(*http.Request) (*http.Response, error)
+}
+
+type fileField struct {
 	Source    io.Reader
 	Fieldname string
 	Filename  string
@@ -20,22 +25,20 @@ type File struct {
 func handleResponse(response *http.Response) ([]byte, error) {
 	defer response.Body.Close()
 	if response.StatusCode > http.StatusBadRequest {
-		return nil, fmt.Errorf("Response status: %d", response.StatusCode)
-	} else {
-		return ioutil.ReadAll(response.Body)
+		return nil, fmt.Errorf("HTTP status: %d", response.StatusCode)
 	}
+
+	return ioutil.ReadAll(response.Body)
 }
 
-func Get(url string) ([]byte, error) {
-	response, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	} else {
-		return handleResponse(response)
+func newGetRequest(url string, params url.Values) (*http.Request, error) {
+	if params != nil {
+		url += fmt.Sprintf("?%s", params.Encode())
 	}
+	return http.NewRequest(http.MethodGet, url, nil)
 }
 
-func Post(url string, data interface{}) ([]byte, error) {
+func newPostRequest(url string, data interface{}) (*http.Request, error) {
 	body := new(bytes.Buffer)
 	if data != nil {
 		if err := json.NewEncoder(body).Encode(data); err != nil {
@@ -43,22 +46,17 @@ func Post(url string, data interface{}) ([]byte, error) {
 		}
 	}
 
-	request, err := http.NewRequest("POST", url, body)
+	request, err := http.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}
 
 	request.Header.Add("Content-Type", "application/json")
 
-	response, err := (&http.Client{}).Do(request)
-	if err != nil {
-		return nil, err
-	} else {
-		return handleResponse(response)
-	}
+	return request, nil
 }
 
-func PostMultipart(url string, file *File, params url.Values) ([]byte, error) {
+func newMultipartRequest(url string, file *fileField, params url.Values) (*http.Request, error) {
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
 
@@ -85,17 +83,12 @@ func PostMultipart(url string, file *File, params url.Values) ([]byte, error) {
 		return nil, err
 	}
 
-	request, err := http.NewRequest("POST", url, body)
+	request, err := http.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}
 
 	request.Header.Add("Content-Type", writer.FormDataContentType())
 
-	response, err := (&http.Client{}).Do(request)
-	if err != nil {
-		return nil, err
-	} else {
-		return handleResponse(response)
-	}
+	return request, nil
 }

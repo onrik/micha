@@ -27,10 +27,13 @@ func (s *BotTestSuite) SetupSuite() {
 
 	s.bot = &Bot{
 		token:   "111",
-		timeout: 25,
-		limit:   100,
-		logger:  newLogger("micha"),
 		updates: make(chan Update),
+		Options: Options{
+			limit:      100,
+			timeout:    25,
+			logger:     newLogger("micha"),
+			httpClient: http.DefaultClient,
+		},
 	}
 }
 
@@ -128,16 +131,18 @@ func (s *BotTestSuite) TestNewBot() {
 	s.Require().NotNil(bot)
 	s.Require().Equal(25, bot.timeout)
 	s.Require().Equal(100, bot.limit)
-	s.Require().Equal(newLogger("michabot"), bot.logger)
+	s.Require().Equal(newLogger("micha"), bot.logger)
 
 	// With options
 	logger := log.New(os.Stderr, "", log.LstdFlags)
-	bot, err = NewBot("111", WithLimit(50), WithTimeout(10), WithLogger(logger))
+	httpClient := &http.Client{}
+	bot, err = NewBot("111", WithLimit(50), WithTimeout(10), WithLogger(logger), WithHttpClient(httpClient))
 	s.Require().Nil(err)
 	s.Require().NotNil(bot)
 	s.Require().Equal(10, bot.timeout)
 	s.Require().Equal(50, bot.limit)
 	s.Require().Equal(logger, bot.logger)
+	s.Require().Equal(httpClient, bot.httpClient)
 }
 
 func (s *BotTestSuite) TestErrorsHandle() {
