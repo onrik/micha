@@ -13,8 +13,6 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/suite"
-
-	mhttp "github.com/onrik/micha/http"
 )
 
 type BotTestSuite struct {
@@ -76,7 +74,7 @@ func (s *BotTestSuite) registerResultWithRequestCheck(method, result, exceptedRe
 	})
 }
 
-func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValues url.Values, exceptedFile mhttp.File) {
+func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValues url.Values, exceptedFile fileField) {
 	url := s.bot.buildURL(method)
 
 	httpmock.RegisterResponder("POST", url, func(request *http.Request) (*http.Response, error) {
@@ -278,7 +276,7 @@ func (s *BotTestSuite) TestSetWebhook() {
 		AllowedUpdates: []string{"message", "callback_query"},
 	}
 
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString(data),
 		Fieldname: "certificate",
 		Filename:  "certificate",
@@ -404,7 +402,7 @@ func (s *BotTestSuite) TestSendPhotoFile() {
 		"caption": {"capt"},
 	}
 	data := bytes.NewBufferString("sadkf")
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString("sadkf"),
 		Fieldname: "photo",
 		Filename:  "photo.png",
@@ -442,7 +440,7 @@ func (s *BotTestSuite) TestSendAudioFile() {
 		"title":     {"Hit"},
 	}
 	data := bytes.NewBufferString("audio data")
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString("audio data"),
 		Fieldname: "audio",
 		Filename:  "song.mp3",
@@ -478,7 +476,7 @@ func (s *BotTestSuite) TestSendDocumentFile() {
 		"caption": {"top secret"},
 	}
 	data := bytes.NewBufferString("...")
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString("..."),
 		Fieldname: "document",
 		Filename:  "x-files.txt",
@@ -510,7 +508,7 @@ func (s *BotTestSuite) TestSendStickerFile() {
 		"chat_id": {"100"},
 	}
 	data := bytes.NewBufferString("sticker data")
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString("sticker data"),
 		Fieldname: "sticker",
 		Filename:  "sticker.webp",
@@ -548,7 +546,7 @@ func (s *BotTestSuite) TestSendVideoFile() {
 		"caption":  {"funny cats"},
 	}
 	data := bytes.NewBufferString("video data")
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString("video data"),
 		Fieldname: "video",
 		Filename:  "cats.mp4",
@@ -585,7 +583,7 @@ func (s *BotTestSuite) TestSendVoiceFile() {
 		"duration": {"15"},
 	}
 	data := bytes.NewBufferString("voice data")
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString("voice data"),
 		Fieldname: "voice",
 		Filename:  "voice.ogg",
@@ -640,7 +638,7 @@ func (s *BotTestSuite) TestSendVideoNoteFile() {
 		"reply_to_message_id": {"3904834"},
 	}
 	data := bytes.NewBufferString("video note data")
-	file := mhttp.File{
+	file := fileField{
 		Source:    bytes.NewBufferString("video note data"),
 		Fieldname: "video_note",
 		Filename:  "aaa.mp4",
