@@ -39,36 +39,42 @@ func WithHttpClient(httpClient HttpClient) Option {
 	}
 }
 
-// Send message optional params
+// SendMessageOptions optional params SendMessage method
 type SendMessageOptions struct {
-	DisableNotification   bool        `json:"disable_notification,omitempty"`
-	ReplyToMessageID      int64       `json:"reply_to_message_id,omitempty"`
 	ParseMode             ParseMode   `json:"parse_mode,omitempty"`
 	DisableWebPagePreview bool        `json:"disable_web_page_preview,omitempty"`
+	DisableNotification   bool        `json:"disable_notification,omitempty"`
+	ReplyToMessageID      int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup           ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send photo optional params
+// SendPhotoOptions optional params SendPhoto method
 type SendPhotoOptions struct {
 	Caption             string      `json:"caption,omitempty"`
+	ParseMode           ParseMode   `json:"parse_mode,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send audio optional params
+// SendAudioOptions optional params SendAudio method
 type SendAudioOptions struct {
+	Caption             string      `json:"caption,omitempty"`
+	ParseMode           ParseMode   `json:"parse_mode,omitempty"`
 	Duration            int         `json:"duration,omitempty"`
 	Performer           string      `json:"performer,omitempty"`
 	Title               string      `json:"title,omitempty"`
+	Thumb               string      `json:"thumb,omitempty"` // TODO add thumb as file
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send document optional params
+// SendDocumentOptions optional params SendDocument method
 type SendDocumentOptions struct {
+	Thumb               string      `json:"thumb,omitempty"` // TODO add thumb as file
 	Caption             string      `json:"caption,omitempty"`
+	ParseMode           ParseMode   `json:"parse_mode,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
@@ -81,57 +87,66 @@ type SendStickerOptions struct {
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send video optional params
+// SendVideoOptions video optional params SendVideo method
 type SendVideoOptions struct {
 	Duration            int         `json:"duration,omitempty"`
 	Width               int         `json:"width,omitempty"`
 	Height              int         `json:"height,omitempty"`
+	Thumb               string      `json:"thumb,omitempty"` // TODO add thumb as file
 	Caption             string      `json:"caption,omitempty"`
+	ParseMode           ParseMode   `json:"parse_mode,omitempty"`
+	SupportsStreaming   bool        `json:"supports_streaming,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send voice optional params
+// SendVoiceOptions optional params for SendVoice method
 type SendVoiceOptions struct {
+	Caption             string      `json:"caption,omitempty"`
+	ParseMode           ParseMode   `json:"parse_mode,omitempty"`
 	Duration            int         `json:"duration,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send video note optional params
+// SendVideoNoteOptions optional params for SendVideoNote method
 type SendVideoNoteOptions struct {
 	Duration            int         `json:"duration,omitempty"`
 	Length              int         `json:"length,omitempty"`
+	Thumb               string      `json:"thumb,omitempty"` // TODO add thumb as file
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send location optional params
+// SendLocationOptions optional params for SendLocation method
 type SendLocationOptions struct {
+	LivePeriod          int         `json:"live_period,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send venue optional params
+// SendVenueOptions optional params for SendVenue method
 type SendVenueOptions struct {
 	FoursquareID        string      `json:"foursquare_id,omitempty"`
+	FoursquareType      string      `json:"foursquare_type,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send contact optional params
+// SendContactOptions optional params for SendContact method
 type SendContactOptions struct {
+	VCard               string      `json:"vcard,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
 
-// Send game optional params
+// SendGameOptions optional params for SendGame method
 type SendGameOptions struct {
 	DisableNotification bool        `json:"disable_notification,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`

@@ -848,11 +848,21 @@ func (s *BotTestSuite) TestGetGameHighScorese() {
 	s.Equal(len(scores), 2)
 	s.Equal(scores[0].Position, 1)
 	s.Equal(scores[0].Score, 22)
-	s.Equal(scores[0].User, User{456, "John", "Doe", "john_doe", ""})
+	s.Equal(scores[0].User, User{
+		ID:        456,
+		FirstName: "John",
+		LastName:  "Doe",
+		Username:  "john_doe",
+	})
 
 	s.Equal(scores[1].Position, 2)
 	s.Equal(scores[1].Score, 11)
-	s.Equal(scores[1].User, User{789, "Mohammad", "Li", "mli", ""})
+	s.Equal(scores[1].User, User{
+		ID:        789,
+		FirstName: "Mohammad",
+		LastName:  "Li",
+		Username:  "mli",
+	})
 
 }
 
