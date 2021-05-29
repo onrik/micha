@@ -2,6 +2,7 @@ package micha
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -34,6 +35,7 @@ func (s *BotTestSuite) SetupSuite() {
 			httpClient: http.DefaultClient,
 		},
 	}
+	s.bot.ctx, s.bot.cancelFunc = context.WithCancel(context.Background())
 }
 
 func (s *BotTestSuite) TearDownSuite() {
@@ -184,15 +186,12 @@ func (s *BotTestSuite) TestGetUpdates() {
 		}]
 	}`)
 
-	go func() {
-		s.bot.Stop()
-		update := <-s.bot.Updates()
-		s.Equal(uint64(463249624), update.UpdateID)
+	go s.bot.Start("message", "callback_query")
 
-	}()
+	s.bot.Stop()
+	update := <-s.bot.Updates()
+	s.Equal(uint64(463249624), update.UpdateID)
 
-	s.bot.Start("message", "callback_query")
-	s.True(s.bot.stop)
 	s.Equal(uint64(463249624), s.bot.offset)
 }
 

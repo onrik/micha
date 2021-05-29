@@ -2,6 +2,7 @@ package micha
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -25,10 +26,11 @@ type Bot struct {
 	Options
 	Me User
 
-	token   string
-	updates chan Update
-	stop    bool
-	offset  uint64
+	token      string
+	updates    chan Update
+	offset     uint64
+	ctx        context.Context
+	cancelFunc context.CancelFunc
 }
 
 // NewBot - create new bot instance
@@ -50,6 +52,8 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 		token:   token,
 		updates: make(chan Update),
 	}
+
+	bot.ctx, bot.cancelFunc = context.WithCancel(context.Background())
 
 	me, err := bot.GetMe()
 	if err != nil {
@@ -179,15 +183,17 @@ func (bot *Bot) Start(allowedUpdates ...string) {
 			bot.offset = update.UpdateID
 		}
 
-		if bot.stop {
+		select {
+		case <-bot.ctx.Done():
 			return
+		default:
 		}
 	}
 }
 
 // Stop getting updates
 func (bot *Bot) Stop() {
-	bot.stop = true
+	bot.cancelFunc()
 }
 
 // Updates channel
