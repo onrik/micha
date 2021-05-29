@@ -8,7 +8,7 @@
 
 Client lib for [Telegram bot api](https://core.telegram.org/bots/api). Supports **Bot API v2.3.1** (of 4th Dec 2016).
 
-##### Simple echo bot example:
+### Simple echo bot
 ```go
 package main
 
@@ -21,8 +21,48 @@ import (
 func main() {
     bot, err := micha.NewBot("<token>")
     if err != nil {
-        log.Fatal(err)
+        log.Println(err)
+        return
     }
+
+    go bot.Start()
+
+    for update := range bot.Updates() {
+        if update.Message != nil {
+            bot.SendMessage(update.Message.Chat.ID, update.Message.Text, nil)
+        }
+    }
+}
+
+```
+
+
+### Custom [Telegram Bot API](https://github.com/tdlib/telegram-bot-api)
+```go
+package main
+
+import (
+    "log"
+	
+    "github.com/onrik/micha"
+)
+
+func main() {
+    bot, err := micha.NewBot(
+        "<token>",
+        micha.WithAPIServer("http://127.0.0.1:8081"),
+    )
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
+    err = bot.Logout()
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
 
     go bot.Start()
 

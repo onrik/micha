@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	API_URL      = "https://api.telegram.org/bot%s/%s"
-	FILE_API_URL = "https://api.telegram.org/file/bot%s/%s"
+	defaultAPIServer = "https://api.telegram.org"
 )
 
 type Response struct {
@@ -37,7 +36,8 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 	options := Options{
 		limit:      100,
 		timeout:    25,
-		logger:     newLogger("micha"),
+		logger:     newLogger("[micha] "),
+		apiServer:  defaultAPIServer,
 		httpClient: http.DefaultClient,
 	}
 
@@ -63,7 +63,7 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 
 // Build url for API method
 func (bot *Bot) buildURL(method string) string {
-	return fmt.Sprintf(API_URL, bot.token, method)
+	return bot.Options.apiServer + fmt.Sprintf("/bot%s/%s", bot.token, method)
 }
 
 // Decode response result to target object
@@ -228,6 +228,28 @@ func (bot *Bot) SetWebhook(webhookURL string, options *SetWebhookOptions) error 
 
 func (bot *Bot) DeleteWebhook() error {
 	return bot.post("deleteWebhook", nil, nil)
+}
+
+// Logout
+// Use this method to log out from the cloud Bot API server before launching the bot locally.
+// You must log out the bot before running it locally,
+// otherwise there is no guarantee that the bot will receive updates.
+// After a successful call, you can immediately log in on a local server,
+// but will not be able to log in back to the cloud Bot API server for 10 minutes.
+func (bot *Bot) Logout() error {
+	url := defaultAPIServer + fmt.Sprintf("/bot%s/logOut", bot.token)
+	request, err := newGetRequest(url, nil)
+	if err != nil {
+		return err
+	}
+
+	response, err := bot.httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	_, err = handleResponse(response)
+	return err
 }
 
 // A simple method for testing your bot's auth token.
@@ -558,7 +580,7 @@ func (bot *Bot) GetFile(fileID string) (*File, error) {
 
 // Return absolute url for file downloading by file path
 func (bot *Bot) DownloadFileURL(filePath string) string {
-	return fmt.Sprintf(FILE_API_URL, bot.token, filePath)
+	return bot.Options.apiServer + fmt.Sprintf("/file/bot%s/%s", bot.token, filePath)
 }
 
 // Use this method to edit text messages sent by the bot or via the bot (for inline bots).

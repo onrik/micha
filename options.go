@@ -1,9 +1,12 @@
 package micha
 
+import "strings"
+
 type Options struct {
 	limit      int
 	timeout    int
 	logger     Logger
+	apiServer  string
 	httpClient HttpClient
 }
 
@@ -36,6 +39,13 @@ func WithLogger(logger Logger) Option {
 func WithHttpClient(httpClient HttpClient) Option {
 	return func(o *Options) {
 		o.httpClient = httpClient
+	}
+}
+
+// WithAPIServer - set custom api server (https://github.com/tdlib/telegram-bot-api)
+func WithAPIServer(url string) Option {
+	return func(o *Options) {
+		o.apiServer = strings.TrimSuffix(url, "/")
 	}
 }
 

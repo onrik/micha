@@ -30,6 +30,7 @@ func (s *BotTestSuite) SetupSuite() {
 			limit:      100,
 			timeout:    25,
 			logger:     newLogger("micha"),
+			apiServer:  defaultAPIServer,
 			httpClient: http.DefaultClient,
 		},
 	}
@@ -129,7 +130,7 @@ func (s *BotTestSuite) TestNewBot() {
 	s.Require().NotNil(bot)
 	s.Require().Equal(25, bot.timeout)
 	s.Require().Equal(100, bot.limit)
-	s.Require().Equal(newLogger("micha"), bot.logger)
+	s.Require().Equal(newLogger("[micha] "), bot.logger)
 
 	// With options
 	logger := log.New(os.Stderr, "", log.LstdFlags)
