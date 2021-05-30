@@ -47,13 +47,19 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 		opt(&options)
 	}
 
+	ctx, cancelFunc := context.WithCancel(context.Background())
+
 	bot := Bot{
-		Options: options,
-		token:   token,
-		updates: make(chan Update),
+		Options:    options,
+		token:      token,
+		updates:    make(chan Update),
+		ctx:        ctx,
+		cancelFunc: cancelFunc,
 	}
 
-	bot.ctx, bot.cancelFunc = context.WithCancel(context.Background())
+	if bot.apiServer == "" {
+		bot.apiServer = defaultAPIServer
+	}
 
 	me, err := bot.GetMe()
 	if err != nil {
