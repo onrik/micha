@@ -1,6 +1,9 @@
 package micha
 
-import "strings"
+import (
+	"context"
+	"strings"
+)
 
 type Options struct {
 	limit      int
@@ -8,6 +11,7 @@ type Options struct {
 	logger     Logger
 	apiServer  string
 	httpClient HttpClient
+	ctx        context.Context
 }
 
 type Option func(*Options)
@@ -46,6 +50,13 @@ func WithHttpClient(httpClient HttpClient) Option {
 func WithAPIServer(url string) Option {
 	return func(o *Options) {
 		o.apiServer = strings.TrimSuffix(url, "/")
+	}
+}
+
+// WithAPIServer - set custom context
+func WithCtx(ctx context.Context) Option {
+	return func(o *Options) {
+		o.ctx = ctx
 	}
 }
 

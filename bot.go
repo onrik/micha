@@ -29,7 +29,6 @@ type Bot struct {
 	token      string
 	updates    chan Update
 	offset     uint64
-	ctx        context.Context
 	cancelFunc context.CancelFunc
 }
 
@@ -41,21 +40,19 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 		logger:     newLogger("[micha] "),
 		apiServer:  defaultAPIServer,
 		httpClient: http.DefaultClient,
+		ctx:        context.Background(),
 	}
 
 	for _, opt := range opts {
 		opt(&options)
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
-
 	bot := Bot{
-		Options:    options,
-		token:      token,
-		updates:    make(chan Update),
-		ctx:        ctx,
-		cancelFunc: cancelFunc,
+		Options: options,
+		token:   token,
+		updates: make(chan Update),
 	}
+	bot.ctx, bot.cancelFunc = context.WithCancel(options.ctx)
 
 	if bot.apiServer == "" {
 		bot.apiServer = defaultAPIServer
@@ -101,7 +98,7 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 
 // Send GET request to Telegram API
 func (bot *Bot) get(method string, params url.Values, target interface{}) error {
-	request, err := newGetRequest(bot.buildURL(method), params)
+	request, err := newGetRequest(bot.ctx, bot.buildURL(method), params)
 	if err != nil {
 		return err
 	}
@@ -121,7 +118,7 @@ func (bot *Bot) get(method string, params url.Values, target interface{}) error 
 
 // Send POST request to Telegram API
 func (bot *Bot) post(method string, data, target interface{}) error {
-	request, err := newPostRequest(bot.buildURL(method), data)
+	request, err := newPostRequest(bot.ctx, bot.buildURL(method), data)
 	if err != nil {
 		return err
 	}
@@ -184,15 +181,16 @@ func (bot *Bot) Start(allowedUpdates ...string) {
 			bot.logger.Printf("Get updates error (%s)\n", err.Error())
 		}
 
+		select {
+		case <-bot.ctx.Done():
+			close(bot.updates)
+			return
+		default:
+		}
+
 		for _, update := range updates {
 			bot.updates <- update
 			bot.offset = update.UpdateID
-		}
-
-		select {
-		case <-bot.ctx.Done():
-			return
-		default:
 		}
 	}
 }
@@ -250,7 +248,7 @@ func (bot *Bot) DeleteWebhook() error {
 // but will not be able to log in back to the cloud Bot API server for 10 minutes.
 func (bot *Bot) Logout() error {
 	url := defaultAPIServer + fmt.Sprintf("/bot%s/logOut", bot.token)
-	request, err := newGetRequest(url, nil)
+	request, err := newGetRequest(bot.ctx, url, nil)
 	if err != nil {
 		return err
 	}

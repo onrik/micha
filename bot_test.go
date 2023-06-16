@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -64,7 +64,7 @@ func (s *BotTestSuite) registerResultWithRequestCheck(method, result, exceptedRe
 
 	httpmock.RegisterResponder("POST", url, func(request *http.Request) (*http.Response, error) {
 		defer request.Body.Close()
-		body, err := ioutil.ReadAll(request.Body)
+		body, err := io.ReadAll(request.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -100,12 +100,12 @@ func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValu
 		}
 
 		defer file.Close()
-		data, err := ioutil.ReadAll(file)
+		data, err := io.ReadAll(file)
 		if err != nil {
 			return nil, err
 		}
 
-		exceptedData, err := ioutil.ReadAll(exceptedFile.Source)
+		exceptedData, err := io.ReadAll(exceptedFile.Source)
 		if err != nil {
 			return nil, err
 		}

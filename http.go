@@ -2,10 +2,10 @@ package micha
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -14,6 +14,14 @@ import (
 // HttpClient interface
 type HttpClient interface {
 	Do(*http.Request) (*http.Response, error)
+}
+
+type HTTPError struct {
+	StatusCode int
+}
+
+func (e HTTPError) Error() string {
+	return fmt.Sprintf("HTTP status: %d", e.StatusCode)
 }
 
 type fileField struct {
@@ -25,20 +33,20 @@ type fileField struct {
 func handleResponse(response *http.Response) ([]byte, error) {
 	defer response.Body.Close()
 	if response.StatusCode > http.StatusBadRequest {
-		return nil, fmt.Errorf("HTTP status: %d", response.StatusCode)
+		return nil, HTTPError{response.StatusCode}
 	}
 
-	return ioutil.ReadAll(response.Body)
+	return io.ReadAll(response.Body)
 }
 
-func newGetRequest(url string, params url.Values) (*http.Request, error) {
+func newGetRequest(ctx context.Context, url string, params url.Values) (*http.Request, error) {
 	if params != nil {
 		url += fmt.Sprintf("?%s", params.Encode())
 	}
-	return http.NewRequest(http.MethodGet, url, nil)
+	return http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 }
 
-func newPostRequest(url string, data interface{}) (*http.Request, error) {
+func newPostRequest(ctx context.Context, url string, data interface{}) (*http.Request, error) {
 	body := new(bytes.Buffer)
 	if data != nil {
 		if err := json.NewEncoder(body).Encode(data); err != nil {
@@ -46,7 +54,7 @@ func newPostRequest(url string, data interface{}) (*http.Request, error) {
 		}
 	}
 
-	request, err := http.NewRequest(http.MethodPost, url, body)
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}
