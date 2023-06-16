@@ -181,16 +181,16 @@ func (bot *Bot) Start(allowedUpdates ...string) {
 			bot.logger.Printf("Get updates error (%s)\n", err.Error())
 		}
 
+		for _, update := range updates {
+			bot.updates <- update
+			bot.offset = update.UpdateID
+		}
+
 		select {
 		case <-bot.ctx.Done():
 			close(bot.updates)
 			return
 		default:
-		}
-
-		for _, update := range updates {
-			bot.updates <- update
-			bot.offset = update.UpdateID
 		}
 	}
 }

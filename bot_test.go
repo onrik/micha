@@ -88,11 +88,11 @@ func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValu
 
 		form := request.MultipartForm
 		for field, value := range exceptedValues {
-			s.Equal(value, form.Value[field])
+			s.Require().Equal(value, form.Value[field])
 		}
 
 		files := form.File[exceptedFile.Fieldname]
-		s.Equal(1, len(files))
+		s.Require().Equal(1, len(files))
 
 		file, err := files[0].Open()
 		if err != nil {
@@ -110,7 +110,7 @@ func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValu
 			return nil, err
 		}
 
-		s.Equal(exceptedData, data)
+		s.Require().Equal(exceptedData, data)
 
 		return httpmock.NewStringResponse(200, `{"ok":true, "result": {}}`), nil
 	})
@@ -150,26 +150,26 @@ func (s *BotTestSuite) TestErrorsHandle() {
 	s.registerResponse("method", nil, `{dsfkdf`)
 
 	err := s.bot.get("method", nil, nil)
-	s.NotEqual(err, nil)
+	s.Require().NotNil(err)
 	s.True(strings.Contains(err.Error(), "Decode response error"))
 
 	httpmock.Reset()
 	s.registerResponse("method", nil, `{"ok":false, "error_code": 111}`)
 	err = s.bot.get("method", nil, nil)
-	s.NotEqual(err, nil)
+	s.Require().NotNil(err)
 	s.True(strings.Contains(err.Error(), "Error 111"))
 
 	httpmock.Reset()
 	s.registerResponse("method", nil, `{"ok":true, "result": "dssdd"}`)
 	var result int
 	err = s.bot.get("method", nil, &result)
-	s.NotEqual(err, nil)
+	s.Require().NotNil(err)
 	s.True(strings.Contains(err.Error(), "Decode result error"))
 }
 
 func (s *BotTestSuite) TestBuildUrl() {
 	url := s.bot.buildURL("someMethod")
-	s.Equal(url, "https://api.telegram.org/bot111/someMethod")
+	s.Require().Equal(url, "https://api.telegram.org/bot111/someMethod")
 }
 
 func (s *BotTestSuite) TestGetUpdates() {
@@ -188,11 +188,15 @@ func (s *BotTestSuite) TestGetUpdates() {
 
 	go s.bot.Start("message", "callback_query")
 
-	s.bot.Stop()
-	update := <-s.bot.Updates()
-	s.Equal(uint64(463249624), update.UpdateID)
+	update, ok := <-s.bot.Updates()
+	s.Require().True(ok)
+	s.Require().Equal(uint64(463249624), update.UpdateID)
+	s.Require().Equal(uint64(463249624), s.bot.offset)
 
-	s.Equal(uint64(463249624), s.bot.offset)
+	s.bot.Stop()
+	update, ok = <-s.bot.Updates()
+	s.Require().False(ok)
+	s.bot.ctx, s.bot.cancelFunc = context.WithCancel(context.Background())
 }
 
 func (s *BotTestSuite) TestGetMe() {
@@ -229,13 +233,13 @@ func (s *BotTestSuite) TestGetChat() {
 	}`)
 
 	chat, err := s.bot.GetChat("123")
-	s.Equal(err, nil)
-	s.Equal(chat.ID, ChatID("123"))
-	s.Equal(chat.Type, CHAT_TYPE_GROUP)
-	s.Equal(chat.Title, "ChatTitle")
-	s.Equal(chat.FirstName, "fn")
-	s.Equal(chat.LastName, "ln")
-	s.Equal(chat.Username, "un")
+	s.Require().Nil(err)
+	s.Require().Equal(chat.ID, ChatID("123"))
+	s.Require().Equal(chat.Type, CHAT_TYPE_GROUP)
+	s.Require().Equal(chat.Title, "ChatTitle")
+	s.Require().Equal(chat.FirstName, "fn")
+	s.Require().Equal(chat.LastName, "ln")
+	s.Require().Equal(chat.Username, "un")
 }
 
 func (s *BotTestSuite) TestGetWebhookInfo() {
@@ -254,13 +258,13 @@ func (s *BotTestSuite) TestGetWebhookInfo() {
 	webhookInfo, err := s.bot.GetWebhookInfo()
 	s.Nil(err)
 	s.NotNil(webhookInfo)
-	s.Equal("someurl", webhookInfo.URL)
+	s.Require().Equal("someurl", webhookInfo.URL)
 	s.True(webhookInfo.HasCustomCertificate)
-	s.Equal(33, webhookInfo.PendingUpdateCount)
-	s.Equal(uint64(1480190406), webhookInfo.LastErrorDate)
-	s.Equal("No way", webhookInfo.LastErrorMessage)
-	s.Equal(4, webhookInfo.MaxConnections)
-	s.Equal([]string{"message", "callback_query"}, webhookInfo.AllowedUpdates)
+	s.Require().Equal(33, webhookInfo.PendingUpdateCount)
+	s.Require().Equal(uint64(1480190406), webhookInfo.LastErrorDate)
+	s.Require().Equal("No way", webhookInfo.LastErrorMessage)
+	s.Require().Equal(4, webhookInfo.MaxConnections)
+	s.Require().Equal([]string{"message", "callback_query"}, webhookInfo.AllowedUpdates)
 }
 
 func (s *BotTestSuite) TestSetWebhook() {
@@ -321,19 +325,19 @@ func (s *BotTestSuite) TestGetChatAdministrators() {
 	}`)
 
 	administrators, err := s.bot.GetChatAdministrators("123")
-	s.Equal(err, nil)
-	s.Equal(len(administrators), 2)
-	s.Equal(administrators[0].User.ID, int64(456))
-	s.Equal(administrators[0].User.FirstName, "John")
-	s.Equal(administrators[0].User.LastName, "Doe")
-	s.Equal(administrators[0].User.Username, "john_doe")
-	s.Equal(administrators[0].Status, MEMBER_STATUS_ADMINISTRATOR)
+	s.Require().Nil(err)
+	s.Require().Equal(len(administrators), 2)
+	s.Require().Equal(administrators[0].User.ID, int64(456))
+	s.Require().Equal(administrators[0].User.FirstName, "John")
+	s.Require().Equal(administrators[0].User.LastName, "Doe")
+	s.Require().Equal(administrators[0].User.Username, "john_doe")
+	s.Require().Equal(administrators[0].Status, MEMBER_STATUS_ADMINISTRATOR)
 
-	s.Equal(administrators[1].User.ID, int64(789))
-	s.Equal(administrators[1].User.FirstName, "Mohammad")
-	s.Equal(administrators[1].User.LastName, "Li")
-	s.Equal(administrators[1].User.Username, "mli")
-	s.Equal(administrators[1].Status, MEMBER_STATUS_ADMINISTRATOR)
+	s.Require().Equal(administrators[1].User.ID, int64(789))
+	s.Require().Equal(administrators[1].User.FirstName, "Mohammad")
+	s.Require().Equal(administrators[1].User.LastName, "Li")
+	s.Require().Equal(administrators[1].User.Username, "mli")
+	s.Require().Equal(administrators[1].Status, MEMBER_STATUS_ADMINISTRATOR)
 }
 
 func (s *BotTestSuite) TestGetChatMember() {
@@ -351,12 +355,12 @@ func (s *BotTestSuite) TestGetChatMember() {
 	}`)
 
 	chatMember, err := s.bot.GetChatMember("123", 456)
-	s.Equal(err, nil)
-	s.Equal(chatMember.User.ID, int64(456))
-	s.Equal(chatMember.User.FirstName, "John")
-	s.Equal(chatMember.User.LastName, "Doe")
-	s.Equal(chatMember.User.Username, "john_doe")
-	s.Equal(chatMember.Status, MEMBER_STATUS_CREATOR)
+	s.Require().Nil(err)
+	s.Require().Equal(chatMember.User.ID, int64(456))
+	s.Require().Equal(chatMember.User.FirstName, "John")
+	s.Require().Equal(chatMember.User.LastName, "Doe")
+	s.Require().Equal(chatMember.User.Username, "john_doe")
+	s.Require().Equal(chatMember.Status, MEMBER_STATUS_CREATOR)
 
 }
 
@@ -364,23 +368,23 @@ func (s *BotTestSuite) TestGetChatMembersCount() {
 	s.registerResponse("getChatMembersCount", url.Values{"chat_id": {"123"}}, `{"ok":true, "result": 25}`)
 
 	count, err := s.bot.GetChatMembersCount("123")
-	s.Equal(err, nil)
-	s.Equal(count, 25)
+	s.Require().Nil(err)
+	s.Require().Equal(count, 25)
 }
 
 func (s *BotTestSuite) TestGetFile() {
 	s.registerResponse("getFile", url.Values{"file_id": {"222"}}, `{"ok":true,"result":{"file_id":"222","file_size":5,"file_path":"document/file_3.txt"}}`)
 
 	file, err := s.bot.GetFile("222")
-	s.Equal(err, nil)
-	s.Equal(file.FileID, "222")
-	s.Equal(file.FileSize, uint64(5))
-	s.Equal(file.FilePath, "document/file_3.txt")
+	s.Require().Nil(err)
+	s.Require().Equal(file.FileID, "222")
+	s.Require().Equal(file.FileSize, uint64(5))
+	s.Require().Equal(file.FilePath, "document/file_3.txt")
 }
 
 func (s *BotTestSuite) TestDownloadFileURL() {
 	url := s.bot.DownloadFileURL("file.mp3")
-	s.Equal(url, "https://api.telegram.org/file/bot111/file.mp3")
+	s.Require().Equal(url, "https://api.telegram.org/file/bot111/file.mp3")
 }
 
 func (s *BotTestSuite) TestSendPhoto() {
@@ -392,8 +396,8 @@ func (s *BotTestSuite) TestSendPhoto() {
 		ReplyToMessageID: 143,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendPhotoFile() {
@@ -413,8 +417,8 @@ func (s *BotTestSuite) TestSendPhotoFile() {
 		Caption: "capt",
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendAudio() {
@@ -428,8 +432,8 @@ func (s *BotTestSuite) TestSendAudio() {
 		ReplyToMessageID: 143,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendAudioFile() {
@@ -453,8 +457,8 @@ func (s *BotTestSuite) TestSendAudioFile() {
 		Title:     "Hit",
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendDocument() {
@@ -466,8 +470,8 @@ func (s *BotTestSuite) TestSendDocument() {
 		ReplyToMessageID: 144,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendDocumentFile() {
@@ -487,8 +491,8 @@ func (s *BotTestSuite) TestSendDocumentFile() {
 		Caption: "top secret",
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendSticker() {
@@ -499,8 +503,8 @@ func (s *BotTestSuite) TestSendSticker() {
 		ReplyToMessageID: 145,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendStickerFile() {
@@ -517,8 +521,8 @@ func (s *BotTestSuite) TestSendStickerFile() {
 
 	message, err := s.bot.SendStickerFile("100", data, "sticker.webp", nil)
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendVideo() {
@@ -533,8 +537,8 @@ func (s *BotTestSuite) TestSendVideo() {
 		ReplyToMessageID: 146,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendVideoFile() {
@@ -560,8 +564,8 @@ func (s *BotTestSuite) TestSendVideoFile() {
 		Caption:  "funny cats",
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendVoice() {
@@ -573,8 +577,8 @@ func (s *BotTestSuite) TestSendVoice() {
 		ReplyToMessageID: 147,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendVoiceFile() {
@@ -594,8 +598,8 @@ func (s *BotTestSuite) TestSendVoiceFile() {
 		Duration: 15,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendVideoNote() {
@@ -606,8 +610,8 @@ func (s *BotTestSuite) TestSendVideoNote() {
 	}`)
 
 	message, err := s.bot.SendVideoNote("123", "837y7w6gdf6sd", nil)
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 
 	httpmock.Reset()
 
@@ -626,8 +630,8 @@ func (s *BotTestSuite) TestSendVideoNote() {
 		DisableNotification: true,
 		ReplyToMessageID:    39047324,
 	})
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendVideoNoteFile() {
@@ -650,8 +654,8 @@ func (s *BotTestSuite) TestSendVideoNoteFile() {
 		Length:           3847,
 		ReplyToMessageID: 3904834,
 	})
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendLocation() {
@@ -662,8 +666,8 @@ func (s *BotTestSuite) TestSendLocation() {
 		ReplyToMessageID: 148,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendVenue() {
@@ -675,8 +679,8 @@ func (s *BotTestSuite) TestSendVenue() {
 		ReplyToMessageID: 149,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err, err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendContact() {
@@ -687,8 +691,8 @@ func (s *BotTestSuite) TestSendContact() {
 		ReplyToMessageID: 150,
 	})
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestForwardMessage() {
@@ -697,8 +701,8 @@ func (s *BotTestSuite) TestForwardMessage() {
 
 	message, err := s.bot.ForwardMessage("131", "99", 543, true)
 
-	s.Equal(err, nil)
-	s.NotEqual(message, nil)
+	s.Require().Nil(err)
+	s.Require().NotNil(message)
 }
 
 func (s *BotTestSuite) TestSendChatAction() {
@@ -706,7 +710,7 @@ func (s *BotTestSuite) TestSendChatAction() {
 	s.registerRequestCheck("sendChatAction", request)
 
 	err := s.bot.SendChatAction("132", CHAT_ACTION_TYPING)
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestAnswerCallbackQuery() {
@@ -717,7 +721,7 @@ func (s *BotTestSuite) TestAnswerCallbackQuery() {
 		Text:      "foo",
 		ShowAlert: true,
 	})
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestKickChatMember() {
@@ -725,7 +729,7 @@ func (s *BotTestSuite) TestKickChatMember() {
 	s.registerRequestCheck("kickChatMember", request)
 
 	err := s.bot.KickChatMember("1", 2)
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestLeaveChat() {
@@ -733,7 +737,7 @@ func (s *BotTestSuite) TestLeaveChat() {
 	s.registerRequestCheck("leaveChat", request)
 
 	err := s.bot.LeaveChat("143")
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestUnbanChatMember() {
@@ -741,7 +745,7 @@ func (s *BotTestSuite) TestUnbanChatMember() {
 	s.registerRequestCheck("unbanChatMember", request)
 
 	err := s.bot.UnbanChatMember("22", 33)
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestGetUserProfilePhotos() {
@@ -766,12 +770,12 @@ func (s *BotTestSuite) TestGetUserProfilePhotos() {
 	offset := 22
 	limit := 1
 	userPhotos, err := s.bot.GetUserProfilePhotos(55, &offset, &limit)
-	s.Equal(err, nil)
-	s.Equal(userPhotos.TotalCount, 1)
-	s.Equal(userPhotos.Photos[0][0].FileID, "111")
-	s.Equal(userPhotos.Photos[0][0].FileSize, uint64(15320))
-	s.Equal(userPhotos.Photos[0][0].Width, 320)
-	s.Equal(userPhotos.Photos[0][0].Height, 240)
+	s.Require().Nil(err)
+	s.Require().Equal(userPhotos.TotalCount, 1)
+	s.Require().Equal(userPhotos.Photos[0][0].FileID, "111")
+	s.Require().Equal(userPhotos.Photos[0][0].FileSize, uint64(15320))
+	s.Require().Equal(userPhotos.Photos[0][0].Width, 320)
+	s.Require().Equal(userPhotos.Photos[0][0].Height, 240)
 
 }
 
@@ -783,7 +787,7 @@ func (s *BotTestSuite) TestSendMessage() {
 		ReplyToMessageID: 89,
 		ParseMode:        PARSE_MODE_HTML,
 	})
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestSendGame() {
@@ -793,7 +797,7 @@ func (s *BotTestSuite) TestSendGame() {
 	_, err := s.bot.SendGame("298", "ggg", &SendGameOptions{
 		ReplyToMessageID: 892,
 	})
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestSetGameScore() {
@@ -806,7 +810,7 @@ func (s *BotTestSuite) TestSetGameScore() {
 		InlineMessageID:    "stf",
 		DisableEditMessage: true,
 	})
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestGetGameHighScorese() {
@@ -844,20 +848,20 @@ func (s *BotTestSuite) TestGetGameHighScorese() {
 		ChatID:    "123",
 		MessageID: int64(892),
 	})
-	s.Equal(err, nil)
-	s.Equal(len(scores), 2)
-	s.Equal(scores[0].Position, 1)
-	s.Equal(scores[0].Score, 22)
-	s.Equal(scores[0].User, User{
+	s.Require().Nil(err)
+	s.Require().Equal(len(scores), 2)
+	s.Require().Equal(scores[0].Position, 1)
+	s.Require().Equal(scores[0].Score, 22)
+	s.Require().Equal(scores[0].User, User{
 		ID:        456,
 		FirstName: "John",
 		LastName:  "Doe",
 		Username:  "john_doe",
 	})
 
-	s.Equal(scores[1].Position, 2)
-	s.Equal(scores[1].Score, 11)
-	s.Equal(scores[1].User, User{
+	s.Require().Equal(scores[1].Position, 2)
+	s.Require().Equal(scores[1].Score, 11)
+	s.Require().Equal(scores[1].User, User{
 		ID:        789,
 		FirstName: "Mohammad",
 		LastName:  "Li",
@@ -874,7 +878,7 @@ func (s *BotTestSuite) TestEditMessageText() {
 		ParseMode: PARSE_MODE_MARKDOWN,
 	})
 
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestEditMessageCaption() {
@@ -885,7 +889,7 @@ func (s *BotTestSuite) TestEditMessageCaption() {
 		Caption: "ca",
 	})
 
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestEditMessageReplyMarkup() {
@@ -897,7 +901,7 @@ func (s *BotTestSuite) TestEditMessageReplyMarkup() {
 		Selective:  true,
 	})
 
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func (s *BotTestSuite) TestDeleteMessage() {
@@ -938,7 +942,7 @@ func (s *BotTestSuite) TestAnswerInlineQuery() {
 		SwitchPmText:      "yes",
 		SwitchPmParameter: "no",
 	})
-	s.Equal(err, nil)
+	s.Require().Nil(err)
 }
 
 func TestBotTestSuite(t *testing.T) {
