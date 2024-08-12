@@ -21,7 +21,7 @@ type HTTPError struct {
 }
 
 func (e HTTPError) Error() string {
-	return fmt.Sprintf("HTTP status: %d", e.StatusCode)
+	return fmt.Sprintf("http status %d (%s)", e.StatusCode, http.StatusText(e.StatusCode))
 }
 
 type fileField struct {
