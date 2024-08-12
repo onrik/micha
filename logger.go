@@ -1,16 +1,10 @@
 package micha
 
 import (
-	"log"
-	"os"
+	"context"
 )
 
 // Logger interface
 type Logger interface {
-	Println(v ...interface{})
-	Printf(format string, v ...interface{})
-}
-
-func newLogger(prefix string) Logger {
-	return log.New(os.Stderr, prefix, log.Ldate|log.Ltime|log.Lshortfile)
+	ErrorContext(ctx context.Context, msg string, args ...any)
 }

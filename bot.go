@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 )
@@ -37,7 +38,7 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 	options := Options{
 		limit:      100,
 		timeout:    25,
-		logger:     newLogger("[micha] "),
+		logger:     slog.Default(),
 		apiServer:  defaultAPIServer,
 		httpClient: http.DefaultClient,
 		ctx:        context.Background(),
@@ -178,7 +179,7 @@ func (bot *Bot) Start(allowedUpdates ...string) {
 	for {
 		updates, err := bot.getUpdates(bot.offset+1, allowedUpdates...)
 		if err != nil {
-			bot.logger.Printf("Get updates error (%s)\n", err.Error())
+			bot.logger.ErrorContext(bot.ctx, "Get updates error", "error", err)
 		}
 
 		for _, update := range updates {
