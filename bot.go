@@ -135,7 +135,7 @@ func (bot *Bot) post(method string, data, target interface{}) error {
 
 // Send POST multipart request to Telegram API
 func (bot *Bot) postMultipart(method string, file *fileField, params url.Values, target interface{}) error {
-	request, err := newMultipartRequest(bot.buildURL(method), file, params)
+	request, err := newMultipartRequest(bot.ctx, bot.buildURL(method), file, params)
 	if err != nil {
 		return err
 	}

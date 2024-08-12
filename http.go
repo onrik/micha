@@ -64,7 +64,7 @@ func newPostRequest(ctx context.Context, url string, data interface{}) (*http.Re
 	return request, nil
 }
 
-func newMultipartRequest(url string, file *fileField, params url.Values) (*http.Request, error) {
+func newMultipartRequest(ctx context.Context, url string, file *fileField, params url.Values) (*http.Request, error) {
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
 
@@ -91,7 +91,7 @@ func newMultipartRequest(url string, file *fileField, params url.Values) (*http.
 		return nil, err
 	}
 
-	request, err := http.NewRequest(http.MethodPost, url, body)
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}
