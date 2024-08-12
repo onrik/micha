@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -55,10 +56,6 @@ func NewBot(token string, opts ...Option) (*Bot, error) {
 	}
 	bot.ctx, bot.cancelFunc = context.WithCancel(options.ctx)
 
-	if bot.apiServer == "" {
-		bot.apiServer = defaultAPIServer
-	}
-
 	me, err := bot.GetMe()
 	if err != nil {
 		return nil, err
@@ -78,7 +75,7 @@ func (bot *Bot) buildURL(method string) string {
 func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 	response := new(Response)
 	if err := json.Unmarshal(data, response); err != nil {
-		return fmt.Errorf("Decode response error (%s)", err.Error())
+		return fmt.Errorf("decode response error: %w", err)
 	}
 
 	if !response.Ok {
@@ -91,7 +88,7 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 	}
 
 	if err := json.Unmarshal(response.Result, target); err != nil {
-		return fmt.Errorf("Decode result error (%s)", err.Error())
+		return fmt.Errorf("decode result error: %w", err)
 	}
 
 	return nil
@@ -180,6 +177,10 @@ func (bot *Bot) Start(allowedUpdates ...string) {
 		updates, err := bot.getUpdates(bot.offset+1, allowedUpdates...)
 		if err != nil {
 			bot.logger.ErrorContext(bot.ctx, "Get updates error", "error", err)
+			httpErr := HTTPError{}
+			if errors.As(err, &httpErr) && httpErr.StatusCode == http.StatusConflict {
+				bot.cancelFunc()
+			}
 		}
 
 		for _, update := range updates {
@@ -270,6 +271,21 @@ func (bot *Bot) GetMe() (*User, error) {
 	err := bot.get("getMe", nil, me)
 
 	return me, err
+}
+
+// Raw - send any method and return raw response
+func (bot *Bot) Raw(method string, data any) ([]byte, error) {
+	request, err := newPostRequest(bot.ctx, bot.buildURL(method), data)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := bot.httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	return handleResponse(response)
 }
 
 // Use this method to send text messages.

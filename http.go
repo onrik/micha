@@ -50,7 +50,7 @@ func newPostRequest(ctx context.Context, url string, data interface{}) (*http.Re
 	body := new(bytes.Buffer)
 	if data != nil {
 		if err := json.NewEncoder(body).Encode(data); err != nil {
-			return nil, fmt.Errorf("Encode data error (%s)", err.Error())
+			return nil, fmt.Errorf("encode data error: %w", err)
 		}
 	}
 
