@@ -151,7 +151,7 @@ func (s *BotTestSuite) TestErrorsHandle() {
 
 	err := s.bot.get("method", nil, nil)
 	s.Require().NotNil(err)
-	s.True(strings.Contains(err.Error(), "Decode response error"))
+	s.True(strings.Contains(err.Error(), "decode response error"))
 
 	httpmock.Reset()
 	s.registerResponse("method", nil, `{"ok":false, "error_code": 111}`)
@@ -164,7 +164,7 @@ func (s *BotTestSuite) TestErrorsHandle() {
 	var result int
 	err = s.bot.get("method", nil, &result)
 	s.Require().NotNil(err)
-	s.True(strings.Contains(err.Error(), "Decode result error"))
+	s.True(strings.Contains(err.Error(), "decode result error"))
 }
 
 func (s *BotTestSuite) TestBuildUrl() {
