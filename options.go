@@ -87,6 +87,7 @@ type SendAudioOptions struct {
 	Title               string      `json:"title,omitempty"`
 	Thumb               string      `json:"thumb,omitempty"` // TODO add thumb as file
 	DisableNotification bool        `json:"disable_notification,omitempty"`
+	ProtectContent      bool        `json:"protect_content,omitempty"`
 	ReplyToMessageID    int64       `json:"reply_to_message_id,omitempty"`
 	ReplyMarkup         ReplyMarkup `json:"reply_markup,omitempty"`
 }
