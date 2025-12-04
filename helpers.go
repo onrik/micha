@@ -1,27 +1,31 @@
 package micha
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/url"
-	"strings"
 )
 
 // Convert struct to url values map
 // TODO: temp implementation
-func structToValues(obj interface{}) (url.Values, error) {
-	data, err := json.Marshal(obj)
+func structToValues(s any) (url.Values, error) {
+	buff := bytes.Buffer{}
+	encoder := json.NewEncoder(&buff)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(s)
 	if err != nil {
 		return nil, err
 	}
 
-	rawMap := map[string]json.RawMessage{}
-	if err := json.Unmarshal(data, &rawMap); err != nil {
+	rawMap := map[string]any{}
+	if err := json.Unmarshal(buff.Bytes(), &rawMap); err != nil {
 		return nil, err
 	}
 
 	values := url.Values{}
 	for key := range rawMap {
-		values.Set(key, strings.Trim(string(rawMap[key]), `/"`))
+		values.Set(key, fmt.Sprintf("%v", rawMap[key]))
 	}
 
 	return values, nil
