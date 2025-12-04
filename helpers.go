@@ -3,7 +3,6 @@ package micha
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/url"
 )
 
@@ -18,14 +17,24 @@ func structToValues(s any) (url.Values, error) {
 		return nil, err
 	}
 
-	rawMap := map[string]any{}
+	rawMap := map[string]json.RawMessage{}
 	if err := json.Unmarshal(buff.Bytes(), &rawMap); err != nil {
 		return nil, err
 	}
 
 	values := url.Values{}
-	for key := range rawMap {
-		values.Set(key, fmt.Sprintf("%v", rawMap[key]))
+	for key, value := range rawMap {
+		if value[0] != '"' {
+			values.Set(key, string(value))
+			continue
+		}
+
+		var str string
+		err = json.Unmarshal(value, &str)
+		if err != nil {
+			return nil, err
+		}
+		values.Set(key, str)
 	}
 
 	return values, nil
