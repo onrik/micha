@@ -134,8 +134,8 @@ func (bot *Bot) post(method string, data, target interface{}) error {
 }
 
 // Send POST multipart request to Telegram API
-func (bot *Bot) postMultipart(method string, file *fileField, params url.Values, target interface{}) error {
-	request, err := newMultipartRequest(bot.ctx, bot.buildURL(method), file, params)
+func (bot *Bot) postMultipart(method string, files []fileField, params url.Values, target interface{}) error {
+	request, err := newMultipartRequest(bot.ctx, bot.buildURL(method), params, files...)
 	if err != nil {
 		return err
 	}
@@ -215,10 +215,10 @@ func (bot *Bot) GetWebhookInfo() (*WebhookInfo, error) {
 }
 
 func (bot *Bot) SetWebhook(webhookURL string, options *SetWebhookOptions) error {
-	var file *fileField
 	params := url.Values{
 		"url": {webhookURL},
 	}
+	files := []fileField{}
 	if options != nil {
 		if options.MaxConnections > 0 {
 			params.Set("max_connections", fmt.Sprintf("%d", options.MaxConnections))
@@ -227,15 +227,15 @@ func (bot *Bot) SetWebhook(webhookURL string, options *SetWebhookOptions) error 
 			params["allowed_updates"] = options.AllowedUpdates
 		}
 		if len(options.Certificate) > 0 {
-			file = &fileField{
+			files = append(files, fileField{
 				Source:    bytes.NewBuffer(options.Certificate),
 				Fieldname: "certificate",
 				Filename:  "certificate",
-			}
+			})
 		}
 	}
 
-	return bot.postMultipart("setWebhook", file, params, nil)
+	return bot.postMultipart("setWebhook", files, params, nil)
 }
 
 func (bot *Bot) DeleteWebhook() error {
@@ -322,14 +322,14 @@ func (bot *Bot) SendPhotoFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &fileField{
+	f := fileField{
 		Source:    file,
 		Fieldname: "photo",
 		Filename:  fileName,
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendPhoto", f, values, message)
+	err = bot.postMultipart("sendPhoto", []fileField{f}, values, message)
 
 	return message, err
 }
@@ -352,14 +352,14 @@ func (bot *Bot) SendAudioFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &fileField{
+	f := fileField{
 		Source:    file,
 		Fieldname: "audio",
 		Filename:  fileName,
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendAudio", f, values, message)
+	err = bot.postMultipart("sendAudio", []fileField{f}, values, message)
 
 	return message, err
 }
@@ -382,14 +382,14 @@ func (bot *Bot) SendDocumentFile(chatID ChatID, file io.Reader, fileName string,
 		return nil, err
 	}
 
-	f := &fileField{
+	f := fileField{
 		Source:    file,
 		Fieldname: "document",
 		Filename:  fileName,
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendDocument", f, values, message)
+	err = bot.postMultipart("sendDocument", []fileField{f}, values, message)
 
 	return message, err
 }
@@ -412,14 +412,14 @@ func (bot *Bot) SendStickerFile(chatID ChatID, file io.Reader, fileName string, 
 		return nil, err
 	}
 
-	f := &fileField{
+	f := fileField{
 		Source:    file,
 		Fieldname: "sticker",
 		Filename:  fileName,
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendSticker", f, values, message)
+	err = bot.postMultipart("sendSticker", []fileField{f}, values, message)
 
 	return message, err
 }
@@ -442,14 +442,24 @@ func (bot *Bot) SendVideoFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &fileField{
-		Source:    file,
-		Fieldname: "video",
-		Filename:  fileName,
+	files := []fileField{
+		{
+			Source:    file,
+			Fieldname: "video",
+			Filename:  fileName,
+		},
+	}
+
+	if options != nil && options.Thumbnail != nil {
+		files = append(files, fileField{
+			Source:    options.Thumbnail,
+			Fieldname: "thumbnail",
+			Filename:  "thumbnail.jpg",
+		})
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendVideo", f, values, message)
+	err = bot.postMultipart("sendVideo", files, values, message)
 
 	return message, err
 }
@@ -474,14 +484,14 @@ func (bot *Bot) SendVoiceFile(chatID ChatID, file io.Reader, fileName string, op
 		return nil, err
 	}
 
-	f := &fileField{
+	f := fileField{
 		Source:    file,
 		Fieldname: "voice",
 		Filename:  fileName,
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendVoice", f, values, message)
+	err = bot.postMultipart("sendVoice", []fileField{f}, values, message)
 
 	return message, err
 }
@@ -504,14 +514,14 @@ func (bot *Bot) SendVideoNoteFile(chatID ChatID, file io.Reader, fileName string
 		return nil, err
 	}
 
-	f := &fileField{
+	f := fileField{
 		Source:    file,
 		Fieldname: "video_note",
 		Filename:  fileName,
 	}
 
 	message := new(Message)
-	err = bot.postMultipart("sendVideoNote", f, values, message)
+	err = bot.postMultipart("sendVideoNote", []fileField{f}, values, message)
 
 	return message, err
 }

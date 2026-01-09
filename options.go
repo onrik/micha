@@ -2,6 +2,7 @@ package micha
 
 import (
 	"context"
+	"io"
 	"strings"
 )
 
@@ -114,8 +115,8 @@ type SendVideoOptions struct {
 	Duration            int         `json:"duration,omitempty"`
 	Width               int         `json:"width,omitempty"`
 	Height              int         `json:"height,omitempty"`
-	Thumb               string      `json:"thumb,omitempty"` // TODO add thumb as file
 	Caption             string      `json:"caption,omitempty"`
+	Thumbnail           io.Reader   `json:"-"`
 	ParseMode           ParseMode   `json:"parse_mode,omitempty"`
 	SupportsStreaming   bool        `json:"supports_streaming,omitempty"`
 	DisableNotification bool        `json:"disable_notification,omitempty"`

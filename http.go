@@ -64,26 +64,26 @@ func newPostRequest(ctx context.Context, url string, data interface{}) (*http.Re
 	return request, nil
 }
 
-func newMultipartRequest(ctx context.Context, url string, file *fileField, params url.Values) (*http.Request, error) {
+func newMultipartRequest(ctx context.Context, url string, params url.Values, files ...fileField) (*http.Request, error) {
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
-
-	if file != nil {
-		part, err := writer.CreateFormFile(file.Fieldname, file.Filename)
-		if err != nil {
-			return nil, err
-		}
-
-		if _, err := io.Copy(part, file.Source); err != nil {
-			return nil, err
-		}
-	}
 
 	for field, values := range params {
 		for i := range values {
 			if err := writer.WriteField(field, values[i]); err != nil {
 				return nil, err
 			}
+		}
+	}
+
+	for i := range files {
+		part, err := writer.CreateFormFile(files[i].Fieldname, files[i].Filename)
+		if err != nil {
+			return nil, err
+		}
+
+		if _, err := io.Copy(part, files[i].Source); err != nil {
+			return nil, err
 		}
 	}
 
