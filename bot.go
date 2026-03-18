@@ -18,9 +18,20 @@ const (
 
 type Response struct {
 	Ok          bool            `json:"ok"`
-	ErrorCode   int             `json:"error_code"`
-	Description string          `json:"description"`
+	ErrorCode   int             `json:"error_code,omitempty"`
+	Description string          `json:"description,omitempty"`
 	Result      json.RawMessage `json:"result"`
+}
+
+func (r *Response) Error() error {
+	if r.Ok {
+		return nil
+	}
+
+	return Error{
+		Code:        r.ErrorCode,
+		Description: r.Description,
+	}
 }
 
 // Bot telegram bot
@@ -72,14 +83,14 @@ func (bot *Bot) buildURL(method string) string {
 }
 
 // Decode response result to target object
-func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
+func (bot *Bot) decodeResponse(data []byte, target any) error {
 	response := new(Response)
 	if err := json.Unmarshal(data, response); err != nil {
 		return fmt.Errorf("decode response error: %w", err)
 	}
 
-	if !response.Ok {
-		return fmt.Errorf("Error %d (%s)", response.ErrorCode, response.Description)
+	if err := response.Error(); err != nil {
+		return err
 	}
 
 	if target == nil {
@@ -95,7 +106,7 @@ func (bot *Bot) decodeResponse(data []byte, target interface{}) error {
 }
 
 // Send GET request to Telegram API
-func (bot *Bot) get(method string, params url.Values, target interface{}) error {
+func (bot *Bot) get(method string, params url.Values, target any) error {
 	request, err := newGetRequest(bot.ctx, bot.buildURL(method), params)
 	if err != nil {
 		return err
@@ -115,7 +126,7 @@ func (bot *Bot) get(method string, params url.Values, target interface{}) error 
 }
 
 // Send POST request to Telegram API
-func (bot *Bot) post(method string, data, target interface{}) error {
+func (bot *Bot) Post(method string, data, target any) error {
 	request, err := newPostRequest(bot.ctx, bot.buildURL(method), data)
 	if err != nil {
 		return err
@@ -131,6 +142,35 @@ func (bot *Bot) post(method string, data, target interface{}) error {
 	}
 
 	return bot.decodeResponse(body, target)
+}
+
+// Raw - send any method and return raw response
+func (bot *Bot) Raw(method string, data any) ([]byte, error) {
+	request, err := newPostRequest(bot.ctx, bot.buildURL(method), data)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := bot.httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := handleResponse(response)
+	if err != nil {
+		return nil, err
+	}
+
+	r := new(Response)
+	if err := json.Unmarshal(body, r); err != nil {
+		return nil, fmt.Errorf("decode response error: %w", err)
+	}
+
+	if err := r.Error(); err != nil {
+		return nil, err
+	}
+
+	return r.Result, nil
 }
 
 // Send POST multipart request to Telegram API
@@ -239,7 +279,7 @@ func (bot *Bot) SetWebhook(webhookURL string, options *SetWebhookOptions) error 
 }
 
 func (bot *Bot) DeleteWebhook() error {
-	return bot.post("deleteWebhook", nil, nil)
+	return bot.Post("deleteWebhook", nil, nil)
 }
 
 // Logout
@@ -273,21 +313,6 @@ func (bot *Bot) GetMe() (*User, error) {
 	return me, err
 }
 
-// Raw - send any method and return raw response
-func (bot *Bot) Raw(method string, data any) ([]byte, error) {
-	request, err := newPostRequest(bot.ctx, bot.buildURL(method), data)
-	if err != nil {
-		return nil, err
-	}
-
-	response, err := bot.httpClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-
-	return handleResponse(response)
-}
-
 // Use this method to send text messages.
 func (bot *Bot) SendMessage(chatID ChatID, text string, options *SendMessageOptions) (*Message, error) {
 	params := sendMessageParams{
@@ -299,7 +324,7 @@ func (bot *Bot) SendMessage(chatID ChatID, text string, options *SendMessageOpti
 	}
 
 	message := new(Message)
-	err := bot.post("sendMessage", params, message)
+	err := bot.Post("sendMessage", params, message)
 
 	return message, err
 }
@@ -309,7 +334,7 @@ func (bot *Bot) SendPhoto(chatID ChatID, photoID string, options *SendPhotoOptio
 	params := newSendPhotoParams(chatID, photoID, options)
 
 	message := new(Message)
-	err := bot.post("sendPhoto", params, message)
+	err := bot.Post("sendPhoto", params, message)
 
 	return message, err
 }
@@ -339,7 +364,7 @@ func (bot *Bot) SendAudio(chatID ChatID, audioID string, options *SendAudioOptio
 	params := newSendAudioParams(chatID, audioID, options)
 
 	message := new(Message)
-	err := bot.post("sendAudio", params, message)
+	err := bot.Post("sendAudio", params, message)
 
 	return message, err
 }
@@ -369,7 +394,7 @@ func (bot *Bot) SendDocument(chatID ChatID, documentID string, options *SendDocu
 	params := newSendDocumentParams(chatID, documentID, options)
 
 	message := new(Message)
-	err := bot.post("sendDocument", params, message)
+	err := bot.Post("sendDocument", params, message)
 
 	return message, err
 }
@@ -399,7 +424,7 @@ func (bot *Bot) SendSticker(chatID ChatID, stickerID string, options *SendSticke
 	params := newSendStickerParams(chatID, stickerID, options)
 
 	message := new(Message)
-	err := bot.post("sendSticker", params, message)
+	err := bot.Post("sendSticker", params, message)
 
 	return message, err
 }
@@ -429,7 +454,7 @@ func (bot *Bot) SendVideo(chatID ChatID, videoID string, options *SendVideoOptio
 	params := newSendVideoParams(chatID, videoID, options)
 
 	message := new(Message)
-	err := bot.post("sendVideo", params, message)
+	err := bot.Post("sendVideo", params, message)
 
 	return message, err
 }
@@ -469,7 +494,7 @@ func (bot *Bot) SendVoice(chatID ChatID, voiceID string, options *SendVoiceOptio
 	params := newSendVoiceParams(chatID, voiceID, options)
 
 	message := new(Message)
-	err := bot.post("sendVoice", params, message)
+	err := bot.Post("sendVoice", params, message)
 
 	return message, err
 }
@@ -501,7 +526,7 @@ func (bot *Bot) SendVideoNote(chatID ChatID, videoNoteID string, options *SendVi
 	params := newSendVideoNoteParams(chatID, videoNoteID, options)
 
 	message := new(Message)
-	err := bot.post("sendVideoNote", params, message)
+	err := bot.Post("sendVideoNote", params, message)
 
 	return message, err
 }
@@ -531,7 +556,7 @@ func (bot *Bot) SendLocation(chatID ChatID, latitude, longitude float64, options
 	params := newSendLocationParams(chatID, latitude, longitude, options)
 
 	message := new(Message)
-	err := bot.post("sendLocation", params, message)
+	err := bot.Post("sendLocation", params, message)
 
 	return message, err
 }
@@ -541,7 +566,7 @@ func (bot *Bot) SendVenue(chatID ChatID, latitude, longitude float64, title, add
 	params := newSendVenueParams(chatID, latitude, longitude, title, address, options)
 
 	message := new(Message)
-	err := bot.post("sendVenue", params, message)
+	err := bot.Post("sendVenue", params, message)
 
 	return message, err
 }
@@ -551,7 +576,7 @@ func (bot *Bot) SendContact(chatID ChatID, phoneNumber, firstName, lastName stri
 	params := newSendContactParams(chatID, phoneNumber, firstName, lastName, options)
 
 	message := new(Message)
-	err := bot.post("sendContact", params, message)
+	err := bot.Post("sendContact", params, message)
 
 	return message, err
 }
@@ -566,7 +591,7 @@ func (bot *Bot) ForwardMessage(chatID, fromChatID ChatID, messageID int64, disab
 	}
 
 	message := new(Message)
-	err := bot.post("forwardMessage", params, message)
+	err := bot.Post("forwardMessage", params, message)
 
 	return message, err
 }
@@ -579,7 +604,7 @@ func (bot *Bot) SendChatAction(chatID ChatID, action ChatAction) error {
 		"action":  action,
 	}
 
-	return bot.post("sendChatAction", params, nil)
+	return bot.Post("sendChatAction", params, nil)
 }
 
 // Use this method to get a list of profile pictures for a user.
@@ -633,7 +658,7 @@ func (bot *Bot) EditMessageText(chatID ChatID, messageID int64, inlineMessageID,
 	}
 
 	message := new(Message)
-	err := bot.post("editMessageText", params, message)
+	err := bot.Post("editMessageText", params, message)
 
 	return message, err
 }
@@ -650,7 +675,7 @@ func (bot *Bot) EditMessageCaption(chatID ChatID, messageID int64, inlineMessage
 	}
 
 	message := new(Message)
-	err := bot.post("editMessageCaption", params, message)
+	err := bot.Post("editMessageCaption", params, message)
 
 	return message, err
 }
@@ -665,7 +690,7 @@ func (bot *Bot) EditMessageReplyMarkup(chatID ChatID, messageID int64, inlineMes
 	}
 
 	message := new(Message)
-	err := bot.post("editMessageReplyMarkup", params, message)
+	err := bot.Post("editMessageReplyMarkup", params, message)
 
 	return message, err
 }
@@ -682,7 +707,7 @@ func (bot *Bot) DeleteMessage(chatID ChatID, messageID int64) (bool, error) {
 	}
 
 	var success bool
-	err := bot.post("deleteMessage", params, &success)
+	err := bot.Post("deleteMessage", params, &success)
 
 	return success, err
 }
@@ -698,7 +723,7 @@ func (bot *Bot) AnswerInlineQuery(inlineQueryID string, results InlineQueryResul
 		params.AnswerInlineQueryOptions = *options
 	}
 
-	return bot.post("answerInlineQuery", params, nil)
+	return bot.Post("answerInlineQuery", params, nil)
 }
 
 // Use this method to kick a user from a group or a supergroup.
@@ -710,7 +735,7 @@ func (bot *Bot) KickChatMember(chatID ChatID, userID int64) error {
 		"user_id": userID,
 	}
 
-	return bot.post("kickChatMember", params, nil)
+	return bot.Post("kickChatMember", params, nil)
 }
 
 // Use this method for your bot to leave a group, supergroup or channel
@@ -719,7 +744,7 @@ func (bot *Bot) LeaveChat(chatID ChatID) error {
 		"chat_id": chatID,
 	}
 
-	return bot.post("leaveChat", params, nil)
+	return bot.Post("leaveChat", params, nil)
 }
 
 // Use this method to unban a previously kicked user in a supergroup.
@@ -731,7 +756,7 @@ func (bot *Bot) UnbanChatMember(chatID ChatID, userID int64) error {
 		"user_id": userID,
 	}
 
-	return bot.post("unbanChatMember", params, nil)
+	return bot.Post("unbanChatMember", params, nil)
 }
 
 // Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
@@ -789,7 +814,7 @@ func (bot *Bot) GetChatMember(chatID ChatID, userID int64) (*ChatMember, error) 
 func (bot *Bot) AnswerCallbackQuery(callbackQueryID string, options *AnswerCallbackQueryOptions) error {
 	params := newAnswerCallbackQueryParams(callbackQueryID, options)
 
-	return bot.post("answerCallbackQuery", params, nil)
+	return bot.Post("answerCallbackQuery", params, nil)
 }
 
 // Use this method to send a game.
@@ -804,7 +829,7 @@ func (bot *Bot) SendGame(chatID ChatID, gameShortName string, options *SendGameO
 	}
 
 	message := new(Message)
-	err := bot.post("sendGame", params, message)
+	err := bot.Post("sendGame", params, message)
 
 	return message, err
 }
@@ -821,7 +846,7 @@ func (bot *Bot) SetGameScore(userID int64, score int, options *SetGameScoreOptio
 	}
 
 	message := new(Message)
-	err := bot.post("setGameScore", params, message)
+	err := bot.Post("setGameScore", params, message)
 
 	return message, err
 }

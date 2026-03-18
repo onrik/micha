@@ -3,6 +3,7 @@ package micha
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -78,6 +79,7 @@ func (s *BotTestSuite) registerResultWithRequestCheck(method, result, exceptedRe
 }
 
 func (s *BotTestSuite) registeMultipartrRequestCheck(method string, exceptedValues url.Values, exceptedFile fileField) {
+	s.T().Helper()
 	url := s.bot.buildURL(method)
 
 	httpmock.RegisterResponder("POST", url, func(request *http.Request) (*http.Response, error) {
@@ -154,10 +156,13 @@ func (s *BotTestSuite) TestErrorsHandle() {
 	s.True(strings.Contains(err.Error(), "decode response error"))
 
 	httpmock.Reset()
-	s.registerResponse("method", nil, `{"ok":false, "error_code": 111}`)
+	s.registerResponse("method", nil, `{"ok":false, "error_code": 400, "description": "chat_id required"}`)
 	err = s.bot.get("method", nil, nil)
 	s.Require().NotNil(err)
-	s.True(strings.Contains(err.Error(), "Error 111"))
+	s.Require().Equal("code: 400 (chat_id required)", err.Error())
+
+	tgErr := Error{}
+	s.Require().True(errors.As(err, &tgErr))
 
 	httpmock.Reset()
 	s.registerResponse("method", nil, `{"ok":true, "result": "dssdd"}`)
