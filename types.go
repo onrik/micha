@@ -332,6 +332,8 @@ type InlineKeyboardButton struct {
 	Text string `json:"text,omitempty"`
 
 	// Optional
+	IconCustomEmojiID            string    `json:"icon_custom_emoji_id,omitempty"`
+	Style                        string    `json:"style,omitempty"`
 	URL                          string    `json:"url,omitempty"`
 	LoginURL                     *LoginURL `json:"login_url,omitempty"`
 	CallbackData                 string    `json:"callback_data,omitempty"`
@@ -356,6 +358,24 @@ type LoginURL struct {
 type InlineKeyboardMarkup struct {
 	replyMarkupImplementation
 	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard"`
+}
+
+func (m *InlineKeyboardMarkup) Push(button InlineKeyboardButton) {
+	if len(m.InlineKeyboard) == 0 {
+		m.InlineKeyboard = [][]InlineKeyboardButton{[]InlineKeyboardButton{}}
+	}
+
+	lastIndex := len(m.InlineKeyboard) - 1
+	m.InlineKeyboard[lastIndex] = append(m.InlineKeyboard[lastIndex], button)
+}
+
+func (m *InlineKeyboardMarkup) Pushln(buttons ...InlineKeyboardButton) {
+	if len(buttons) == 0 {
+		m.InlineKeyboard = append(m.InlineKeyboard, []InlineKeyboardButton{})
+		return
+	}
+
+	m.InlineKeyboard = append(m.InlineKeyboard, buttons)
 }
 
 // ChosenInlineResult object represents a result of an inline query that was chosen by the user and sent to their chat partner.
